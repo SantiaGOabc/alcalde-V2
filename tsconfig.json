@@ -8,8 +8,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
-      "@constants/*": ["./src/constants/*"],
-      "@constanrs": ["./src/constants/index.astro"],
+      "@constant/*": ["./src/constants/*"],
+      "@constant": ["./src/constants/index"],
       "@global/*": ["./src/global/*"],
       "@layouts/*": ["./src/layouts/*"],
       "@pages/*": ["./src/pages/*"],

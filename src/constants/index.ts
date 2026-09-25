@@ -1,1 +1,1 @@
-export { NAVBAR } from "@constants/home";
+export { NAVBAR } from "@constant/home/navbar.ts";

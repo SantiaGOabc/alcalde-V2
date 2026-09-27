@@ -1,0 +1,37 @@
+---
+import { Section, Tipography, Link } from "@components";
+import { SECTION_BIOGRAPHY_CONTENT } from "@constant";
+---
+
+<Section className="flex flex-col gap-10 md:flex-row md:items-center md:gap-12">
+  <div class="min-w-0 flex-1">
+    <Tipography as="h2" variant="h2" color="primary">
+      {SECTION_BIOGRAPHY_CONTENT.title}
+    </Tipography>
+    <Tipography as="p" variant="body" color="secondary" class="mt-6 uppercase">
+      {SECTION_BIOGRAPHY_CONTENT.description}
+    </Tipography>
+    <div class="flex gap-2 mt-8">
+      <Link href={SECTION_BIOGRAPHY_CONTENT.buttons[0].url} type="button" isExternal={true} class="button-primary">
+        {SECTION_BIOGRAPHY_CONTENT.buttons[0].primary}
+      </Link>
+      <Link href={SECTION_BIOGRAPHY_CONTENT.buttons[1].url} type="button" isExternal={true} class="button-outline">
+        {SECTION_BIOGRAPHY_CONTENT.buttons[1].secondary}
+      </Link>
+    </div>
+  </div>
+
+  <div class="min-w-0 flex-1">
+    {/* TODO: FALTA CREAR UN COMPONENTE VIDEO E IMPORTARLO TANTO AQUI Y EN EL LIBRO */}
+    <video
+      class="aspect-video w-full rounded-md bg-black object-cover"
+      controls
+    >
+      <source
+        src={SECTION_BIOGRAPHY_CONTENT.video.url}
+        type={SECTION_BIOGRAPHY_CONTENT.video.type}
+      />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</Section>

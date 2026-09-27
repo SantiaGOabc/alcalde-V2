@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'primary' | 'secondary';
+interface Props extends HTMLAttributes<'section'> {
+    variant?: Variant;
+    className?: string;
+}
+
+
+const VARIANTS = {
+    'primary': 'bg-gray-200 text-black',
+    'secondary': 'bg-purple-700 text-white',
+}
+
+const { variant, className, ...props } = Astro.props;
+---
+
+<section class={ variant && VARIANTS[variant] || VARIANTS.primary + ' ' + className} {...props}>
+    <slot />
+</section>

@@ -1,7 +1,6 @@
 ---
-import Navbar from '../global/navbar.astro';
-import Footer from '../global/footer.astro';
-import '../styles/global.css';
+import { Navbar, Footer } from "@components"
+import '../../global.css';
 
 const { title } = Astro.props;
 ---
@@ -14,7 +13,7 @@ const { title } = Astro.props;
 		<meta name="description" content="Alcaldía V2" />
 		<title>{title}</title>
 	</head>
-	<body class="flex min-h-screen flex-col bg-white text-gray-900">
+	<body class="flex min-h-screen flex-col">
 		<Navbar />
 		<main class="flex-1">
 			<slot />

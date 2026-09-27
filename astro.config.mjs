@@ -7,6 +7,15 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
+  image: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'manfredreyesvilla.netlify.app',
+        pathname: '/_astro/**'
+      }
+    ]
+  },
   vite: {
     plugins: [tailwindcss()]
   },

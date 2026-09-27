@@ -1,0 +1,32 @@
+---
+import { Section, Tipography } from "@components";
+
+interface Props {
+	title: string;
+	description: string;
+	id?: string;
+}
+
+const { title, description, id } = Astro.props;
+---
+
+<Section className="home-hero min-h-screen grid place-items-center text-white text-center bg-no-repeat bg-bottom bg-cover" id={id}>
+	<div class="mx-auto max-w-5xl">
+		<Tipography
+			as="p"
+			variant="body"
+			color="inherit"
+			class="text-sm font-semibold uppercase tracking-widest text-white/80 sm:text-base"
+		>
+			{title}
+		</Tipography>
+		<Tipography
+			as="h1"
+			variant="h1"
+			color="inherit"
+			class="mt-5 uppercase text-white"
+		>
+			{description}
+		</Tipography>
+	</div>
+</Section>

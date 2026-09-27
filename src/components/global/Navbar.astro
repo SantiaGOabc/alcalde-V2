@@ -1,0 +1,24 @@
+---
+import { Link } from "@components";
+import { NAVBAR } from "@constant";
+---
+
+<nav aria-label="Navegación principal" class="fixed top-0 w-full bg-transparent px-5 py-4 shadow-sm">
+  <div class="flex h-16 items-center justify-between">
+    <Link href="/" class="text-lg font-semibold">M.R.V</Link>
+    <ul class="flex items-center gap-6">
+      {
+        NAVBAR.map((nav) => (
+          <li>
+            <Link
+              href={nav.path}
+              class="text-gray-800 hover:text-gray-900 text-lg font-semibold"
+            >
+              {nav.label}
+            </Link>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,12 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import { Hero, BiographyVideo, Phrases } from "@components";
+import { CONTENT_HERO_HOME } from "@constant";
+---
+
+<MainLayout title="Inicio">
+    {/* TODO: EL HERO RECIBA DEBE RECIBIR LAS IMAGENES PARA EL FONDO - USAR EL METODO GETIMAGES DE UTILS */}
+    <Hero title={CONTENT_HERO_HOME.title} description={CONTENT_HERO_HOME.description} />
+    <BiographyVideo />
+    <Phrases />
+</MainLayout>

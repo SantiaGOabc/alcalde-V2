@@ -6,7 +6,7 @@
 :root {
     --home-accent: #0a5cff;
     --home-accent-strong: #0849cc;
-    --home-ink: #111114;
+    --home-ink: rgb(96, 96, 98);
     --hero-step: 7s;
 }
 
@@ -22,24 +22,23 @@
 }
 
 .hero-media__layer {
-    @apply absolute inset-0 size-full object-cover opacity-0;
-    animation: hero-crossfade var(--hero-duration) linear infinite;
+    @apply absolute inset-0 size-full object-cover object-top opacity-0;
+    animation: hero-crossfade var(--hero-duration) ease-in-out infinite;
     animation-delay: calc(var(--i) * var(--hero-step));
 }
 
 @keyframes hero-crossfade {
     0% { opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
+    2% { opacity: 1; }
+    24% { opacity: 1; }
+    26% { opacity: 0; }
     100% { opacity: 0; }
 }
 
-/* Velo del gradiente de marca + un velo oscuro para que el texto se lea. */
+/* Oscurecimiento uniforme para mantener legible el texto del hero. */
 .hero-veil {
     @apply pointer-events-none absolute inset-0;
-    background-image:
-        linear-gradient(to top, var(--hero-gradient-bottom) 0%, var(--hero-gradient-top) 50%, transparent 100%),
-        linear-gradient(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.35));
+    background-color: rgb(0 0 0 / 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -125,7 +124,7 @@
 }
 
 .home-cta--ghost {
-    @apply border border-gray-200 hover:bg-gray-100 text-[--home-ink];
+    @apply border-2 border-gray-300 hover:bg-gray-200 text-[--home-ink];
 }
 
 .home-cta--ghost:hover {

@@ -1,5 +1,5 @@
 ---
-import { Link } from "@components";
+import {Link} from "@components";
 import { NAVBAR } from "@constant";
 
 import "@styles/home.css";
@@ -11,16 +11,15 @@ import "@styles/home.css";
   class="fixed top-0 z-50 w-full bg-transparent shadow-sm transition-all duration-300"
 >
   <div class="mx-auto flex h-16 w-full max-w-6xl items-center justify-between">
-    <Link href="/" class="text-lg font-semibold">M.R.V</Link>
+    <a href="/" class="text-lg font-semibold no-underline before:hidden after:hidden">M.R.V</a>
     <ul class="flex items-center gap-6">
       {
         NAVBAR.map((nav) => (
           <li>
             <Link
               href={nav.path}
-              aria-current={nav.path === Astro.url.pathname}
-              aria-label={nav.label}
-              class="text-lg font-semibold"
+              aria-current={nav.path === Astro.url.pathname ? "page" : undefined}
+              class="text-lg font-semibold text-gray-200 no-underline before:hidden after:hidden"
             >
               {nav.label}
             </Link>
@@ -36,13 +35,11 @@ import "@styles/home.css";
   const navbar = getElementById("site-navbar");
   
   if (navbar) {
-    const lis = navbar.querySelectorAll("li");
     const updateNavbar = () => {
       const isScrolled = window.scrollY > 16;
 
       navbar.classList.toggle("bg-transparent", !isScrolled);
       navbar.classList.toggle("bg-(--home-accent)", isScrolled);
-      lis?.forEach((li) => li.classList.toggle("text-gray-200", isScrolled));
       navbar.classList.toggle("shadow-sm", !isScrolled);
       navbar.classList.toggle("shadow-md", isScrolled);
       navbar.classList.toggle("backdrop-blur-sm", isScrolled);

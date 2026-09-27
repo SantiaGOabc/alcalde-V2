@@ -4,11 +4,10 @@ import { Section, Tipography, Link } from "@components";
 interface Props {
   title: string;
   description: string;
-  buttons: Array<{
-    primary: string;
-    secondary: string;
-    url: string;
-  }>;
+  buttons: readonly [
+    { primary: string; url: string },
+    { secondary: string; url: string },
+  ];
   video: {
     poster: string;
     type: string;
@@ -20,13 +19,6 @@ const { title, description, buttons, video } = Astro.props;
 ---
 
 <Section className="relative isolate overflow-hidden py-32 sm:py-40 lg:py-48">
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -top-48 left-1/2 h-136 w-5xl -translate-x-1/2 rounded-full blur-3xl"
-    style="background: radial-gradient(closest-side, rgb(10 92 255 / 0.16), transparent 70%)"
-  >
-  </div>
-
   <div
     class="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-12 lg:gap-20"
   >
@@ -68,7 +60,7 @@ const { title, description, buttons, video } = Astro.props;
 
     <div class="lg:col-span-7 lg:origin-left lg:scale-110">
       {/* TODO: FALTA CREAR UN COMPONENTE VIDEO E IMPORTARLO TANTO AQUI Y EN EL LIBRO */}
-      <figure class="w-full h-full m-0">
+      <figure class="w-full h-full m-0 shadow-md">
           <video class="block aspect-16/10 w-full object-cover" controls playsinline preload="metadata">
             <source src={video.url} type={video.type} />
             Your browser does not support the video tag.

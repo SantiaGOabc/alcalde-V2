@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 :root {
-    --hero-gradient-bottom: #0d25d4;
-    --hero-gradient-top: rgb(0, 4, 216);
     --button-primary: #005d9c;
     --button-outiline: 1px solid #005d9c;
 }
@@ -14,6 +12,7 @@
     html, body {
         padding: 0;
         margin: 0;
+        overflow-x: clip;
     }
 
     nav {
@@ -39,20 +38,11 @@
 }
 
 @layer components {
-    .home-hero {
-        background-image: linear-gradient(
-            to top,
-            var(--hero-gradient-bottom) 0%,
-            var(--hero-gradient-top) 50%,
-            transparent 100%
-        );
-    }
-
     .button-primary {
-        @apply bg-[var(--button-primary)] text-white hover:bg-purple-700 px-12 py-4 rounded-md;
+        @apply bg-(--button-primary) text-white hover:bg-purple-700 px-12 py-4 rounded-md;
     }
 
     .button-outline {
-        @apply border border-[var(--button-outiline)] text-gray-700 hover:bg-gray-100 px-12 py-4 rounded-md;
+        @apply border border-(--button-outiline) text-gray-700 hover:bg-gray-100 px-12 py-4 rounded-md;
     }
 }

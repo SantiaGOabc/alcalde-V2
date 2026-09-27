@@ -1,37 +1,82 @@
 ---
 import { Image } from "astro:assets";
 import { Button, Input, Section, Tipography } from "@components";
-import { SECTION_BEFORE_AFTER_CONTENT } from "@constant";
 import { ArrowLeft, ArrowRight } from "@icons";
 
-const { title, description, before, after } = SECTION_BEFORE_AFTER_CONTENT;
+interface Props {
+  title: string;
+  description: string;
+  before: Array<{
+    title: string;
+    imageURL: string;
+    imageFit: "contain" | "cover";
+  }>;
+  after: Array<{
+    title: string;
+    imageURL: string;
+    imageFit: "contain" | "cover";
+  }>;
+}
+
+const { title, description, before, after } = Astro.props;
 const slides = before.flatMap((beforeImage, index) =>
   after[index] ? [{ before: beforeImage, after: after[index] }] : [],
 );
 ---
 
 <Section className="py-24 sm:py-28 lg:py-32">
-    <div class="mx-auto max-w-6xl">
-      <header class="mb-10 max-w-3xl sm:mb-14">
-        <Tipography
-          as="h2"
-          class="mt-3 text-3xl font-semibold leading-tight text-balance sm:text-4xl lg:text-5xl"
-        >
-          {title}
-        </Tipography>
-        <Tipography
-          as="p"
-          class="mt-4 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg"
-        >
-          {description}
-        </Tipography>
-      </header>
+  <div class="mx-auto max-w-6xl">
+    <header class="mb-10 max-w-3xl sm:mb-14">
+      <Tipography
+        as="h2"
+        class="mt-3 text-3xl font-semibold leading-tight text-balance sm:text-4xl lg:text-5xl"
+      >
+        {title}
+      </Tipography>
+      <Tipography
+        as="p"
+        class="mt-4 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg"
+      >
+        {description}
+      </Tipography>
+    </header>
     {
       slides.length > 0 && (
         <div
           class="overflow-hidden rounded-lg bg-(--home-accent) text-white shadow-xl"
           data-before-after-slider
         >
+          <div class="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+            <Button
+              type="button"
+              variant="inverse"
+              className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Comparación anterior"
+              title="Comparación anterior"
+              data-previous-slide
+            >
+              <ArrowLeft />
+            </Button>
+            <Tipography
+              as="p"
+              color="inherit"
+              class="m-0 text-sm font-medium tabular-nums text-white/75"
+              aria-live="polite"
+              data-slide-counter
+            >
+              01 / {String(slides.length).padStart(2, "0")}
+            </Tipography>
+            <Button
+              type="button"
+              variant="inverse"
+              className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Siguiente comparación"
+              title="Siguiente comparación"
+              data-next-slide
+            >
+              <ArrowRight />
+            </Button>
+          </div>
           <div class="relative aspect-4/3 w-full overflow-hidden bg-(--home-accent) sm:aspect-video">
             {slides.map((slide, index) => (
               <div class="absolute inset-0" data-slide hidden={index !== 0}>
@@ -99,38 +144,6 @@ const slides = before.flatMap((beforeImage, index) =>
               class="absolute inset-x-0 top-1/2 z-20 h-10 w-full -translate-y-1/2 cursor-ew-resize opacity-0 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               data-comparison-range
             />
-          </div>
-
-          <div class="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-            <Button
-              type="button"
-              variant="inverse"
-              className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Comparación anterior"
-              title="Comparación anterior"
-              data-previous-slide
-            >
-              <ArrowLeft />
-            </Button>
-            <Tipography
-              as="p"
-              color="inherit"
-              class="m-0 text-sm font-medium tabular-nums text-white/75"
-              aria-live="polite"
-              data-slide-counter
-            >
-              01 / {String(slides.length).padStart(2, "0")}
-            </Tipography>
-            <Button
-              type="button"
-              variant="inverse"
-              className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Siguiente comparación"
-              title="Siguiente comparación"
-              data-next-slide
-            >
-              <ArrowRight />
-            </Button>
           </div>
         </div>
       )

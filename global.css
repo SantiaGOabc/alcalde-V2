@@ -7,46 +7,52 @@
     --button-outiline: 1px solid #005d9c;
 }
 
-html, body {
-    padding: 0;
-    margin: 0;
-}
+/* Unlayered CSS beats every @layer, so these base rules would override the
+   padding utilities on each section. Keeping them in @layer base lets
+   `py-*` / `px-*` on a section work as expected. */
+@layer base {
+    html, body {
+        padding: 0;
+        margin: 0;
+    }
 
-nav {
-    padding-inline: 1.5rem;
-}
+    nav {
+        padding-inline: 1.5rem;
+    }
 
-section {
-    @apply py-24 px-24;
-    padding-block: 2.5rem;
-    padding-inline: 1.5rem;
-}
+    section {
+        padding-block: 2.5rem;
+        padding-inline: 1.5rem;
+    }
 
-.home-hero {
-    background-image: linear-gradient(
-        to top,
-        var(--hero-gradient-bottom) 0%,
-        var(--hero-gradient-top) 50%,
-        transparent 100%
-    );
-}
+    @media (min-width: 768px) {
+        nav, section {
+            padding-inline: 3rem;
+        }
+    }
 
-.button-primary {
-    @apply bg-[var(--button-primary)] text-white hover:bg-purple-700 px-12 py-4 rounded-md;
-}
-
-.button-outline {
-    @apply border border-[var(--button-outiline)] text-gray-700 hover:bg-gray-100 px-12 py-4 rounded-md;
-}
-
-@media (min-width: 768px) {
-    nav, section {
-        padding-inline: 3rem;
+    @media (min-width: 1280px) {
+        nav, section {
+            padding-inline: 6rem;
+        }
     }
 }
 
-@media (min-width: 1280px) {
-    nav, section {
-        padding-inline: 6rem;
+@layer components {
+    .home-hero {
+        background-image: linear-gradient(
+            to top,
+            var(--hero-gradient-bottom) 0%,
+            var(--hero-gradient-top) 50%,
+            transparent 100%
+        );
+    }
+
+    .button-primary {
+        @apply bg-[var(--button-primary)] text-white hover:bg-purple-700 px-12 py-4 rounded-md;
+    }
+
+    .button-outline {
+        @apply border border-[var(--button-outiline)] text-gray-700 hover:bg-gray-100 px-12 py-4 rounded-md;
     }
 }

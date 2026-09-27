@@ -1,17 +1,44 @@
 ---
+import { Image } from "astro:assets";
 import { Section, Tipography } from "@components";
 
 interface Props {
 	title: string;
 	description: string;
+	images?: string[];
 	id?: string;
 }
 
-const { title, description, id } = Astro.props;
+const { title, description, images = [], id } = Astro.props;
 ---
 
-<Section className="home-hero min-h-screen grid place-items-center text-white text-center bg-no-repeat bg-bottom bg-cover" id={id}>
-	<div class="mx-auto max-w-5xl">
+<Section className="home-hero relative isolate grid min-h-svh place-items-center overflow-hidden text-center text-white" id={id}>
+	{
+		images.length > 0 && (
+			<div
+				class="hero-media"
+				aria-hidden="true"
+				style={`--hero-count: ${images.length}`}
+			>
+				{images.map((src, index) => (
+					<Image
+						src={src}
+						alt=""
+						width={1920}
+						height={1080}
+						loading={index === 0 ? "eager" : "lazy"}
+						decoding="async"
+						class="hero-media__layer"
+						style={`--i: ${index}`}
+					/>
+				))}
+			</div>
+		)
+	}
+
+	<div class="hero-veil" aria-hidden="true"></div>
+
+	<div class="relative mx-auto max-w-5xl px-6">
 		<Tipography
 			as="p"
 			variant="body"

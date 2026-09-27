@@ -7,6 +7,10 @@ interface Props {
   imageURL: string;
   reverse?: boolean;
   variant?: "primary" | "secondary";
+  /** La primera frase del slider entra desde la izquierda. */
+  lead?: boolean;
+  /** Posicion dentro del slider, en base 0. */
+  index?: number;
 }
 
 const {
@@ -14,17 +18,32 @@ const {
   imageURL,
   reverse = false,
   variant = "secondary",
+  lead = false,
+  index = 0,
 } = Astro.props;
 ---
 
-<Section variant={variant} className="py-24 sm:py-28 lg:py-40">
+<Section
+  variant={variant}
+  class:list={[
+    "phrase-item",
+    lead && "phrase-item--lead",
+    "py-24 lg:py-32",
+  ]}
+  style={`--index: ${index}`}
+>
   <div
-    class="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-12 lg:gap-20"
+    class:list={[
+      "mx-auto grid w-full max-w-6xl items-center gap-14 lg:grid-cols-12 lg:gap-20",
+    ]}
   >
     <div
-      class:list={["lg:col-span-5", reverse && "lg:order-2"]}
+      class:list={[
+        "phrase-item__text lg:col-span-5",
+        reverse && "lg:order-2",
+      ]}
     >
-      <blockquote class="m-0 mt-7">
+      <blockquote class="m-0">
         <cite
           class="text-3xl font-semibold leading-[1.1] tracking-tight text-balance sm:text-4xl lg:text-[3.25rem]"
         >
@@ -33,7 +52,11 @@ const {
       </blockquote>
     </div>
 
-    <figure class="relative m-0 aspect-4/3 w-full lg:col-span-7">
+    <figure
+      class:list={[
+        "phrase-item__figure relative m-0 aspect-4/3 w-full lg:col-span-7",
+      ]}
+    >
       <div
         aria-hidden="true"
         class:list={[

@@ -1,11 +1,25 @@
 ---
 import { Section, Tipography, Link } from "@components";
-import { SECTION_BIOGRAPHY_CONTENT } from "@constant";
 
-const { title, description, buttons, video } = SECTION_BIOGRAPHY_CONTENT;
+interface Props {
+  title: string;
+  description: string;
+  buttons: Array<{
+    primary: string;
+    secondary: string;
+    url: string;
+  }>;
+  video: {
+    poster: string;
+    type: string;
+    url: string;
+  };
+}
+
+const { title, description, buttons, video } = Astro.props;
 ---
 
-<Section className="relative isolate overflow-hidden py-24 sm:py-28 lg:py-40">
+<Section className="relative isolate overflow-hidden py-32 sm:py-40 lg:py-48">
   <div
     aria-hidden="true"
     class="pointer-events-none absolute -top-48 left-1/2 h-136 w-5xl -translate-x-1/2 rounded-full blur-3xl"

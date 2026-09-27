@@ -7,8 +7,106 @@
     --home-accent: #0a5cff;
     --home-accent-strong: #0849cc;
     --home-ink: #111114;
+    --hero-step: 7s;
 }
 
+/* ==========================================================================
+   Hero — fondo carrusel
+   Cada capa usa la misma animacion y se retrasa un paso, asi el desvanecido
+   queda encadenado sin JavaScript.
+   ========================================================================== */
+
+.hero-media {
+    @apply absolute inset-0 overflow-hidden;
+    --hero-duration: calc(var(--hero-count) * var(--hero-step));
+}
+
+.hero-media__layer {
+    @apply absolute inset-0 size-full object-cover opacity-0;
+    animation: hero-crossfade var(--hero-duration) linear infinite;
+    animation-delay: calc(var(--i) * var(--hero-step));
+}
+
+@keyframes hero-crossfade {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Velo del gradiente de marca + un velo oscuro para que el texto se lea. */
+.hero-veil {
+    @apply pointer-events-none absolute inset-0;
+    background-image:
+        linear-gradient(to top, var(--hero-gradient-bottom) 0%, var(--hero-gradient-top) 50%, transparent 100%),
+        linear-gradient(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.35));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-media__layer {
+        animation: none;
+    }
+
+    .hero-media__layer:first-child {
+        @apply opacity-100;
+    }
+}
+
+/* ==========================================================================
+   Phrases — secciones sticky que se deslizan con el scroll vertical
+   Cada Phrase es una section sticky: se apila, se pega arriba y solo se
+   desplaza en X. El contenedor reserva items * 100svh de recorrido, asi que
+   las secciones siguientes de la pagina aparecen igual al terminar.
+   Sin JS se quedan como secciones normales apiladas.
+   ========================================================================== */
+
+.phrase-slider {
+    @apply relative;
+}
+
+.phrase-item {
+    @apply relative;
+}
+
+[data-scroll-progress] .phrase-slider {
+    height: calc(var(--items) * 100svh);
+}
+
+[data-scroll-progress] .phrase-item {
+    @apply sticky top-0 flex h-svh items-center justify-center overflow-hidden;
+    /* Progreso local de esta seccion: 0 cuando entra, 1 cuando sale.
+       El factor es `items` (no items - 1) porque el recorrido real dentro del
+       contenedor son 3 * 100svh para 4 frases: con items - 1 la ultima se
+       queda en 0 y nunca aparece. */
+    --local: clamp(0, calc(var(--progress, 0) * var(--items) - var(--index)), 1);
+    transform: translate3d(calc((1 - var(--local)) * 100%), 0, 0);
+    will-change: transform;
+}
+
+/* La primera frase no se desplaza: entra ya en su sitio y se queda. Al salir
+   se separa, el texto hacia la derecha y la foto hacia la izquierda.
+   El offset arranca en 1 (no en 0) para que solo se mueva cuando la segunda
+   frase viene a taparla, nunca al llegar al inicio del bloque. */
+[data-scroll-progress] .phrase-item--lead {
+    transform: none;
+    --local: clamp(0, calc(var(--progress, 0) * var(--items) - 1), 1);
+}
+
+[data-scroll-progress] .phrase-item--lead .phrase-item__text {
+    transform: translate3d(calc(var(--local) * 100vw), 0, 0);
+    opacity: calc(1 - var(--local));
+}
+
+[data-scroll-progress] .phrase-item--lead .phrase-item__figure {
+    transform: translate3d(calc(var(--local) * -100vw), 0, 0);
+    opacity: calc(1 - var(--local));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .phrase-slider {
+        @apply flex flex-col;
+    }
+}
 
 /* ==========================================================================
    Home — call to action

@@ -1,6 +1,13 @@
 export const CONTENT_HERO_HOME = {
   title: "El Valor del Trabajo, la Cercanía y el Compromiso",
   description: "Manfred Reyes Villa",
+  // TODO: ESTAS IMAGENES DEBERIAN VENIR DEL CMS CON getImages() DE UTILS
+  images: [
+    "https://manfredreyesvilla.netlify.app/_astro/DSC_0806_ZuLMnQ.webp",
+    "https://manfredreyesvilla.netlify.app/_astro/DSC_0809_ZuLMnQ.webp",
+    "https://manfredreyesvilla.netlify.app/_astro/DSC_0811_ZuLMnQ.webp",
+    "https://manfredreyesvilla.netlify.app/_astro/DSC_0810_ZuLMnQ.webp",
+  ],
 };
 
 export const SECTION_BIOGRAPHY_CONTENT = {

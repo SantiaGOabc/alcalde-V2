@@ -1,0 +1,97 @@
+---
+import { Image } from "astro:assets";
+import { Button, Section, Tipography } from "@components";
+import { SECTION_BOOK_CONTENT } from "@constant";
+
+const { title, eyebrow, description, imageURL, imageAlt, button } =
+  SECTION_BOOK_CONTENT;
+---
+
+<Section variant="primary" className="overflow-hidden py-24 sm:py-32 lg:py-40">
+  <div
+    class="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2 lg:gap-20"
+  >
+    <div class="relative z-10">
+      <Tipography
+        as="span"
+        color="inherit"
+        class="inline-flex items-center gap-3 text-xs font-semibold uppercase text-(--home-accent) sm:text-sm"
+      >
+        <span aria-hidden="true" class="h-px w-8 bg-(--home-accent)"></span>
+        {eyebrow}
+      </Tipography>
+
+      <Tipography
+        as="h2"
+        variant="h2"
+        class="mt-7 max-w-xl text-5xl font-semibold leading-[0.98] text-balance sm:text-6xl lg:text-7xl"
+      >
+        {title}
+      </Tipography>
+
+      <Tipography
+        as="p"
+        color="secondary"
+        class="mt-7 max-w-lg text-lg leading-8 text-pretty sm:text-xl"
+      >
+        {description}
+      </Tipography>
+
+      <Button
+        text={button}
+        className="min-h-12 rounded-full bg-(--home-accent) px-6 text-gray-200 mt-8"
+        aria-label={button}
+      />
+    </div>
+
+    <div class="relative mx-auto w-full max-w-120 px-5 py-8 sm:px-10 lg:py-12">
+      <div
+        aria-hidden="true"
+        class="absolute inset-y-0 right-0 w-[72%] bg-(--home-accent)"
+      >
+      </div>
+      <figure
+        class="relative m-0 aspect-4/5] w-[82%] overflow-hidden bg-gray-900 shadow-[0_28px_70px_-24px_rgb(17_24_39/0.55)] transition-transform duration-500 ease-out hover:-translate-y-2"
+      >
+        <Image
+          src={imageURL}
+          alt={imageAlt}
+          width={1400}
+          height={1000}
+          class="absolute inset-0 size-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-linear-to-t from-black/85 via-black/10 to-black/15"
+        >
+        </div>
+        <div
+          class="absolute inset-x-0 top-0 flex items-center justify-between p-5 text-[10px] font-semibold uppercase text-white/85 sm:p-7 sm:text-xs"
+        >
+          <span>Manfred Reyes Villa</span>
+          <span>Cochabamba</span>
+        </div>
+        <div class="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
+          <Tipography
+            as="span"
+            color="inherit"
+            class="text-[10px] font-semibold uppercase text-white/75 sm:text-xs"
+          >
+            Una ciudad en movimiento
+          </Tipography>
+          <Tipography
+            as="p"
+            color="inherit"
+            class="mt-3 max-w-xs text-3xl font-semibold leading-[0.98] text-white text-balance sm:text-4xl"
+          >
+            Cocha, la mejor ciudad
+          </Tipography>
+          <div aria-hidden="true" class="mt-5 h-1 w-12 bg-(--home-accent)">
+          </div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</Section>

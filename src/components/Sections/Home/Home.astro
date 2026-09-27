@@ -1,6 +1,6 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { Hero, BiographyVideo, Phrase } from "@components";
+import { Hero, BiographyVideo, Phrase, BeforeAfter, Book } from "@components";
 import {
   CONTENT_HERO_HOME,
   SECTION_PHRASES_CONTENT,
@@ -30,6 +30,8 @@ const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
     description={CONTENT_HERO_HOME.description}
   />
   <BiographyVideo />
+
+  {/* TODO: AÑADIR LA ANIMACION DE SCROLL ENTRE LAS FRASES INLINE COMO SLIDER */}
   {
     phrases.map((phrase) => (
         <div class="">
@@ -42,4 +44,6 @@ const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
         </div>
     ))
   }
+  <BeforeAfter />
+  <Book />
 </MainLayout>

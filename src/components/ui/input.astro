@@ -1,0 +1,11 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"input">;
+
+const { class: className, ...props } = Astro.props;
+
+const baseClass = "block w-full disabled:cursor-not-allowed disabled:opacity-50";
+---
+
+<input class:list={[baseClass, className]} {...props} />

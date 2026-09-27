@@ -2,8 +2,8 @@
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"button"> {
-  text: string;
-  variant?: "primary" | "ghost";
+  text?: string;
+  variant?: "primary" | "ghost" | "inverse";
   className?: string;
 }
 
@@ -11,13 +11,14 @@ const { text, variant = "primary", className = "", ...props } = Astro.props;
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-const styles =
-  variant === "primary"
-    ? "bg-blue-600 text-white hover:bg-blue-700"
-    : "text-gray-700 hover:bg-gray-100";
+const styles = {
+  primary: "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer",
+  ghost: "text-gray-700 hover:bg-gray-100 cursor-pointer",
+  inverse: "text-white hover:bg-white/10 focus-visible:ring-white cursor-pointer",
+}[variant];
 ---
 
 <button class={`${base} ${styles} ${className}`} {...props}>
-  {text}
+  {text}<slot />
 </button>
 

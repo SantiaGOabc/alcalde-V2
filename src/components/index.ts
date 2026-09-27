@@ -8,11 +8,14 @@ export { default as Footer } from './global/Footer.astro';
 // Layout Section
 export { default as Section } from './global/Section.astro';
 
-// Sections
+// Sections HOME
 export { default as Home } from './Sections/Home/Home.astro';
 export { default as About } from './Sections/About/About.astro';
 export { default as BiographyVideo } from './Sections/Home/BiographyVideo.astro';
 export { default as Phrase } from './Sections/Home/Phrase.astro';
+export { default as BeforeAfter } from './Sections/Home/BeforeAfter.astro';
+export { default as Book } from './Sections/Home/Book.astro';
 
 // UI 
 export { default as Button } from './ui/Button.astro';
+export { default as Input } from './ui/Input.astro';

@@ -1,7 +1,7 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Variant = 'primary' | 'secondary';
+type Variant = 'primary' | 'secondary' | 'accent';
 interface Props extends HTMLAttributes<'section'> {
     variant?: Variant;
     className?: string;
@@ -9,13 +9,24 @@ interface Props extends HTMLAttributes<'section'> {
 
 
 const VARIANTS = {
-    'primary': 'bg-gray-200 text-black',
-    'secondary': 'bg-purple-700 text-white',
+    'primary': 'bg-gray-100 text-black',
+    'secondary': 'bg-white text-black',
+    'accent': 'bg-purple-700 text-white',
+
 }
 
-const { variant, className, ...props } = Astro.props;
+const {
+    variant = 'primary',
+    className,
+    class: classProp,
+    ...props
+} = Astro.props;
+
+const classes = [VARIANTS[variant], className, classProp]
+    .filter(Boolean)
+    .join(' ');
 ---
 
-<section class={ variant && VARIANTS[variant] || VARIANTS.primary + ' ' + className} {...props}>
+<section class={classes} {...props}>
     <slot />
 </section>

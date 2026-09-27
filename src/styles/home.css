@@ -1,0 +1,43 @@
+@reference "tailwindcss";
+/* ==========================================================================
+   Home — design tokens
+   ========================================================================== */
+
+:root {
+    --home-accent: #0a5cff;
+    --home-accent-strong: #0849cc;
+    --home-ink: #111114;
+}
+
+
+/* ==========================================================================
+   Home — call to action
+   ========================================================================== */
+
+.home-cta {
+    @apply inline-flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-center transition-all;
+}
+
+.home-cta--primary {
+    @apply bg-(--home-accent) text-white;
+}
+
+.home-cta--primary:hover {
+    background-color: var(--home-accent-strong);
+}
+
+.home-cta--ghost {
+    @apply border border-gray-200 hover:bg-gray-100 text-[--home-ink];
+}
+
+.home-cta--ghost:hover {
+    @apply bg-gray-100;
+}
+
+.home-cta:active {
+    @apply scale-95;
+}
+
+.home-cta:focus-visible {
+    @apply outline-2 outline-offset-3 outline-[--home-accent];
+}

@@ -12,7 +12,7 @@ export { default as Section } from './global/Section.astro';
 export { default as Home } from './Sections/Home/Home.astro';
 export { default as About } from './Sections/About/About.astro';
 export { default as BiographyVideo } from './Sections/Home/BiographyVideo.astro';
-export { default as Phrases } from './Sections/Home/Phrases.astro';
+export { default as Phrase } from './Sections/Home/Phrase.astro';
 
 // UI 
 export { default as Button } from './ui/Button.astro';

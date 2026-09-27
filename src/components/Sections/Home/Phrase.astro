@@ -1,0 +1,55 @@
+---
+import { Image } from "astro:assets";
+import { Section } from "@components";
+
+interface Props {
+  phrase: string;
+  imageURL: string;
+  reverse?: boolean;
+  variant?: "primary" | "secondary";
+}
+
+const {
+  phrase,
+  imageURL,
+  reverse = false,
+  variant = "secondary",
+} = Astro.props;
+---
+
+<Section variant={variant} className="py-24 sm:py-28 lg:py-40">
+  <div
+    class="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-12 lg:gap-20"
+  >
+    <div
+      class:list={["lg:col-span-5", reverse && "lg:order-2"]}
+    >
+      <blockquote class="m-0 mt-7">
+        <cite
+          class="text-3xl font-semibold leading-[1.1] tracking-tight text-balance sm:text-4xl lg:text-[3.25rem]"
+        >
+          {phrase}
+        </cite>
+      </blockquote>
+    </div>
+
+    <figure class="relative m-0 aspect-4/3 w-full lg:col-span-7">
+      <div
+        aria-hidden="true"
+        class:list={[
+          "absolute bottom-0 left-1/2 aspect-square w-[64%] -translate-x-1/2 overflow-hidden rounded-full",
+          variant === "primary" ? "bg-(--home-accent)" : "bg-gray-200",
+        ]}
+      >
+        <Image
+          src={imageURL}
+          alt={phrase}
+          width={1400}
+          height={1400}
+          loading="lazy"
+          class="size-full object-cover object-top"
+        />
+      </div>
+    </figure>
+  </div>
+</Section>

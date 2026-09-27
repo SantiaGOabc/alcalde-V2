@@ -1,37 +1,65 @@
 ---
 import { Section, Tipography, Link } from "@components";
 import { SECTION_BIOGRAPHY_CONTENT } from "@constant";
+
+const { title, description, buttons, video } = SECTION_BIOGRAPHY_CONTENT;
 ---
 
-<Section className="flex flex-col gap-10 md:flex-row md:items-center md:gap-12">
-  <div class="min-w-0 flex-1">
-    <Tipography as="h2" variant="h2" color="primary">
-      {SECTION_BIOGRAPHY_CONTENT.title}
-    </Tipography>
-    <Tipography as="p" variant="body" color="secondary" class="mt-6 uppercase">
-      {SECTION_BIOGRAPHY_CONTENT.description}
-    </Tipography>
-    <div class="flex gap-2 mt-8">
-      <Link href={SECTION_BIOGRAPHY_CONTENT.buttons[0].url} type="button" isExternal={true} class="button-primary">
-        {SECTION_BIOGRAPHY_CONTENT.buttons[0].primary}
-      </Link>
-      <Link href={SECTION_BIOGRAPHY_CONTENT.buttons[1].url} type="button" isExternal={true} class="button-outline">
-        {SECTION_BIOGRAPHY_CONTENT.buttons[1].secondary}
-      </Link>
-    </div>
+<Section className="relative isolate overflow-hidden py-24 sm:py-28 lg:py-40">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -top-48 left-1/2 h-136 w-5xl -translate-x-1/2 rounded-full blur-3xl"
+    style="background: radial-gradient(closest-side, rgb(10 92 255 / 0.16), transparent 70%)"
+  >
   </div>
 
-  <div class="min-w-0 flex-1">
-    {/* TODO: FALTA CREAR UN COMPONENTE VIDEO E IMPORTARLO TANTO AQUI Y EN EL LIBRO */}
-    <video
-      class="aspect-video w-full rounded-md bg-black object-cover"
-      controls
-    >
-      <source
-        src={SECTION_BIOGRAPHY_CONTENT.video.url}
-        type={SECTION_BIOGRAPHY_CONTENT.video.type}
-      />
-      Your browser does not support the video tag.
-    </video>
+  <div
+    class="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-12 lg:gap-20"
+  >
+    <div class="home-reveal lg:col-span-5" style="--reveal-delay: 0ms">
+      <Tipography
+        as="h2"
+        variant="h2"
+        color="primary"
+        class="mt-6 text-4xl leading-[1.05] text-balance sm:text-5xl lg:text-[3.5rem]"
+      >
+        {title}
+      </Tipography>
+
+      <Tipography
+        as="p"
+        color="secondary"
+        class="mt-7 max-w-xl text-lg text-pretty"
+      >
+        {description}
+      </Tipography>
+
+      <div class="mt-10 flex flex-wrap items-center gap-4">
+        <Link
+          href={buttons[0].url}
+          isExternal={false}
+          class="home-cta home-cta--primary"
+        >
+          {buttons[0].primary}
+        </Link>
+        <Link
+          href={buttons[1].url}
+          isExternal={false}
+          class="home-cta home-cta--ghost"
+        >
+          {buttons[1].secondary}
+        </Link>
+      </div>
+    </div>
+
+    <div class="lg:col-span-7 lg:origin-left lg:scale-110">
+      {/* TODO: FALTA CREAR UN COMPONENTE VIDEO E IMPORTARLO TANTO AQUI Y EN EL LIBRO */}
+      <figure class="w-full h-full m-0">
+          <video class="block aspect-16/10 w-full object-cover" controls playsinline preload="metadata">
+            <source src={video.url} type={video.type} />
+            Your browser does not support the video tag.
+          </video>
+      </figure>
+    </div>
   </div>
 </Section>

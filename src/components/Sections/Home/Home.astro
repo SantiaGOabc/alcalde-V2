@@ -1,12 +1,45 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { Hero, BiographyVideo, Phrases } from "@components";
-import { CONTENT_HERO_HOME } from "@constant";
+import { Hero, BiographyVideo, Phrase } from "@components";
+import {
+  CONTENT_HERO_HOME,
+  SECTION_PHRASES_CONTENT,
+} from "@constant";
+import "@styles/home.css";
+
+const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
+  ([, content], position) => {
+    const variant: "primary" | "secondary" =
+      position % 2 === 0 ? "secondary" : "primary";
+
+    return {
+      ...content,
+      reverse: position % 2 === 1,
+      variant,
+    };
+  },
+);
 ---
 
 <MainLayout title="Inicio">
-    {/* TODO: EL HERO RECIBA DEBE RECIBIR LAS IMAGENES PARA EL FONDO - USAR EL METODO GETIMAGES DE UTILS */}
-    <Hero title={CONTENT_HERO_HOME.title} description={CONTENT_HERO_HOME.description} />
-    <BiographyVideo />
-    <Phrases />
+  {
+    /* TODO: EL HERO DEBE RECIBIR LAS IMAGENES PARA EL FONDO - USAR EL METODO GETIMAGES DE UTILS */
+  }
+  <Hero
+    title={CONTENT_HERO_HOME.title}
+    description={CONTENT_HERO_HOME.description}
+  />
+  <BiographyVideo />
+  {
+    phrases.map((phrase) => (
+        <div class="">
+            <Phrase
+              phrase={phrase.phrase}
+              imageURL={phrase.imageURL}
+              reverse={phrase.reverse}
+              variant={phrase.variant}
+            />
+        </div>
+    ))
+  }
 </MainLayout>

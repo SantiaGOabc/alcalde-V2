@@ -13,7 +13,7 @@ html, body {
 }
 
 nav {
-    @apply px-24;
+    padding-inline: 1.5rem;
 }
 
 section {
@@ -40,13 +40,13 @@ section {
 }
 
 @media (min-width: 768px) {
-    section {
+    nav, section {
         padding-inline: 3rem;
     }
 }
 
 @media (min-width: 1280px) {
-    section {
+    nav, section {
         padding-inline: 6rem;
     }
 }

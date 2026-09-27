@@ -108,5 +108,5 @@ export const SECTION_BOOK_CONTENT = {
   imageURL:
     "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
   imageAlt: "Playa Turquesa, uno de los espacios transformados de Cochabamba",
-  button: "Disponible próximamente",
+  button: "Abrir libro",
 };

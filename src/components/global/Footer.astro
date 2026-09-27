@@ -1,7 +1,54 @@
 ---
+import { Tipography, Link } from "@components";
+import { NAVBAR, SOCIAL_ICONS } from "@constant";
+
+const anioCurrent = new Date().getFullYear();
 ---
-<footer class="border-t border-gray-200 py-8 text-center text-sm text-gray-600">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6">
-		<p>© {new Date().getFullYear()} Alcaldía. Todos los derechos reservados.</p>
-	</div>
+
+<footer class="relative overflow-hidden bg-(--home-accent) text-white">
+    <div class="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-accent to-primary" aria-hidden="true"></div>
+
+    <div class="relative z-10 mx-auto flex max-w-7xl flex-col items-center px-6 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <nav class="mb-7 w-full" aria-label="Pie de página">
+            <ul class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-medium">
+                {NAVBAR.map((link) => (
+                    <li>
+                        <Link
+                            href={link.path}
+                            class="relative text-lg text-purple-100 transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-accent after:transition-all after:duration-300 hover:text-white hover:after:w-full"
+                        >
+                            {link.label}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+
+        <div class="mb-7 flex flex-wrap justify-center gap-4">
+            {SOCIAL_ICONS.map((icon) => (
+                <Link
+                    href={icon.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={icon.name}
+                    class="flex size-14 shrink-0 items-center justify-center rounded-full text-purple-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent/15 hover:text-accent sm:size-16"
+                >
+                    <svg
+                        class="block size-8 shrink-0 transition-transform duration-200 hover:scale-110 sm:size-9"
+                        viewBox="0 0 24 24"
+                        set:html={icon.svg}
+                    ></svg>
+                </Link>
+            ))}
+        </div>
+        
+        <Tipography
+            as="p"
+            variant="body"
+            color="inherit"
+            class="mb-7 text-center text-sm font-semibold uppercase text-white/75 sm:text-base"
+        >
+        © {anioCurrent} Manfred Reyes Villa. Todos los derechos reservados.
+        </Tipography>
+    </div>
 </footer>

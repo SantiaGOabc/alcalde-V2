@@ -87,8 +87,62 @@ const slides = comparisons.flatMap((comparison, index) => [
           </div>
           <div class="relative aspect-4/3 w-full overflow-hidden bg-(--home-accent) sm:aspect-video">
             {slides.map((slide, index) => (
-              <div class="absolute inset-0" data-slide hidden={index !== 0}>
-                {slide.kind === COMPARISON ? (
+              <div
+                class="absolute inset-0"
+                data-slide
+                data-mayor-slide={slide.kind === COMPARISON && index === 0 ? "" : undefined}
+                hidden={index !== 0}
+              >
+                {slide.kind === COMPARISON && index === 0 ? (
+                  <>
+                    <div
+                      class="absolute inset-y-0 left-0 w-1/2 overflow-hidden"
+                      data-mayor-before
+                    >
+                      <Image
+                        src={slide.before.imageURL}
+                        alt={`Antes: ${slide.before.title}`}
+                        class={`size-full select-none object-cover ${slide.before.imageFit === "contain" ? "object-top" : "object-center"}`}
+                        draggable="false"
+                        width={slide.before.imageFit === "contain" ? 900 : 1400}
+                        height={slide.before.imageFit === "contain" ? 1400 : 900}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </div>
+                    <div
+                      class="absolute inset-y-0 right-0 w-1/2 overflow-hidden"
+                      data-mayor-after
+                    >
+                      <Image
+                        src={slide.after.imageURL}
+                        alt={`Después: ${slide.after.title}`}
+                        class={`size-full select-none object-cover ${slide.after.imageFit === "contain" ? "object-top" : "object-center"}`}
+                        draggable="false"
+                        width={slide.after.imageFit === "contain" ? 900 : 1400}
+                        height={slide.after.imageFit === "contain" ? 1400 : 900}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </div>
+                    <div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-between">
+                      <Tipography
+                        as="span"
+                        color="inherit"
+                        class="bg-(--home-accent)/80 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
+                      >
+                        Antes · {slide.before.title}
+                      </Tipography>
+                      <Tipography
+                        as="span"
+                        color="inherit"
+                        class="bg-(--home-accent) px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
+                      >
+                        Después · {slide.after.title}
+                      </Tipography>
+                    </div>
+                  </>
+                ) : slide.kind === COMPARISON ? (
                   <>
                     <Image
                       src={slide.before.imageURL}
@@ -256,6 +310,43 @@ const slides = comparisons.flatMap((comparison, index) => [
       );
     };
 
+    const animateMayorSlide = () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+      }
+
+      const activeSlide = slides[activeIndex];
+      if (!activeSlide.hasAttribute("data-mayor-slide")) return;
+
+      ["[data-mayor-before]", "[data-mayor-after]"].forEach(
+        (selector, index) => {
+          const panel = activeSlide.querySelector(selector) as HTMLElement | null;
+          if (!panel) return;
+
+          panel.getAnimations().forEach((animation) => animation.cancel());
+          panel.animate(
+            [
+              { transform: "translateX(100%)", opacity: 0.7 },
+              { transform: "translateX(0)", opacity: 1 },
+            ],
+            {
+              duration: 750,
+              delay: index * 120,
+              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            },
+          );
+        },
+      );
+    };
+
+    const animateActiveSlide = () => {
+      if (slides[activeIndex].hasAttribute("data-mayor-slide")) {
+        animateMayorSlide();
+      } else {
+        animateDividerCue();
+      }
+    };
+
     const showSlide = (index: number) => {
       activeIndex = (index + slides.length) % slides.length;
       slides.forEach((slide, slideIndex) => {
@@ -264,13 +355,14 @@ const slides = comparisons.flatMap((comparison, index) => [
       range.value = "50";
       counter.textContent = `${String(activeIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
       updateComparison();
+      animateActiveSlide();
     };
 
     range.addEventListener("input", updateComparison);
     previousButton.addEventListener("click", () => showSlide(activeIndex - 1));
     nextButton.addEventListener("click", () => showSlide(activeIndex + 1));
     updateComparison();
-    observeVisibility(slider, animateDividerCue, {
+    observeVisibility(slider, animateActiveSlide, {
       once: false,
       threshold: 0.35,
     });

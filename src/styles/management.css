@@ -45,25 +45,30 @@
    ========================================================================== */
 
 .gestion-obra {
-    @apply grid overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl;
+    @apply grid overflow-hidden rounded-[2rem] border border-gray-200/90 bg-white shadow-xl;
     isolation: isolate;
 }
 
 .gestion-media {
-    @apply relative w-full overflow-hidden bg-(--gestion-panel);
+    @apply relative w-full overflow-hidden bg-slate-900;
     aspect-ratio: 16 / 10;
 }
 
 .gestion-media > button {
-    @apply block size-full;
+    @apply relative block size-full;
+}
+
+.gestion-media img,
+.gestion-media video {
+    @apply absolute inset-0 size-full object-cover;
 }
 
 .gestion-obra-texto {
-    @apply flex flex-col justify-between p-6 sm:p-8;
+    @apply flex flex-col justify-between p-6 sm:p-8 lg:p-10 bg-white text-gray-900;
 }
 
 .gestion-seccion {
-    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-(--gestion-accent);
+    @apply text-xs font-bold uppercase tracking-[0.22em] text-(--gestion-accent);
 }
 
 .gestion-estado {
@@ -71,16 +76,16 @@
 }
 
 .gestion-obra-titulo {
-    @apply text-xl font-bold leading-tight tracking-tight text-gray-900 sm:text-2xl;
+    @apply text-xl font-bold leading-tight tracking-tight text-gray-900 sm:text-2xl lg:text-3xl;
 }
 
 .gestion-obra-desc {
-    @apply text-sm leading-relaxed text-gray-600;
+    @apply text-sm leading-relaxed text-gray-600 sm:text-base;
 }
 
 /* Pie de avance: "Obra 2 de 4" + puntos */
 .gestion-avance {
-    @apply mt-7 flex items-center justify-between gap-4 border-t border-gray-200 pt-5;
+    @apply mt-7 flex items-center justify-between gap-4 border-t border-gray-100 pt-5;
 }
 
 .gestion-avance-texto {
@@ -88,11 +93,11 @@
 }
 
 .gestion-avance-texto span {
-    @apply text-gray-900;
+    @apply font-bold text-gray-900;
 }
 
 .gestion-punto {
-    @apply h-1.5 w-2 cursor-pointer rounded-full border-0 bg-gray-300 transition-all duration-300 hover:bg-gray-400;
+    @apply h-1.5 w-2 cursor-pointer rounded-full border-0 bg-gray-200 transition-all duration-300 hover:bg-gray-300;
 }
 
 .gestion-punto--activo {
@@ -102,15 +107,16 @@
 @media (min-width: 40rem) {
     .gestion-obra {
         @apply grid-cols-12;
+        height: 34rem;
     }
 
     .gestion-media {
-        @apply col-span-7;
+        @apply col-span-7 h-full;
         aspect-ratio: auto;
     }
 
     .gestion-obra-texto {
-        @apply col-span-5;
+        @apply col-span-5 h-full overflow-y-auto;
     }
 }
 

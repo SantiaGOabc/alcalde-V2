@@ -15,16 +15,20 @@
  */
 
 /** Categorías que salen como botones sueltos, en este orden. */
-export const PILLS_GESTION = ['espacio-publico', 'ciudad-jardin', 'destacados'] as const;
+export const PILLS_GESTION = ['puentes', 'ciudad-jardin', 'destacados'] as const;
 
 /** Categorías que viven dentro del desplegable "Más categorías", en este orden. */
 export const DROPDOWN_GESTION = [
     'infraestructura-vial',
-    'espacio-publico-verde',
+    'espacio-publico',
     'medio-ambiente',
     'salud',
-    'deporte',
+    'agua',
+    'recreacion',
+    'lagunas',
+    'futuro-ecologico',
     'progreso',
+    'apps',
 ] as const;
 
 /** Orden global: primero las pills, después las del desplegable. */
@@ -32,28 +36,36 @@ export const CATEGORIAS_GESTION: readonly string[] = [...PILLS_GESTION, ...DROPD
 
 /** Nombre visible de cada categoría. */
 export const LABELS_CATEGORIA: Record<string, string> = {
-    'espacio-publico': 'Espacio público',
-    'ciudad-jardin': 'Ciudad Jardín',
+    puentes: 'Puentes',
+    'ciudad-jardin': 'Áreas verdes',
     destacados: 'Destacados',
     'infraestructura-vial': 'Infraestructura vial',
-    'espacio-publico-verde': 'Espacio verde',
+    'espacio-publico': 'Espacio público',
     'medio-ambiente': 'Medio ambiente',
     salud: 'Salud',
-    deporte: 'Deporte',
+    agua: 'Agua',
+    recreacion: 'Recreación',
+    lagunas: 'Lagunas',
+    'futuro-ecologico': 'Futuro ecológico',
     progreso: 'Progreso',
+    apps: 'A.P.P.S',
 };
 
 /** Frase que encabeza la tarjeta de la obra, distinta según la categoría. */
 export const SECCION_CATEGORIA: Record<string, string> = {
-    'espacio-publico': 'Espacios de encuentro para la gente',
-    'ciudad-jardin': 'Una ciudad con más verde y sombra',
+    puentes: 'Pioneros en pasos a desnivel y puentes',
+    'ciudad-jardin': 'Ciudad Jardín: áreas verdes y parques',
     destacados: 'Hitos que marcaron época',
-    'infraestructura-vial': 'Cochabamba conectada',
-    'espacio-publico-verde': 'Parques y Areas verdes recuperadas',
-    'medio-ambiente': 'Cuidar los espejos de agua de la ciudad',
-    salud: 'Salud de calidad para todos',
-    deporte: 'Deporte y comunidad',
+    salud: 'Salud de calidad',
+    agua: 'Cobertura de agua potable: deuda social',
+    recreacion: 'Cochabamba, Ciudad Jardín: recreación y encuentro',
+    lagunas: 'Nuestros espejos de agua',
+    'futuro-ecologico': 'Un compromiso con el futuro ecológico',
+    'infraestructura-vial': 'Cochabamba conectada: infraestructura vial para una ciudad que avanza',
     progreso: 'Cochabamba a la vanguardia del progreso',
+    apps: 'Pioneros en alianzas público-privadas',
+    'espacio-publico': 'Espacios de encuentro para la gente',
+    'medio-ambiente': 'Cuidar los espejos de agua de la ciudad',
 };
 
 /**

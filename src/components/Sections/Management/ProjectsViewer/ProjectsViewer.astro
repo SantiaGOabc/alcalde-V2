@@ -8,7 +8,7 @@ import {
   SECCION_CATEGORIA,
   SECTION_OBRAS_GESTION,
 } from '@constant';
-import type { Obra } from '@constant';
+import type { Obra, ImagenObra } from '@constant';
 import type { CategoriaObra, ObraImagen, ObraVisor } from '@types';
 import { ProjectsViewer as ProjectsViewerIsland } from './index';
 
@@ -34,7 +34,20 @@ const optimizar = async (imageURL: string, width: number): Promise<string> => {
   }
 };
 
-const prepararImagen = async (imagen: Obra['portada']): Promise<ObraImagen> => {
+const prepararImagen = async (imagen: ImagenObra): Promise<ObraImagen> => {
+  if (imagen.tipo === 'video') {
+    const poster = imagen.poster ? await optimizar(imagen.poster, ANCHO_PORTADA) : undefined;
+    const thumb = imagen.poster ? await optimizar(imagen.poster, ANCHO_THUMB) : (imagen.thumb ?? '');
+    return {
+      tipo: 'video',
+      src: imagen.src,
+      thumb: thumb || poster || '',
+      poster,
+      alt: imagen.alt,
+      titulo: imagen.alt,
+    };
+  }
+
   const [src, thumb] = await Promise.all([
     optimizar(imagen.src, ANCHO_PORTADA),
     optimizar(imagen.src, ANCHO_THUMB),

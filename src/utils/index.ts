@@ -6,3 +6,4 @@ export * from './imagePosition';
 export * from './images';
 export * from './intersectionObserver';
 export * from './scroll';
+export * from './auth';

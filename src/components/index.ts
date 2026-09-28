@@ -17,10 +17,14 @@ export { default as Book } from './Sections/Home/Book.astro';
 
 // Sections ABOUT
 export { default as About } from './Sections/About/About.astro';
+export { default as Motivations } from './Sections/About/Motivations/Motivations.astro';
 export { default as Timeline } from './Sections/About/Timeline/Timeline.component.astro';
 
 // Sections MAILBOX
 export { default as Mailbox } from './Sections/Mailbox/Mailbox.astro';
+
+// Sections ADMIN
+export { default as Login } from './Sections/Admin/Login/Login.astro';
 
 // Sections MANAGEMENT
 export { default as Management } from './Sections/Management/Management.astro';

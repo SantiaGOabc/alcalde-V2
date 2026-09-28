@@ -8,17 +8,13 @@
 }
 
 :root {
-    /* ==========================================================================
-       Design Tokens: Colores de Marca (Única Fuente de Verdad)
-       Cambia aquí los colores y se actualizarán automáticamente en toda la web.
-       ========================================================================== */
     /* 1. Color Primario (Morado: Navbar, Footer, Botones Principales) */
     --brand-primary: #472D82;
     --brand-primary-strong: #695DA9;
 
     /* 2. Color de Acento (Celeste: Timeline, Eje, Pestañas activas, Gestión) */
-    --brand-accent: #0a5cff;
-    --brand-accent-strong: #0849cc;
+    --brand-accent: #472D82;
+    --brand-accent-strong: #695DA9;
 
     /* Alias de compatibilidad */
     --button-primary: var(--brand-primary);
@@ -29,7 +25,7 @@
        2. Tablet (768px - 1023px): Balanced medium gutter (2rem / 32px).
        3. PC / Desktop (>=1024px): Spacious, generous gutter (4rem / 64px) with centered cap. */
     --page-gutter: 1rem;
-    --content-max-w: 72rem;
+    --content-max-w: 80rem;
 }
 
 @media (min-width: 768px) {
@@ -40,13 +36,13 @@
 
 @media (min-width: 1024px) {
     :root {
-        --page-gutter: 4rem;
+        --page-gutter: 2.5rem;
     }
 }
 
 @media (min-width: 1440px) {
     :root {
-        --page-gutter: 5rem;
+        --page-gutter: 3rem;
     }
 }
 

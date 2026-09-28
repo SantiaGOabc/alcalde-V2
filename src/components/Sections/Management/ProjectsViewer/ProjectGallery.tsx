@@ -31,57 +31,54 @@ export default function ProjectGallery({
 
     return (
         <div className="gestion-media">
-            <button
-                type="button"
-                onClick={onAbrir}
-                disabled={obra.imagenes.length === 0}
-                aria-label={
-                    obra.imagenes.length > 0
-                        ? `Ver ${obra.titulo} en grande`
-                        : undefined
-                }
-                className="block size-full cursor-zoom-in disabled:cursor-default"
-            >
-                {item?.tipo === 'video' ? (
-                    <video
-                        key={item.src}
-                        controls
-                        playsInline
-                        preload="none"
-                        poster={item.poster ?? item.thumb}
-                        src={item.src}
-                        className="size-full object-cover"
-                    />
-                ) : item ? (
-                    <img
-                        key={item.src}
-                        src={item.src}
-                        alt={item.alt ?? obra.titulo}
-                        loading="lazy"
-                        decoding="async"
-                        className="size-full object-cover"
-                        style={{ objectPosition }}
-                    />
-                ) : obra.imagenSrc ? (
-                    <img
-                        src={obra.imagenSrc}
-                        alt={obra.titulo}
-                        loading="lazy"
-                        decoding="async"
-                        className="size-full object-cover"
-                        style={{ objectPosition }}
-                    />
-                ) : (
-                    <span
-                        aria-hidden="true"
-                        className="grid size-full place-items-center bg-(--gestion-panel)"
-                    >
-                        <span className="select-none text-7xl font-black tracking-tighter text-white/10">
+            {item?.tipo === 'video' ? (
+                <video
+                    key={item.src}
+                    controls
+                    playsInline
+                    preload="none"
+                    poster={item.poster ?? item.thumb}
+                    src={item.src}
+                    className="absolute inset-0 size-full object-cover"
+                />
+            ) : (
+                <button
+                    type="button"
+                    onClick={onAbrir}
+                    disabled={obra.imagenes.length === 0}
+                    aria-label={
+                        obra.imagenes.length > 0
+                            ? `Ver ${obra.titulo} en grande`
+                            : undefined
+                    }
+                    className="block size-full cursor-zoom-in disabled:cursor-default"
+                >
+                    {item ? (
+                        <img
+                            key={item.src}
+                            src={item.src}
+                            alt={item.alt ?? obra.titulo}
+                            loading="lazy"
+                            decoding="async"
+                            className="size-full object-cover"
+                            style={{ objectPosition }}
+                        />
+                    ) : obra.imagenSrc ? (
+                        <img
+                            src={obra.imagenSrc}
+                            alt={obra.titulo}
+                            loading="lazy"
+                            decoding="async"
+                            className="size-full object-cover"
+                            style={{ objectPosition }}
+                        />
+                    ) : (
+                        <span className="grid size-full place-items-center select-none text-7xl font-black tracking-tight text-white/10 sm:text-8xl">
                             {getInitials(obra.titulo)}
                         </span>
-                    </span>
-                )}
-            </button>
+                    )}
+                </button>
+            )}
 
             {obra.imagenes.length > 1 && (
                 <span

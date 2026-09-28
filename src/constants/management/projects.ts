@@ -25,9 +25,12 @@
 import type { Encuadre } from '@types';
 
 export interface ImagenObra {
+    tipo?: 'foto' | 'video';
     src: string;
     alt: string;
     encuadre?: Encuadre;
+    poster?: string;
+    thumb?: string;
 }
 export interface Obra {
     /** Slug de la categoría (ver categorias.ts). */
@@ -48,6 +51,46 @@ const FOTO = 'https://manfredreyesvilla.netlify.app/_astro/';
 
 export const OBRAS_GESTION: Obra[] = [
     {
+        categoria: 'puentes',
+        titulo: 'Puente Cala Cala',
+        descripcion:
+            'Pionero en Bolivia: en 1993 el primer paso a desnivel de la ciudad ordenó el tránsito hacia el norte y cambió la forma de cruzar Cochabamba.',
+        estado: 'concluido',
+        area: 'Puentes',
+        portada: {
+            src: `${FOTO}trabajos_plaza_de_las_banderas_931_2wD2Rc.webp`,
+            alt: 'Puente Cala Cala - Primer paso a desnivel',
+            encuadre: 'centro',
+        },
+        imagenes: [
+            {
+                tipo: 'foto',
+                src: `${FOTO}trabajos_plaza_de_las_banderas_931_2wD2Rc.webp`,
+                alt: 'Vista del Puente Cala Cala',
+            },
+        ],
+    },
+    {
+        categoria: 'puentes',
+        titulo: 'Distribuidor y Puente Muyurina',
+        descripcion:
+            'Pasaje a desnivel que liberó el cruce de la Av. Ayacucho y conectó los barrios del este con el centro de la ciudad.',
+        estado: 'concluido',
+        area: 'Puentes',
+        portada: {
+            src: `${FOTO}parque_vial_5wRQF.webp`,
+            alt: 'Distribuidor Muyurina',
+            encuadre: 'centro',
+        },
+        imagenes: [
+            {
+                tipo: 'foto',
+                src: `${FOTO}parque_vial_5wRQF.webp`,
+                alt: 'Distribuidor Muyurina',
+            },
+        ],
+    },
+    {
         categoria: 'espacio-publico',
         titulo: 'Complejo Recreacional Coña Coña - Playa Turquesa',
         descripcion:
@@ -61,8 +104,15 @@ export const OBRAS_GESTION: Obra[] = [
         },
         imagenes: [
             {
+                tipo: 'foto',
                 src: `${FOTO}playa_turquesa_cona_cona.jfif_Z1uMk5q.webp`,
                 alt: 'La playa artificial de Playa Turquesa',
+            },
+            {
+                tipo: 'video',
+                src: 'https://xfkfvabjxgfwjktaxhcs.supabase.co/storage/v1/object/public/media/videos/01_PLAYA_TURQUESA.mp4',
+                poster: `${FOTO}playa_turquesa_cona_cona.jfif_Z1uMk5q.webp`,
+                alt: 'Video de la Playa Turquesa',
             },
         ],
     },
@@ -80,8 +130,15 @@ export const OBRAS_GESTION: Obra[] = [
         },
         imagenes: [
             {
+                tipo: 'foto',
                 src: `${FOTO}Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_2hX1Q8.webp`,
                 alt: 'La laguna Alalay recuperada',
+            },
+            {
+                tipo: 'video',
+                src: 'https://xfkfvabjxgfwjktaxhcs.supabase.co/storage/v1/object/public/media/videos/02_LAGUNA_ALALAY.mp4',
+                poster: `${FOTO}Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_2hX1Q8.webp`,
+                alt: 'Video de la Laguna Alalay',
             },
         ],
     },

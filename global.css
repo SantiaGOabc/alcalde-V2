@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-    --button-primary: #005d9c;
-    --button-outiline: 1px solid #005d9c;
+    --button-primary: #472D82;
+    --button-outiline: 1px solid #695DA9;
 }
 
 /* Unlayered CSS beats every @layer, so these base rules would override the

@@ -1,8 +1,28 @@
 @import "tailwindcss";
 
+@theme {
+    --color-primary: var(--brand-primary);
+    --color-primary-strong: var(--brand-primary-strong);
+    --color-accent: var(--brand-accent);
+    --color-accent-strong: var(--brand-accent-strong);
+}
+
 :root {
-    --button-primary: #472D82;
-    --button-outiline: 1px solid #695DA9;
+    /* ==========================================================================
+       Design Tokens: Colores de Marca (Única Fuente de Verdad)
+       Cambia aquí los colores y se actualizarán automáticamente en toda la web.
+       ========================================================================== */
+    /* 1. Color Primario (Morado: Navbar, Footer, Botones Principales) */
+    --brand-primary: #472D82;
+    --brand-primary-strong: #695DA9;
+
+    /* 2. Color de Acento (Celeste: Timeline, Eje, Pestañas activas, Gestión) */
+    --brand-accent: #0a5cff;
+    --brand-accent-strong: #0849cc;
+
+    /* Alias de compatibilidad */
+    --button-primary: var(--brand-primary);
+    --button-outiline: 1px solid var(--brand-primary-strong);
 
     /* Design System: 3-Tier Responsive Gutter & Container Tokens
        1. Mobile (<768px): Compact gutter (1rem / 16px) to maximize screen real estate.

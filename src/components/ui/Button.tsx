@@ -13,11 +13,11 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const VARIANTS: Record<NonNullable<ButtonProps['variant']>, string> = {
   primary:
-    'bg-[#472D82] text-white shadow-sm hover:bg-[#382367] active:scale-[0.98] focus-visible:ring-[#472D82]/50',
+    'bg-(--brand-primary) text-white shadow-sm hover:brightness-90 active:scale-[0.98] focus-visible:ring-(--brand-primary)/50',
   secondary:
     'bg-gray-100 text-gray-900 hover:bg-gray-200 active:scale-[0.98] focus-visible:ring-gray-400',
   outline:
-    'border-2 border-[#472D82] text-[#472D82] bg-transparent hover:bg-[#472D82]/10 active:scale-[0.98] focus-visible:ring-[#472D82]/50',
+    'border-2 border-(--brand-primary) text-(--brand-primary) bg-transparent hover:bg-(--brand-primary)/10 active:scale-[0.98] focus-visible:ring-(--brand-primary)/50',
   ghost:
     'text-gray-700 bg-transparent hover:bg-gray-100 active:scale-[0.98] focus-visible:ring-gray-400',
   inverse:

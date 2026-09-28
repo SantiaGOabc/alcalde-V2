@@ -14,10 +14,9 @@
    ========================================================================== */
 
 :root {
-    /* Mismo azul de marca que Home (--home-accent / --home-accent-strong),
-       repetido aquí para que la sección sea autónoma. */
-    --timeline-accent: #0a5cff;
-    --timeline-accent-strong: #0849cc;
+    /* Toma los colores de marca unificados de global.css con fallback */
+    --timeline-accent: var(--brand-accent, #0a5cff);
+    --timeline-accent-strong: var(--brand-accent-strong, #0849cc);
 
     /* Capas de la galería. `.timeline-galeria` abre un contexto de apilamiento
        propio (`isolation: isolate`), así que estos valores solo ordenan hijos de

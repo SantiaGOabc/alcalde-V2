@@ -9,11 +9,11 @@
    ========================================================================== */
 
 :root {
-    /* Azul de marca, el mismo que Home y About. */
-    --gestion-accent: #0a5cff;
-    --gestion-accent-strong: #0849cc;
-    /* Panel de la tarjeta: el morado que usa el proyecto origen. */
-    --gestion-panel: #472d82;
+    /* Toma los colores de marca unificados de global.css con fallback */
+    --gestion-accent: var(--brand-accent, #0a5cff);
+    --gestion-accent-strong: var(--brand-accent-strong, #0849cc);
+    /* Panel de la tarjeta: el morado que usa el proyecto origen */
+    --gestion-panel: var(--brand-primary, #472d82);
 
     /* Capas locales. `.gestion-visor` abre contexto de apilamiento, así que
        estos valores solo ordenan hijos del visor y nunca compiten con las capas

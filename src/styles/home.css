@@ -4,8 +4,9 @@
    ========================================================================== */
 
 :root {
-    --home-accent: #472D82;
-    --home-accent-strong: #695DA9;
+    /* Toma los colores de marca unificados de global.css con fallback */
+    --home-accent: var(--brand-primary, #472D82);
+    --home-accent-strong: var(--brand-primary-strong, #695DA9);
     --home-ink: rgb(96, 96, 98);
     --hero-step: 7s;
 }

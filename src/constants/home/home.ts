@@ -43,21 +43,23 @@ export const SECTION_PHRASES_CONTENT = {
     phrase:
       "En la familia aprendemos el valor de estar, incluso cuando nadie mira.",
     imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0803_ZuLMnQ.webp",
+      "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZK7QfD.webp",
   },
   pets: {
     phrase: "Los que nunca piden palabras enseñan lo que es la lealtad.",
     imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0804_ZuLMnQ.webp",
+      "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZaHkvk.webp",
   },
   community: {
     phrase:
       "Una ciudad cambia el día en que sus vecinos vuelven a sentirse parte.",
     imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0805_ZuLMnQ.webp",
+      "https://manfredreyesvilla.netlify.app/_astro/IMG_1088_ZuAgom.webp",
   },
 };
 
+// Las listas `before` y `after` se alinean por índice: cada par es la misma
+// obra antes y después de la gestión.
 export const SECTION_BEFORE_AFTER_CONTENT: {
   title: string;
   description: string;
@@ -66,7 +68,7 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
     title: string;
     imageURL: string;
     imageFit: "contain" | "cover";
-  }>,
+  }>;
   after: Array<{
     title: string;
     imageURL: string;
@@ -76,59 +78,57 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
   title: "Una persona, ciudad que transforman",
   description:
     "Imágenes que muestran cómo cambian sus espacios y la vida de sus habitantes.",
-  transitionPhrase: "Pioneros en ...",
+  transitionPhrase: "Pionieros en ...",
   before: [
     {
       title: "Capitán Manfred Reyes Villa",
-      imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0801_ZuLMnQ.webp",
+      imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
       imageFit: "contain",
     },
     {
       title: "Laguna Coña Coña",
       imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/DSC_0806_ZuLMnQ.webp",
+        "https://manfredreyesvilla.netlify.app/_astro/1_cona_cona_antes.jpg_Z26A0gR.webp",
       imageFit: "cover",
     },
     {
       title: "Plaza de las banderas",
       imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_ZuLMnQ.webp",
-        imageFit: "cover",
+        "https://manfredreyesvilla.netlify.app/_astro/trabajos_plaza_de_las_banderas_931_1dvvyE.webp",
+      imageFit: "cover",
     },
     {
       title: "Laguna Alalay",
       imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/DSC_0808_ZuLMnQ.webp",
-        imageFit: "cover",
+        "https://manfredreyesvilla.netlify.app/_astro/Laguna_Alalay..._la_antigua_Loma_del_Burro_final_avenida_6_de_Agosto_y_el_actual_Circuito_Bolivia_en_1917._(2).jfif_1jkxLK.webp",
+      imageFit: "cover",
     },
   ],
 
   after: [
     {
       title: "Prefecto Manfred Reyes Villa",
-      imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
+      imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_Z2rxRve.webp",
       imageFit: "contain",
     },
     {
       title: "Playa Turquesa",
-      imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
-        imageFit: "cover",
+      imageURL: "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
+      imageFit: "cover",
     },
     {
       title: "Plaza de las banderas",
-      imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/DSC_0810_ZuLMnQ.webp",
-        imageFit: "cover",
+      imageURL: "https://manfredreyesvilla.netlify.app/_astro/IMG_5929_ZxWrmu.webp",
+      imageFit: "cover",
     },
     {
       title: "Laguna Alalay",
       imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/DSC_0811_ZuLMnQ.webp",
-        imageFit: "cover",
+        "https://manfredreyesvilla.netlify.app/_astro/Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_YDCwU.webp",
+      imageFit: "cover",
     },
   ],
-};
+} as const;
 
 export const SECTION_BOOK_CONTENT = {
   title: "Cocha, la mejor ciudad",
@@ -179,7 +179,7 @@ export const BOOK_META: BookMeta = {
    -------------------------------------------------------------------------- */
 const PHOTO = {
   laguna: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0801_ZuLMnQ.webp",
+    src: "https://manfredreyesvilla.netlify.app/_astro/1_cona_cona_antes.jpg_Z26A0gR.webp",
     alt: "Laguna Coña Coña, uno de los espejos de agua de la ciudad",
   },
   turquesa: {
@@ -187,40 +187,40 @@ const PHOTO = {
     alt: "Playa Turquesa, espacio público recuperado en el centro",
   },
   lago: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0806_ZuLMnQ.webp",
-    alt: "Laguna de la ciudad recuperada como espacio de encuentro",
+    src: "https://manfredreyesvilla.netlify.app/_astro/6P9A8685_21g61j.webp",
+    alt: "Cochabamba de los años 90",
   },
   banderasAntes: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_ZuLMnQ.webp",
+    src: "https://manfredreyesvilla.netlify.app/_astro/trabajos_plaza_de_las_banderas_931_1dvvyE.webp",
     alt: "Plaza de las Banderas antes de la intervención",
   },
   banderasDespues: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0810_ZuLMnQ.webp",
+    src: "https://manfredreyesvilla.netlify.app/_astro/IMG_5929_ZxWrmu.webp",
     alt: "Plaza de las Banderas después de la intervención",
   },
   alalayAntes: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0808_ZuLMnQ.webp",
+    src: "https://manfredreyesvilla.netlify.app/_astro/Laguna_Alalay..._la_antigua_Loma_del_Burro_final_avenada_6_de_Agosto_y_el_actual_Circuito_Bolivia_en_1917._(2).jfif_1jkxLK.webp",
     alt: "Laguna Alalay antes de la intervención",
   },
   alalayDespues: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0811_ZuLMnQ.webp",
+    src: "https://manfredreyesvilla.netlify.app/_astro/Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_YDCwU.webp",
     alt: "Laguna Alalay después de la intervención",
   },
   escuela: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0803_ZuLMnQ.webp",
+    src: "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZK7QfD.webp",
     alt: "Manfred Reyes Villa con estudiantes",
   },
   ceremonia: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0804_ZuLMnQ.webp",
-    alt: "Manfred Reyes Villa en un acto municipal",
+    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
+    alt: "Manfred Reyes Villa",
   },
   familia: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0805_ZuLMnQ.webp",
-    alt: "Manfred Reyes Villa con su familia",
+    src: "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZaHkvk.webp",
+    alt: "Manfred Reyes Villa con su comunidad",
   },
   teatro: {
-    src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
-    alt: "Playa Turquesa junto al Teatro Municipal",
+    src: "https://manfredreyesvilla.netlify.app/_astro/IMG_1088_ZuAgom.webp",
+    alt: "Espacios públicos recuperados en el centro de la ciudad",
   },
 } as const;
 

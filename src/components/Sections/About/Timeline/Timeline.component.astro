@@ -1,0 +1,102 @@
+---
+import { getImage } from "astro:assets";
+import { Section, Tipography } from "@components";
+import { TimelineDolly } from "./index";
+import { ajustaImagen, resumen } from "@utils";
+import type { PlacaDolly, TabDolly } from "@types";
+import {
+  FILTROS_HITO,
+  SECTION_ABOUT_HITOS,
+  SECTION_ABOUT_INTRO,
+  SECTION_ABOUT_TRAJECTORY,
+} from "@constant";
+import type { Hito } from "@constant";
+// La sección importa su propio scope: quien monte `<Timeline />` no tiene que
+// acordarse de ningun `@styles/...`.
+import "@styles/timeline.css";
+import "@styles/gallery.css";
+
+/** Ancho al que se optimiza la foto de cada placa (hasta 420px en 2xl). */
+const ANCHO_IMG_PLACA = 720;
+
+/** Optimiza la foto a webp. `inferSize` deja que Astro lea las dimensiones
+ *  originales de la imagen remota, así el recorte 4:5 lo hace el CSS.
+ *  Si el remoto falla (cuota, timeout, 404) no tumba el render: se cae a la
+ *  imagen original sin transformar. */
+const optimizar = async (imageURL: string): Promise<string> => {
+  try {
+    const { src } = await getImage({
+      src: imageURL,
+      width: ANCHO_IMG_PLACA,
+      inferSize: true,
+      quality: 70,
+      format: "webp",
+    });
+    return src;
+  } catch (error) {
+    console.warn(
+      `[about] No se pudo optimizar la imagen, se usa la original: ${imageURL}`,
+      error,
+    );
+    return imageURL;
+  }
+};
+
+const placaDe = async (hito: Hito, id: string): Promise<PlacaDolly> => ({
+  id,
+  anio: hito.anio,
+  etapa: hito.etapa,
+  titulo: hito.titulo,
+  descripcion: hito.descripcion,
+  resumen: hito.resumen ?? resumen(hito.descripcion),
+  imagen: await optimizar(hito.imageURL),
+  alt: hito.imageAlt,
+  objectPosition: ajustaImagen(hito.encuadre),
+});
+
+interface Props {
+  variant?: "primary" | "secondary" | "accent";
+}
+
+const { variant = "primary" } = Astro.props;
+const { title } = SECTION_ABOUT_TRAJECTORY;
+
+// Un tab por filtro, con los hitos de esa pestaña. Solo los hitos con foto se
+// convierten en placa: los que no la tienen se quedan fuera de la galería.
+const tabs: TabDolly[] = await Promise.all(
+  FILTROS_HITO.map(async (filtro) => {
+    const conFoto = SECTION_ABOUT_HITOS.filter((hito) => hito.tipo === filtro.id);
+
+    return {
+      id: filtro.id,
+      label: filtro.label,
+      placas: await Promise.all(
+        conFoto.map((hito, i) => placaDe(hito, `${filtro.id}-${i}`)),
+      ),
+      galeria: conFoto.map((hito) => ({
+        src: hito.imageURL,
+        titulo: `${hito.anio} · ${hito.titulo}`,
+      })),
+    };
+  }),
+);
+---
+
+<Section variant={variant} className="py-16 sm:py-20 lg:py-24">
+  <div class="page-container">
+    <header class="mb-6 max-w-3xl sm:mb-8">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-(--timeline-accent)">
+        {SECTION_ABOUT_INTRO.title}
+      </p>
+      <Tipography
+        as="h1"
+        color="inherit"
+        class="text-3xl font-semibold leading-tight text-balance text-gray-900 sm:text-4xl lg:text-5xl"
+      >
+        {title}
+      </Tipography>
+    </header>
+
+    <TimelineDolly client:visible tabs={tabs} />
+  </div>
+</Section>

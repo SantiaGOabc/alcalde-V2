@@ -1,0 +1,552 @@
+@reference "tailwindcss";
+/* ==========================================================================
+   Timeline — galería de línea de tiempo (dolly 3D)
+   --------------------------------------------------------------------------
+   Almost todo el CSS vive aquí porque el escenario escribe transform /
+   opacity / filter por frame desde JS: eso no se puede expresar con
+   utilidades. Los breakpoints son los del proyecto (sm = 40rem, lg = 64rem);
+   el corte entre el dolly 3D y el carrusel es `lg`, igual que en
+   useTimelineMedia.
+
+   Esta hoja es el scope de la sección: la importa `Timeline.component.astro`
+   y nadie más, así que la galería puede montarse en cualquier página sin que
+   la página tenga que acordarse de su CSS.
+   ========================================================================== */
+
+:root {
+    /* Toma los colores de marca unificados de global.css con fallback */
+    --timeline-accent: var(--brand-accent, #0a5cff);
+    --timeline-accent-strong: var(--brand-accent-strong, #0849cc);
+
+    /* Capas de la galería. `.timeline-galeria` abre un contexto de apilamiento
+       propio (`isolation: isolate`), así que estos valores solo ordenan hijos de
+       la galería y NUNCA compiten con las capas de la página: el navbar es
+       `fixed z-50` y nada de lo que hay dentro puede taparlo, por alto que sea
+       su z-index. */
+    --timeline-z-escenario: 1; /* placas 3D + eje vertical */
+    /* Tarjeta de info: por encima de las placas (la cámara las sube hasta
+       ~875 = Z_BASE 500 + caída por distancia), porque al ensanchar la galería
+       la tarjeta se solapa con la placa vecina y tiene que seguir legible. */
+    --timeline-z-info: 950;
+
+    /* Los overlays se portalean a `document.body`, así que sí viven en la capa
+       de la página: van por encima del navbar (z-50) pero en un rango corto y
+       legible, no en valores de miles. */
+    --timeline-z-detalle: 60;
+    --timeline-z-modal: 70;
+    --timeline-z-modal-controles: 80;
+}
+
+/* ==========================================================================
+   Pestañas (filtro Trayectoria / Reconocimientos)
+   ========================================================================== */
+
+.timeline-dolly {
+    @apply mt-4;
+}
+
+.timeline-tabs {
+    @apply inline-flex gap-1 rounded-full border border-gray-200/90 bg-gray-50/80 p-1 shadow-xs;
+}
+
+.timeline-tabs button {
+    @apply cursor-pointer rounded-full border-0 bg-transparent px-4 py-1.5 text-xs sm:text-sm font-medium text-gray-600 transition-all duration-200;
+}
+
+.timeline-tabs button:hover {
+    @apply text-gray-900;
+}
+
+.timeline-tabs button[aria-selected="true"] {
+    @apply bg-(--timeline-accent) text-white font-semibold shadow-xs;
+}
+
+.timeline-tabs button:focus-visible {
+    @apply outline-2 outline-offset-2 outline-(--timeline-accent);
+}
+
+.timeline-vacio {
+    @apply mt-8 text-sm text-gray-500;
+}
+
+/* ==========================================================================
+   Galería (escenario + eje, centrados)
+   `isolation: isolate` es la pieza clave del scope: crea un contexto de
+   apilamiento en la galería, de modo que las capas internas (escenario, eje,
+   tarjeta de info) se ordenan entre sí y quedan atrapadas aquí. Sin esto, el
+   `z-index` de la tarjeta de info competiría en la capa de la página y, al
+   hacer scroll, se dibujaría por encima del navbar fijo.
+   ========================================================================== */
+
+.timeline-galeria {
+    @apply relative mt-6 sm:mt-8;
+    isolation: isolate;
+}
+
+/* ==========================================================================
+   Zona de captura del scroll
+   --------------------------------------------------------------------------
+   El escenario llama a `preventDefault()` en la rueda y tiene
+   `touch-action: none`, así que DENTRO de este recuadro el scroll mueve la
+   línea de tiempo y FUERA de él sigue moviendo la página. El recuadro punteado
+   es la frontera entre ambos territorios: sin él el usuario no tiene forma de
+   saber en qué punto dejó de hacer scroll la página.
+
+   Vive dentro del contexto de apilamiento de `.timeline-galeria`, y su
+   z-index es local: las placas escriben hasta ~875 (Z_BASE 500 + caída por
+   distancia), por eso la zona va a 900 y nunca compite con el navbar.
+   ========================================================================== */
+
+.timeline-zona {
+    @apply pointer-events-none absolute inset-0 rounded-2xl border border-dashed;
+    z-index: 900;
+    border-color: color-mix(in srgb, var(--timeline-accent) 30%, transparent);
+}
+
+/* ==========================================================================
+   Escenario 3D
+   `--placa-w` es la fuente de verdad del ancho de placa: la cámara lo lee con
+   getComputedStyle para separar las fotos del eje según el breakpoint. Tiene
+   que ser un valor en px (nada de clamp/calc con vw), porque la cámara lo
+   parsea con parseFloat.
+
+   La galería se ensancha en vez de crecer: el ancho de placa sube por escalones
+   de breakpoint y la separación lateral la calcula la cámara a partir del
+   espacio que sobra (ANCHO_OCUPADO), así el par de placas enfocadas llena el
+   escenario en lugar de dejar un margen muerto a los lados. El alto del
+   escenario se mantiene en 500px: justo para que la placa enfocada quepa entera
+   y el recuadro sea equilibrado en pantalla.
+   ========================================================================== */
+
+.timeline-escenario {
+    --placa-w: min(240px, 64vw);
+    @apply relative overflow-x-visible;
+    height: clamp(380px, 50svh, 430px);
+    overflow-y: clip;
+    perspective: 800px;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+}
+
+.timeline-escenario:active {
+    cursor: grabbing;
+}
+
+@media (min-width: 64rem) {
+    .timeline-escenario {
+        --placa-w: 280px;
+        height: 480px;
+    }
+}
+
+@media (min-width: 80rem) {
+    .timeline-escenario {
+        --placa-w: 310px;
+        height: 500px;
+    }
+}
+
+.timeline-placa {
+    @apply absolute left-1/2 top-1/2 overflow-hidden rounded-2xl bg-gray-200;
+    width: var(--placa-w);
+    aspect-ratio: 4 / 5;
+    box-shadow: 0 24px 60px -18px rgb(17 24 39 / 0.35);
+    will-change: transform, opacity, filter;
+    transform-style: preserve-3d;
+    cursor: zoom-in;
+}
+
+.timeline-placa img {
+    @apply block size-full object-cover;
+}
+
+.timeline-placa:focus {
+    outline: none;
+}
+
+.timeline-placa:focus-visible {
+    box-shadow: 0 0 0 3px var(--timeline-accent), 0 24px 60px -18px rgb(17 24 39 / 0.35);
+}
+
+.timeline-placa-anio {
+    @apply absolute bottom-3 left-3 rounded-full border border-white/25 bg-black/35 px-2.5 py-1 text-xs font-bold uppercase tracking-[0.08em] text-white;
+    z-index: 1;
+    backdrop-filter: blur(6px);
+}
+
+/* ==========================================================================
+   Eje vertical central (índice rápido arrastrable)
+   El eje es la única referencia de posición de la escena, así que necesita
+   peso visual: 3px con degradado suave, opacidad alta y una sombra sutil que
+   lo separa de las placas que pasan por detrás.
+   ========================================================================== */
+
+.timeline-eje {
+    @apply absolute bottom-4 left-1/2 top-4 w-[3px] -translate-x-1/2;
+    z-index: var(--timeline-z-escenario);
+    border-radius: 999px;
+    background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--timeline-accent) 25%, transparent),
+        var(--timeline-accent) 12%,
+        var(--timeline-accent) 88%,
+        color-mix(in srgb, var(--timeline-accent) 25%, transparent)
+    );
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.5);
+}
+
+.timeline-eje-relleno {
+    @apply absolute inset-0;
+    transform: scaleY(0);
+    transform-origin: top;
+    border-radius: inherit;
+    background: var(--timeline-accent-strong);
+}
+
+.timeline-eje-marca {
+    @apply absolute left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent;
+}
+
+.timeline-eje-marca:hover .timeline-eje-punto {
+    background: var(--timeline-accent);
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+.timeline-eje-punto {
+    @apply absolute left-1/2 top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-(--timeline-accent) bg-white transition-all duration-200;
+    box-shadow: 0 2px 6px rgb(17 24 39 / 0.2);
+}
+
+/* El año se lee por encima de las placas, así que lleva un halo claro para
+   que no se pierda contra una foto oscura. */
+.timeline-eje-anio {
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-4 text-[11px] font-bold whitespace-nowrap text-gray-600;
+    text-shadow:
+        0 0 3px rgb(255 255 255),
+        0 0 6px rgb(255 255 255);
+}
+
+.timeline-eje-pulgar {
+    @apply absolute left-1/2 size-[22px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white bg-(--timeline-accent);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--timeline-accent) 50%, transparent);
+}
+
+/* ==========================================================================
+   Tarjeta de información (lado opuesto a la placa enfocada)
+   Vive dentro del contexto de apilamiento de `.timeline-galeria`, así que su
+   z-index es local y jamás supera al navbar fijo.
+
+   Los bloques (kicker, título, año, resumen) y el botón los pinta `CardInfo.tsx`
+   leyendo `CARD_INFO` (@constant): para cambiar el contenido de la tarjeta se
+   edita esa constante, no estas reglas.
+   ========================================================================== */
+
+.timeline-info {
+    @apply relative mx-auto mt-6 flex w-[min(340px,92%)] cursor-zoom-in flex-col rounded-2xl border border-gray-200 bg-white text-left select-none;
+    z-index: var(--timeline-z-info);
+    min-height: 240px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    box-shadow: 0 20px 50px -22px rgb(17 24 39 / 0.35);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    will-change: opacity;
+}
+
+.timeline-info-kicker {
+    @apply mb-2.5 text-xs font-bold uppercase tracking-[0.16em] text-(--timeline-accent);
+}
+
+.timeline-info-titulo {
+    @apply text-xl leading-tight font-bold text-balance text-gray-900 sm:text-2xl;
+}
+
+.timeline-info-anio {
+    @apply mt-3 self-start rounded-full bg-(--timeline-accent) px-2.5 py-1 text-xs font-bold tracking-[0.08em] text-white;
+}
+
+/* Resumen corto: `line-clamp` lo deja en tres líneas para que la tarjeta no
+   crezca con textos largos (la cámara la muestra y oculta por opacidad). */
+.timeline-info-resumen {
+    @apply mt-2.5 line-clamp-3 text-sm leading-6 text-pretty text-gray-600;
+}
+
+.timeline-info-boton {
+    @apply mt-auto inline-flex cursor-pointer items-center gap-1.5 self-start rounded-full border border-(--timeline-accent) bg-white px-3.5 py-1.5 text-xs font-bold text-(--timeline-accent) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--timeline-accent);
+}
+
+.timeline-info-boton:hover {
+    @apply bg-(--timeline-accent) text-white;
+}
+
+@media (min-width: 64rem) {
+    /* La tarjeta se ancla al centro vertical de la galería, pero con alto
+       dinámico acotado al alto del escenario: así un título largo crece hacia
+       abajo en vez de desbordarse hacia el título de la sección. */
+    .timeline-info {
+        /* `mt-0`: en desktop la tarjeta es absoluta y ya se centra con
+           `-translate-y-1/2`; el `mt-6` de móvil la descentraba. */
+        @apply absolute top-1/2 mx-0 mt-0 -translate-y-1/2;
+        width: 320px;
+        min-height: 270px;
+        max-height: calc(100% - 2.5rem);
+        overflow: hidden;
+    }
+
+    /* Las tarjetas se separan del borde del escenario: la de la derecha se va
+       hacia la izquierda y la de la izquierda hacia la derecha, manteniendo el
+       mismo margen para que la composición no se descentre al alternar. */
+    .timeline-info--der {
+        @apply right-6 text-left;
+    }
+
+    .timeline-info--izq {
+        @apply left-6 text-right;
+    }
+
+    /* Al espejar la tarjeta hay que espejar también lo que va alineado a un
+       lado (el año y el botón), no solo el texto. */
+    .timeline-info--izq .timeline-info-anio,
+    .timeline-info--izq .timeline-info-boton {
+        @apply self-end;
+    }
+}
+
+/* ==========================================================================
+   Pistas de uso
+   ========================================================================== */
+
+.timeline-pistas {
+    @apply mt-4 text-center text-xs tracking-[0.04em] text-gray-500;
+}
+
+/* Segunda línea de la ayuda: el límite de la zona de captura del scroll. */
+.timeline-pistas-limite {
+    @apply mt-1.5 font-semibold tracking-[0.06em] text-gray-600;
+}
+
+/* ==========================================================================
+   Botones del overlay de detalle (misma base que ui/Button.astro)
+   ========================================================================== */
+
+.timeline-btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
+}
+
+.timeline-btn--primary {
+    @apply bg-(--timeline-accent) text-white focus-visible:ring-(--timeline-accent);
+}
+
+.timeline-btn--primary:hover {
+    background-color: var(--timeline-accent-strong);
+}
+
+.timeline-btn--outline {
+    @apply border border-gray-300 text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-400;
+}
+
+/* ==========================================================================
+   Overlay de detalle (texto completo + acceso a la galería)
+   ========================================================================== */
+
+.timeline-detalle-overlay {
+    @apply fixed inset-0 flex cursor-pointer items-center justify-center bg-gray-900/60 p-5;
+    z-index: var(--timeline-z-detalle);
+    backdrop-filter: blur(10px);
+    animation: timeline-fade-in 0.25s ease-out both;
+}
+
+.timeline-detalle {
+    @apply flex w-[min(420px,94%)] max-h-[88svh] cursor-default flex-col overflow-hidden rounded-2xl bg-white;
+    box-shadow: 0 30px 80px -20px rgb(17 24 39 / 0.6);
+    animation: timeline-zoom-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.timeline-detalle-img {
+    @apply block h-[240px] w-full object-cover;
+    object-position: var(--obj, center);
+}
+
+.timeline-detalle-cuerpo {
+    @apply overflow-y-auto px-5 pt-5 pb-1;
+}
+
+.timeline-detalle-top {
+    @apply flex items-center gap-2.5;
+}
+
+.timeline-detalle-anio {
+    @apply inline-block rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-bold tracking-[0.08em] text-(--timeline-accent);
+}
+
+.timeline-detalle-kicker {
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-(--timeline-accent);
+}
+
+.timeline-detalle-titulo {
+    @apply mt-3 text-xl font-bold leading-tight text-gray-900;
+}
+
+.timeline-detalle-desc {
+    @apply mt-3 text-sm leading-7 whitespace-pre-line text-gray-600;
+}
+
+.timeline-detalle-acciones {
+    @apply flex justify-end gap-2.5 px-5 pt-3 pb-5;
+}
+
+@keyframes timeline-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes timeline-zoom-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   Móvil y tablet: carrusel con scroll-snap (reemplaza al dolly 3D)
+   ========================================================================== */
+
+.timeline-movil {
+    @apply mt-6;
+}
+
+@media (min-width: 64rem) {
+    .timeline-movil {
+        @apply hidden;
+    }
+}
+
+.timeline-movil-progreso {
+    @apply mb-2 h-1 overflow-hidden rounded-full bg-gray-200;
+}
+
+.timeline-movil-progreso-bar {
+    @apply block h-full w-0 rounded-full bg-(--timeline-accent);
+}
+
+.timeline-movil-pista {
+    @apply flex gap-3.5 overflow-x-auto pb-2;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.timeline-movil-pista::-webkit-scrollbar {
+    display: none;
+}
+
+.timeline-movil-pista:focus-visible {
+    @apply rounded-2xl outline-2 outline-offset-4 outline-(--timeline-accent);
+}
+
+.timeline-movil-placa {
+    @apply relative flex flex-col overflow-hidden rounded-2xl bg-white;
+    flex: 0 0 calc(100% - 2rem);
+    scroll-snap-align: center;
+    height: clamp(380px, 56svh, 500px);
+    box-shadow: 0 20px 50px -22px rgb(17 24 39 / 0.35);
+}
+
+.timeline-movil-placa img {
+    @apply block min-h-0 w-full flex-1 object-cover;
+    object-position: var(--obj, center);
+}
+
+.timeline-movil-info {
+    @apply shrink-0 px-5 pt-4 pb-5;
+}
+
+/* La tarjeta del carrusel pinta los mismos bloques que la del dolly, en el
+   orden de CARD_INFO (@constant), con sus propias clases. */
+.timeline-movil-kicker {
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-(--timeline-accent);
+}
+
+.timeline-movil-titulo {
+    @apply mt-2.5 text-lg leading-tight font-bold text-balance text-gray-900;
+}
+
+.timeline-movil-anio {
+    @apply mt-2.5 inline-block rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-bold tracking-[0.08em] text-(--timeline-accent);
+}
+
+.timeline-movil-resumen {
+    @apply mt-2.5 line-clamp-2 text-sm leading-6 text-pretty text-gray-600;
+}
+
+.timeline-movil-boton {
+    @apply mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-(--timeline-accent) px-4 py-2 text-xs font-bold text-(--timeline-accent) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--timeline-accent);
+}
+
+.timeline-movil-boton:hover {
+    @apply bg-(--timeline-accent) text-white;
+}
+
+/* ==========================================================================
+   prefers-reduced-motion / sin JS: lista estática de placas
+   El componente ya cambia a <ModoEstatico> cuando matchMedia dice que no hay
+   movimiento; estas reglas solo quitan las transiciones restantes.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .timeline-detalle-overlay,
+    .timeline-detalle {
+        animation: none;
+    }
+}
+
+.timeline-estatico {
+    @apply mt-8 grid gap-5;
+}
+
+@media (min-width: 40rem) {
+    .timeline-estatico {
+        @apply grid-cols-2;
+    }
+}
+
+.timeline-estatico li {
+    @apply grid cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white text-left transition-all duration-200;
+    grid-template-columns: 8rem 1fr;
+}
+
+.timeline-estatico li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 45px -25px rgb(17 24 39 / 0.4);
+}
+
+.timeline-estatico img {
+    @apply size-full object-cover;
+}
+
+.timeline-estatico div {
+    @apply py-4 pr-4 pl-0;
+}
+
+.timeline-estatico li:nth-child(odd) {
+    grid-template-columns: 1fr 8rem;
+}
+
+.timeline-estatico li:nth-child(odd) > img {
+    order: 2;
+}
+
+.timeline-estatico li:nth-child(odd) div {
+    @apply py-4 pr-0 pl-4;
+}
+
+.timeline-estatico p:first-child {
+    @apply text-xs font-bold tracking-[0.06em] text-(--timeline-accent);
+}
+
+.timeline-estatico h3 {
+    @apply mt-1 text-base font-bold text-gray-900;
+}
+
+.timeline-estatico p:last-child {
+    @apply mt-1.5 text-sm leading-6 text-gray-500;
+}

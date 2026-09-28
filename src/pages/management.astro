@@ -1,7 +1,16 @@
 ---
-import { Hero } from '@components';
-import MainLayout from '@layouts/MainLayout.astro';
+import MainLayout from "@layouts/MainLayout.astro";
+import { Management, ProjectsViewer } from "@components";
+import { SECTION_GESTION } from "@constant";
+import "@styles/management.css";
+import "@styles/gallery.css";
 ---
+
 <MainLayout title="Gestión">
-	<Hero title="Panel de Gestión" description="Administra tus proyectos y equipo" />
+  <Management
+    title={SECTION_GESTION.title}
+    description={SECTION_GESTION.description}
+  >
+    <ProjectsViewer />
+  </Management>
 </MainLayout>

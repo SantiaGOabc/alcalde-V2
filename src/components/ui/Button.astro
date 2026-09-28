@@ -1,24 +1,14 @@
 ---
-import type { HTMLAttributes } from "astro/types";
+import ButtonReact, { type ButtonProps } from "./Button";
 
-interface Props extends HTMLAttributes<"button"> {
-  text?: string;
-  variant?: "primary" | "ghost" | "inverse";
+interface Props extends ButtonProps {
+  class?: string;
   className?: string;
 }
 
-const { text, variant = "primary", className = "", ...props } = Astro.props;
-
-const base =
-  "inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-const styles = {
-  primary: "bg-(--home-accent) text-white hover:bg-(--home-accent)/80 cursor-pointer",
-  ghost: "text-gray-700 hover:bg-gray-100 cursor-pointer",
-  inverse: "text-white hover:bg-white/10 focus-visible:ring-white cursor-pointer",
-}[variant];
+const { class: astroClass, className, ...props } = Astro.props;
 ---
 
-<button class={`${base} ${styles} ${className}`} {...props}>
-  {text}<slot />
-</button>
-
+<ButtonReact className={className || astroClass} {...props}>
+  <slot />
+</ButtonReact>

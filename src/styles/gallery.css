@@ -1,0 +1,105 @@
+@reference "tailwindcss";
+/* ==========================================================================
+   Lightbox de galería — compartido
+   --------------------------------------------------------------------------
+   Lo usan todas las secciones con galería: About (Timeline) y Management
+    (ProyectosVisor). Vive aparte de `timeline.css` y `management.css` a propósito:
+   el lightbox es un overlay oscuro y neutro, no depende del tema de la sección
+   que lo abre, así que puede reutilizarse sin duplicar 200 líneas de CSS.
+
+   Los tokens de capas son propios y viven fuera del contexto de la sección:
+   el overlay se monta en `document.body` mediante portal, así que compite en
+   la capa de la página y DEBE quedar por encima del navbar (`fixed z-50`).
+   ========================================================================== */
+
+:root {
+    --galeria-z: 70;
+    --galeria-z-controles: 80;
+}
+
+.galeria-modal {
+    @apply fixed inset-0 flex items-center justify-center bg-gray-900/80 p-5;
+    z-index: var(--galeria-z);
+    backdrop-filter: blur(10px);
+    animation: galeria-fade-in 0.25s ease-out both;
+}
+
+.galeria-modal-figure {
+    @apply mt-14 flex flex-col items-center;
+}
+
+.galeria-modal-img {
+    @apply max-h-[72svh] max-w-[90vw] rounded-2xl object-contain;
+    animation: galeria-zoom-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.galeria-modal-pie {
+    @apply mt-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-white/90;
+}
+
+.galeria-modal-cerrar {
+    @apply fixed top-24 right-4 cursor-pointer rounded-full border border-white/20 bg-white/10 p-3 text-white backdrop-blur-lg transition-all duration-300 hover:scale-110 hover:bg-white/25 hover:rotate-90 lg:top-28 lg:right-10 lg:p-4;
+    z-index: var(--galeria-z-controles);
+}
+
+.galeria-modal-cerrar:focus-visible {
+    @apply outline-2 outline-offset-2 outline-white;
+}
+
+.galeria-modal-cerrar svg {
+    @apply size-6 lg:size-8;
+}
+
+.galeria-modal-flecha {
+    @apply absolute cursor-pointer rounded-full border border-white/20 bg-white/10 p-3 text-white backdrop-blur-lg transition-colors hover:bg-white/25 lg:p-4;
+    z-index: 1; /* por encima de la foto, dentro del propio overlay */
+}
+
+.galeria-modal-flecha:focus-visible {
+    @apply outline-2 outline-offset-2 outline-white;
+}
+
+.galeria-modal-flecha svg {
+    @apply size-5 lg:size-6;
+}
+
+.galeria-modal-flecha--prev {
+    @apply left-4 lg:left-12;
+}
+
+.galeria-modal-flecha--next {
+    @apply right-4 lg:right-12;
+}
+
+.galeria-modal-contador {
+    @apply fixed bottom-7 left-1/2 -translate-x-1/2 text-[11px] font-bold tracking-[0.3em] text-white/70;
+}
+
+@keyframes galeria-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes galeria-zoom-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* El lightbox no depende de la sección que lo abre, así que su
+    prefers-reduced-motion vive acá y no en timeline.css ni en management.css. */
+@media (prefers-reduced-motion: reduce) {
+    .galeria-modal,
+    .galeria-modal-img {
+        animation: none;
+    }
+}

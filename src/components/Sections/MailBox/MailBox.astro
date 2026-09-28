@@ -1,14 +1,14 @@
 ---
 import { Image } from "astro:assets";
 import { Section, Tipography } from "@components";
-import { MAILBOX_CONTENT } from '../../../constants/global/mailbox';
-import MailBoxForm from './MailBoxForm.tsx';
+import { MAILBOX_CONTENT } from "@constant";
+import MailboxForm from "./MailBoxForm.tsx";
 
 const { title, description, imageURL, imageAlt } = MAILBOX_CONTENT;
 ---
 
-<Section variant="secondary" className="px-4 pt-20 pb-10 sm:pt-24 sm:pb-12 lg:px-8 flex justify-center items-center min-h-screen bg-slate-100">
-  <div class="w-full max-w-4xl bg-white rounded-[2rem] p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
+<Section variant="secondary" className="pt-20 pb-12 sm:pt-24 sm:pb-16 flex justify-center items-center min-h-[calc(100vh-80px)] bg-slate-100">
+  <div class="w-full max-w-5xl bg-white rounded-[2rem] p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row gap-8 lg:gap-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
     <div class="w-full lg:w-[55%] flex flex-col justify-center">
       <header class="mb-6">
         <Tipography as="h2" variant="h2" class="text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-900">
@@ -18,11 +18,11 @@ const { title, description, imageURL, imageAlt } = MAILBOX_CONTENT;
           {description}
         </Tipography>
       </header>
-      <MailBoxForm client:visible />
+      <MailboxForm client:visible />
     </div>
 
     <div class="w-full lg:w-[45%] flex items-center justify-center">
-      <div class="relative w-full rounded-[1.5rem] overflow-hidden shadow-sm aspect-[4/5] lg:aspect-auto lg:h-[500px] max-h-[500px]">
+      <div class="relative w-full rounded-[1.5rem] overflow-hidden shadow-sm aspect-4/5 lg:aspect-auto lg:h-[520px] max-h-[520px]">
         <Image 
           src={imageURL} 
           alt={imageAlt}

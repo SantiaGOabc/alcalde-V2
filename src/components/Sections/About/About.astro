@@ -1,14 +1,48 @@
 ---
+import { Section, Tipography } from "@components";
+import Timeline from "./Timeline/Timeline.component.astro";
+
 interface Props {
-	title: string;
-	description: string;
+  title?: string;
+  description?: string;
+  variant?: "primary" | "secondary" | "accent";
 }
 
-const { title, description } = Astro.props;
+const { title, description, variant = "primary" } = Astro.props;
+const hasCustomHeader = Boolean(title);
 ---
 
-<section class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-	<h2 class="text-2xl font-semibold">{title}</h2>
-	<p class="mt-2 text-gray-600">{description}</p>
-	<slot />
-</section>
+{
+  hasCustomHeader ? (
+    <Section variant={variant} className="py-16 sm:py-20 lg:py-24">
+      <div class="page-container mb-8">
+        <header class="max-w-3xl">
+          <Tipography
+            as="h1"
+            color="inherit"
+            class="text-3xl font-semibold leading-tight text-balance text-gray-900 sm:text-4xl lg:text-5xl"
+          >
+            {title}
+          </Tipography>
+          {
+            description && (
+              <Tipography
+                as="p"
+                color="inherit"
+                class="mt-4 max-w-2xl text-base leading-7 text-gray-600 text-pretty sm:text-lg"
+              >
+                {description}
+              </Tipography>
+            )
+          }
+        </header>
+      </div>
+
+      <slot />
+    </Section>
+  ) : (
+    <Timeline variant={variant}>
+      <slot />
+    </Timeline>
+  )
+}

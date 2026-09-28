@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import Button from '../../ui/Button';
 
 type Form = { nombre: string; correo: string; mensaje: string };
 
-export default function ContactForm() {
+export default function MailboxForm() {
   const [form, setForm] = useState<Form>({ nombre: '', correo: '', mensaje: '' });
   const [estado, setEstado] = useState<'idle' | 'enviando' | 'listo'>('idle');
   //actualiza el form
@@ -59,19 +60,24 @@ export default function ContactForm() {
       </div>
       
       <div className="flex flex-col sm:flex-row items-center justify-end gap-3 mt-4 pt-6 border-t border-gray-50">
-        <button type="button" onClick={limpiar} 
-          className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-purple-600 bg-transparent border-2 border-purple-600 rounded-full hover:bg-purple-50 transition-colors"
+        <Button
+          type="button"
+          variant="outline"
+          onClick={limpiar}
+          className="w-full sm:w-auto"
         >
           Cancelar
-        </button>
+        </Button>
 
-        <button 
-          type="submit" 
-          disabled={estado === 'enviando'} 
-          className="w-full sm:w-auto px-8 py-3 text-sm font-semibold text-white bg-purple-600 rounded-full shadow-md shadow-purple-600/20 hover:bg-purple-700 disabled:bg-purple-400 disabled:shadow-none transition-all flex justify-center items-center gap-2"
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={estado === 'enviando'}
+          disabled={estado === 'enviando'}
+          className="w-full sm:w-auto"
         >
           {estado === 'enviando' ? 'Enviando...' : 'Enviar mensaje'}
-        </button>
+        </Button>
       </div>
 
       {estado === 'listo' && (

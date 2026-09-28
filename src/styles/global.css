@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+    --button-primary: #472D82;
+    --button-outiline: 1px solid #695DA9;
+
+    /* Design System: 3-Tier Responsive Gutter & Container Tokens
+       1. Mobile (<768px): Compact gutter (1rem / 16px) to maximize screen real estate.
+       2. Tablet (768px - 1023px): Balanced medium gutter (2rem / 32px).
+       3. PC / Desktop (>=1024px): Spacious, generous gutter (4rem / 64px) with centered cap. */
+    --page-gutter: 1rem;
+    --content-max-w: 72rem;
+}
+
+@media (min-width: 768px) {
+    :root {
+        --page-gutter: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    :root {
+        --page-gutter: 4rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    :root {
+        --page-gutter: 5rem;
+    }
+}
+
+/* Base layer: Enforces uniform left/right margins across the entire viewport */
+@layer base {
+    html, body {
+        padding: 0;
+        margin: 0;
+        overflow-x: clip;
+    }
+
+    nav,
+    section,
+    footer {
+        padding-inline: var(--page-gutter);
+    }
+}
+
+@layer components {
+    /* Shared inner content boundary so everything aligns to the exact same visual vertical grid */
+    .page-container {
+        width: 100%;
+        max-width: var(--content-max-w);
+        margin-inline: auto;
+    }
+
+    .button-primary {
+        @apply bg-(--button-primary) text-white hover:bg-purple-700 px-8 py-3 rounded-full font-semibold transition-all;
+    }
+
+    .button-outline {
+        @apply border border-(--button-outiline) text-gray-700 hover:bg-gray-100 px-8 py-3 rounded-full font-semibold transition-all;
+    }
+}

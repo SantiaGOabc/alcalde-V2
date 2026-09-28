@@ -6,6 +6,7 @@ import {
   SECTION_PHRASES_CONTENT,
   SECTION_BIOGRAPHY_CONTENT,
   SECTION_BEFORE_AFTER_CONTENT,
+  SECTION_BOOK_CONTENT,
 
 } from "@constant";
 import "@styles/home.css";
@@ -58,8 +59,16 @@ const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
     transitionPhrase={SECTION_BEFORE_AFTER_CONTENT.transitionPhrase}
     before={SECTION_BEFORE_AFTER_CONTENT.before}
     after={SECTION_BEFORE_AFTER_CONTENT.after}
+    
   />
-  <Book/>
+  <Book 
+    title={SECTION_BOOK_CONTENT.title}
+    eyebrow={SECTION_BOOK_CONTENT.eyebrow}
+    description={SECTION_BOOK_CONTENT.description}
+    imageURL={SECTION_BOOK_CONTENT.imageURL}
+    imageAlt={SECTION_BOOK_CONTENT.imageAlt}
+    button={SECTION_BOOK_CONTENT.button}
+  />
 </MainLayout>
 
 <script>

@@ -1,0 +1,130 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { Button, Tipography } from "@components";
+
+interface Props extends HTMLAttributes<"dialog"> {
+	id: string;
+	title?: string;
+	ariaLabel?: string;
+	triggerText?: string;
+	triggerClass?: string;
+	closeButtonLabel?: string;
+	closeOnBackdrop?: boolean;
+	initialOpen?: boolean;
+	showCloseButton?: boolean;
+	panelClass?: string;
+}
+
+const {
+	id,
+	title,
+	ariaLabel,
+	triggerText,
+	triggerClass,
+	closeButtonLabel = "Close dialog",
+	closeOnBackdrop = true,
+	initialOpen = false,
+	showCloseButton = true,
+	panelClass,
+	class: className,
+	...dialogProps
+} = Astro.props;
+---
+
+{triggerText && (
+	<Button
+		text={triggerText}
+		variant="primary"
+		className={triggerClass}
+		type="button"
+		data-modal-open={id}
+	/>
+)}
+
+<dialog
+	id={id}
+	class:list={[
+		"fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[min(42rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-visible border-0 bg-transparent p-0 text-[CanvasText] backdrop:bg-black/55 backdrop:backdrop-blur-sm",
+		className,
+	]}
+	data-modal
+	data-close-on-backdrop={String(closeOnBackdrop)}
+	data-modal-initial-open={initialOpen ? "" : undefined}
+	aria-label={ariaLabel ?? (!title ? "Dialog" : undefined)}
+	aria-labelledby={title ? `${id}-title` : undefined}
+	{...dialogProps}
+>
+	<div
+		class:list={[
+			"max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-[Canvas] text-[CanvasText] shadow-2xl",
+			panelClass,
+		]}
+	>
+		<header class="flex items-start justify-between gap-4 px-6 pt-5">
+			<slot name="header">
+				{title && (
+					<Tipography as="h2" id={`${id}-title`} class="m-0 text-xl font-semibold leading-snug">
+						{title}
+					</Tipography>
+				)}
+			</slot>
+			{showCloseButton && (
+				<Button
+					variant="ghost"
+					className="size-10 shrink-0 rounded-md p-0 text-2xl leading-none"
+					type="button"
+					data-modal-close
+					aria-label={closeButtonLabel}
+				>
+					<span aria-hidden="true">&times;</span>
+				</Button>
+			)}
+		</header>
+
+		<div class="p-6">
+			<slot />
+		</div>
+
+		<footer class="flex flex-wrap justify-end gap-3 px-6 pb-6 empty:hidden">
+			<slot name="footer" />
+		</footer>
+	</div>
+</dialog>
+
+<script>
+    import {$$, getElementById} from "@utils";
+	document.addEventListener("click", (event) => {
+		if (!(event.target instanceof Element)) return;
+
+		const opener = event.target.closest<HTMLElement>("[data-modal-open]");
+		if (opener) {
+			const modalId = opener.dataset.modalOpen;
+			const dialog = modalId ? getElementById(modalId) : null;
+			if (dialog instanceof HTMLDialogElement && !dialog.open) 
+				dialog.showModal();
+			return;
+		}
+
+		const closer = event.target.closest<HTMLElement>("[data-modal-close]");
+		const containingDialog = closer?.closest("dialog");
+		if (containingDialog instanceof HTMLDialogElement) {
+			containingDialog.close();
+			return;
+		}
+
+		const dialog = event.target.closest<HTMLDialogElement>("dialog[data-modal]");
+		if (
+			dialog &&
+			event.target !== dialog &&
+			dialog.dataset.closeOnBackdrop !== "true"
+		) return;
+
+		dialog?.close();
+		
+	});
+
+	$$<HTMLDialogElement>("dialog[data-modal-initial-open]")
+		.forEach((dialog) => {
+			if (!dialog.open) dialog.showModal();
+		});
+</script>

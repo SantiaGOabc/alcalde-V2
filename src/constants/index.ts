@@ -6,3 +6,4 @@ export * from "./management/categories";
 export * from "./management/projects";
 export * from "./global/navbar";
 export * from "./global/footer";
+export * from "./global/mailbox";

@@ -29,9 +29,11 @@ export {
   default as ProyectosVisor,
 } from './Sections/Management/ProjectsViewer/ProjectsViewer.astro';
 
-// UI (Single source of truth: Button.tsx, also compatible via Button.astro)
+// UI
 export { default as Button } from './ui/Button';
 export { default as ButtonAstro } from './ui/Button.astro';
 export { default as ArrowButton } from './ui/ArrowButton';
 export { default as GalleryModal } from './ui/GalleryModal';
 export { default as Input } from './ui/Input.astro';
+export { default as Modal } from './ui/modal.astro';
+export { default as Form } from './ui/Form.tsx';

@@ -1,90 +1,91 @@
-import { useState } from 'react';
-import Button from '../../ui/Button';
+import { Form } from '@components';
+import { useForm } from '@/hooks';
+import { MAILBOX_CONTENT } from '@constant';
 
-type Form = { nombre: string; correo: string; mensaje: string };
+type MailboxData = { fullName: string; email: string; message: string };
 
-export default function MailboxForm() {
-  const [form, setForm] = useState<Form>({ nombre: '', correo: '', mensaje: '' });
-  const [estado, setEstado] = useState<'idle' | 'enviando' | 'listo'>('idle');
-  //actualiza el form
-  const set = (k: keyof Form) => (e: any) =>
-    setForm(f => ({ ...f, [k]: e.target.value }));
+export default function MailBoxForm() {
+  const { form: staticText } = MAILBOX_CONTENT;
+  const { values, handleChange, resetForm } = useForm<MailboxData>({
+    fullName: '',
+    email: '',
+    message: '',
+  });
 
-  const limpiar = () => setForm({ nombre: '', correo: '', mensaje: '' });
+  const submitData = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log('Datos enviados:', values);
+  };
 
-  async function enviar(e: React.FormEvent) {
-    e.preventDefault();
-    setEstado('enviando');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setEstado('listo');
-    setTimeout(() => {
-      limpiar();
-      setEstado('idle');
-    }, 3000);
-  }
-
-  const inputClass = "w-full rounded-xl bg-gray-50 border border-transparent px-4 py-3 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition-all outline-none";
+  const inputClass =
+    'w-full rounded-lg bg-slate-50 border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-(--home-accent) focus:ring-2 focus:ring-(--home-accent)/20 transition-all duration-200 outline-none';
 
   return (
-    <form onSubmit={enviar} className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 flex flex-col gap-6">
-      <div className="mb-2">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          Buzón Ciudadano
-        </h2>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="nombre" className="text-sm font-semibold text-gray-700 cursor-pointer">
-          Nombre completo
-        </label>
-        <input id="nombre" type="text" name="nombre" value={form.nombre} onInput={set('nombre')} className={inputClass} placeholder="Ej: Ana López" required />
+    <Form
+      onSubmit={submitData}
+      onCancel={resetForm}
+      submitText={staticText.submitButton}
+      loadingText={staticText.loadingText}
+      cancelText={staticText.cancelButton}
+      successMessage={staticText.successMessage}
+      className="flex flex-col gap-4 w-full"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="fullName"
+            className="text-[11px] font-bold text-slate-700 tracking-wide uppercase"
+          >
+            {staticText.fullNameLabel}
+          </label>
+          <input
+            id="fullName"
+            name="fullName"
+            type="text"
+            value={values.fullName}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder={staticText.fullNamePlaceholder}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="email"
+            className="text-[11px] font-bold text-slate-700 tracking-wide uppercase"
+          >
+            {staticText.emailLabel}
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={values.email}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder={staticText.emailPlaceholder}
+            required
+          />
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="correo" className="text-sm font-semibold text-gray-700 cursor-pointer">
-          Correo electrónico
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="message"
+          className="text-[11px] font-bold text-slate-700 tracking-wide uppercase"
+        >
+          {staticText.messageLabel}
         </label>
-        <input id="correo" type="email" name="correo" value={form.correo} onInput={set('correo')} className={inputClass} placeholder="ana@ejemplo.com" required />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="mensaje" className="text-sm font-semibold text-gray-700 cursor-pointer">
-          Escribe tu mensaje
-        </label>
-        <textarea 
-          id="mensaje"
-          value={form.mensaje} 
-          onInput={set('mensaje')} 
-          className={`${inputClass} resize-none h-32`} 
-          placeholder="Escribe tu mensaje aquí..."
-          required 
+        <textarea
+          id="message"
+          name="message"
+          value={values.message}
+          onChange={handleChange}
+          className={`${inputClass} resize-none h-24`}
+          required
         />
       </div>
-      
-      <div className="flex flex-col sm:flex-row items-center justify-end gap-3 mt-4 pt-6 border-t border-gray-50">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={limpiar}
-          className="w-full sm:w-auto"
-        >
-          Cancelar
-        </Button>
-
-        <Button
-          type="submit"
-          variant="primary"
-          isLoading={estado === 'enviando'}
-          disabled={estado === 'enviando'}
-          className="w-full sm:w-auto"
-        >
-          {estado === 'enviando' ? 'Enviando...' : 'Enviar mensaje'}
-        </Button>
-      </div>
-
-      {estado === 'listo' && (
-        <div className="p-4 bg-purple-50 border border-purple-100 text-purple-700 rounded-xl text-center text-sm font-semibold animate-pulse">
-          ¡Mensaje enviado correctamente! Gracias por tu tiempo.
-        </div>
-      )}
-    </form>
+    </Form>
   );
 }

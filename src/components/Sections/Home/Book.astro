@@ -1,10 +1,18 @@
 ---
 import { Image } from "astro:assets";
-import { Button, Section, Tipography } from "@components";
-import { SECTION_BOOK_CONTENT } from "@constant";
+import { Button, Section, Tipography, Modal } from "@components";
+
+interface Props {
+  title: string;
+  eyebrow: string;
+  description: string;
+  imageURL: string;
+  imageAlt: string;
+  button: string;
+}
 
 const { title, eyebrow, description, imageURL, imageAlt, button } =
-  SECTION_BOOK_CONTENT;
+  Astro.props;
 ---
 
 <Section variant="primary" className="overflow-hidden py-24 sm:py-32 lg:py-40">
@@ -41,7 +49,14 @@ const { title, eyebrow, description, imageURL, imageAlt, button } =
         text={button}
         className="min-h-12 rounded-full bg-(--home-accent) px-6 text-gray-200 mt-8"
         aria-label={button}
+        data-modal-open="modal-1"
       />
+      <Modal id="modal-1" title="Modal" ariaLabel="Modal">
+        <div class="flex flex-col gap-4">
+          <Button variant="primary" text="Button" />
+          <Button variant="ghost" text="Button" />
+        </div>
+      </Modal>
     </div>
 
     <div class="relative mx-auto w-full max-w-120 px-5 py-8 sm:px-10 lg:py-12">

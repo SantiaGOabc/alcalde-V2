@@ -18,5 +18,6 @@ export { default as Book } from './Sections/Home/Book.astro';
 
 // UI 
 export { default as Button } from './ui/Button.astro';
+export { default as Modal } from './ui/Modal.astro';
 export { default as Input } from './ui/Input.astro';
 export {default as Form } from './ui/Form.tsx';

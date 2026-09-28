@@ -56,7 +56,21 @@ export const SECTION_PHRASES_CONTENT = {
   },
 };
 
-export const SECTION_BEFORE_AFTER_CONTENT = {
+export const SECTION_BEFORE_AFTER_CONTENT: {
+  title: string;
+  description: string;
+  transitionPhrase: string;
+  before: Array<{
+    title: string;
+    imageURL: string;
+    imageFit: "contain" | "cover";
+  }>,
+  after: Array<{
+    title: string;
+    imageURL: string;
+    imageFit: "contain" | "cover";
+  }>;
+} = {
   title: "Una persona, ciudad que transforman",
   description:
     "Imágenes que muestran cómo cambian sus espacios y la vida de sus habitantes.",

@@ -1,29 +1,36 @@
 ---
-import MailBoxForm from './MailBoxForm.tsx';
 import { Image } from "astro:assets";
+import { Section, Tipography } from "@components";
+import { MAILBOX_CONTENT } from '../../../constants/global/mailbox';
+import MailBoxForm from './MailBoxForm.tsx';
+
+const { title, description, imageURL, imageAlt } = MAILBOX_CONTENT;
 ---
 
-<section class="bg-slate-50 px-4 py-12 sm:px-6 lg:px-8 flex justify-center items-center min-h-[90vh]">
-  <div class="w-full max-w-6xl bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col lg:flex-row shadow-2xl shadow-slate-200/60 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 ease-out">
-    <div class="w-full lg:w-1/2 relative min-h-[300px] lg:min-h-full flex flex-col justify-end">
-      <Image 
-        src="https://cochabamba.bo/img/noticias/XApapGO21aPYGwIPs14pbmNwTikKkRsK4Ywgh7qm.jpeg" 
-        alt="Buzon Ciudadano"
-        width={1000}
-        height={1000}
-        class="absolute inset-0 size-full object-cover"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
-      <div class="relative z-10 p-10 sm:p-14">
-        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-          Buzón Ciudadano
-        </h2>
-      </div>
-    </div>
-    <!-- COLUMNA DERECHA-->
-    <div class="w-full lg:w-1/2 bg-white p-10 sm:p-14 flex items-center">
+<Section variant="secondary" className="px-4 pt-20 pb-10 sm:pt-24 sm:pb-12 lg:px-8 flex justify-center items-center min-h-screen bg-slate-100">
+  <div class="w-full max-w-4xl bg-white rounded-[2rem] p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
+    <div class="w-full lg:w-[55%] flex flex-col justify-center">
+      <header class="mb-6">
+        <Tipography as="h2" variant="h2" class="text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-900">
+          {title}
+        </Tipography>
+        <Tipography as="p" variant="body" class="mt-2 text-sm text-slate-600 max-w-sm">
+          {description}
+        </Tipography>
+      </header>
       <MailBoxForm client:visible />
     </div>
 
+    <div class="w-full lg:w-[45%] flex items-center justify-center">
+      <div class="relative w-full rounded-[1.5rem] overflow-hidden shadow-sm aspect-[4/5] lg:aspect-auto lg:h-[500px] max-h-[500px]">
+        <Image 
+          src={imageURL} 
+          alt={imageAlt}
+          width={600}
+          height={800}
+          class="absolute inset-0 size-full object-cover transition-transform duration-700 hover:scale-105"
+        />
+      </div>
+    </div>
   </div>
-</section>
+</Section>

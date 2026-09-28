@@ -1,0 +1,139 @@
+---
+import { ArrowLeft, ArrowRight } from "@icons";
+import { Button, Input, Tipography } from "@components";
+
+/**
+ * El visor: el marco donde se abre el libro.
+ *
+ * Solo pinta el armazón. Las hojas las monta `BookPages.astro` y las mueve
+ * `createBookViewer`, así que aquí no hay estado que mantener en Astro: el
+ * visor se ocupa por `data-book-*`.
+ *
+ * Las hojas se esconden en un `hidden`: `page-flip` necesita nodos reales en
+ * el DOM, no cadenas, y se los queda al abrirse. Escondidas no estorban ni se
+ * ven en el fluxo de la página, pero siguen siendo markup real y no
+ * necesitan JavaScript para existir.
+ */
+---
+
+<div
+  data-book-overlay
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label="Libro: Cocha, la mejor ciudad de Bolivia"
+  class="fixed inset-0 z-50"
+>
+  <div
+    data-book-backdrop
+    aria-hidden="true"
+    class="absolute inset-0 bg-black/80 backdrop-blur-md"
+  >
+  </div>
+
+  <!-- El marco se posiciona y se dimensiona desde el visor: crece desde el
+       lugar que ocupa el libro cerrado hasta el centro de la pantalla. -->
+  <div data-book-frame class="book-viewer__frame">
+    <div data-book-inner class="book-viewer__inner">
+      <div data-book-block class="size-full"></div>
+    </div>
+  </div>
+
+  <!-- Controles. Se montan siempre y el visor muestra u oculta cada grupo
+       según en qué punto del ciclo esté el libro.
+
+       Cada uno vive en su propia esquina en vez de agruparse: las flechas son
+       las que pasan la página, así que van pegadas al canto por el que se
+       pasa; cerrar no es parte de esa pareja y por eso sube arriba, donde
+       están los cierres de cualquier diálogo. -->
+  <div data-book-toolbar class="pointer-events-none fixed inset-0 z-10">
+    <Button
+      type="button"
+      variant="ghost"
+      data-book-prev
+      aria-label="Página anterior"
+      title="Página anterior"
+      className="pointer-events-auto fixed top-1/2 left-4 size-11 -translate-y-1/2 cursor-pointer rounded-full border border-white/20 bg-black/40 p-0 text-white backdrop-blur-sm hover:bg-white/10 sm:left-8"
+    >
+      <ArrowLeft />
+    </Button>
+    <Button
+      type="button"
+      variant="ghost"
+      data-book-next
+      aria-label="Página siguiente"
+      title="Página siguiente"
+      className="pointer-events-auto fixed top-1/2 right-4 size-11 -translate-y-1/2 cursor-pointer rounded-full border border-white/20 bg-black/40 p-0 text-white backdrop-blur-sm hover:bg-white/10 sm:right-8"
+    >
+      <ArrowRight />
+    </Button>
+
+    <Button
+      type="button"
+      variant="ghost"
+      data-book-close
+      aria-label="Cerrar el libro"
+      title="Cerrar (Esc)"
+      className="pointer-events-auto fixed top-4 right-4 size-11 cursor-pointer rounded-full border border-white/20 bg-black/40 text-2xl leading-none text-white backdrop-blur-sm hover:bg-(--home-accent) sm:top-8 sm:right-8"
+    >
+      <span aria-hidden="true">&times;</span>
+    </Button>
+  </div>
+
+  <div
+    data-book-footer
+    class="pointer-events-none fixed inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 bg-linear-to-t from-black/80 to-transparent px-4 pt-10 pb-4"
+  >
+    <Tipography
+      as="p"
+      data-book-page-label
+      color="inherit"
+      class="text-xs font-semibold text-white/90 tabular-nums"
+    >
+    </Tipography>
+
+    <Input
+      type="range"
+      min={0}
+      max={0}
+      step={1}
+      value={0}
+      data-book-range
+      aria-label="Ir a la página"
+      class="pointer-events-auto w-full max-w-160 cursor-pointer accent-white"
+    />
+
+    <Tipography as="p" color="inherit" class="text-[0.7rem] text-white/45">
+      Arrastra las esquinas o usa las flechas del teclado · Esc para cerrar
+    </Tipography>
+  </div>
+
+  <!-- Lector de fotos y videos, por encima del libro. El elemento concreto
+       (img, video o embed) lo crea el visor, que es quien sabe de dónde salió.
+       Ojo: aquí no puede haber ninguna utilidad de `display`, porque el
+       atributo `hidden` y `flex` se pisarían y el panel nunca se escondería. -->
+  <div data-book-media hidden class="fixed inset-0 z-20 bg-black/85 p-6 backdrop-blur-sm">
+    <div class="flex h-full flex-col items-center justify-center gap-3">
+      <Button
+        type="button"
+        variant="ghost"
+        data-book-media-back
+        className="cursor-pointer self-start rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
+      >
+        &larr; Volver al libro
+      </Button>
+      <div
+        data-book-media-body
+        class="flex max-h-[75svh] w-full max-w-5xl items-center justify-center overflow-hidden rounded-xl"
+      >
+      </div>
+      <Tipography
+        as="p"
+        data-book-media-alt
+        color="inherit"
+        class="max-w-3xl text-center text-sm text-white/70"
+      >
+      </Tipography>
+    </div>
+  </div>
+</div>

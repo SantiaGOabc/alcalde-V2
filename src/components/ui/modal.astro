@@ -2,6 +2,36 @@
 import type { HTMLAttributes } from "astro/types";
 import { Button, Tipography } from "@components";
 
+/**
+ * Ejemplo con activador integrado y slots de contenido y acciones:
+ *
+ * ```astro
+ * ---
+ * import { Modal, Button } from "@components";
+ * ---
+ *
+ * <Modal id="confirmar" title="Confirmar acción" triggerText="Abrir">
+ *   <p>¿Quieres continuar?</p>
+ *   <Button slot="footer" text="Cancelar" variant="ghost" data-modal-close />
+ *   <Button slot="footer" text="Confirmar" variant="primary" />
+ * </Modal>
+ * ```
+ *
+ * Ejemplo con activador externo y encabezado personalizado:
+ *
+ * ```astro
+ * ---
+ * import { Modal, Button } from "@components";
+ * ---
+ *
+ * <Button type="button" text="Ver ayuda" data-modal-open="ayuda" />
+ * <Modal id="ayuda" ariaLabel="Ayuda" closeOnBackdrop={false}>
+ *   <h2 slot="header">Ayuda</h2>
+ *   <p>Contenido libre: texto, formularios u otros componentes.</p>
+ *   <Button slot="footer" text="Listo" data-modal-close />
+ * </Modal>
+ * ```
+ */
 interface Props extends HTMLAttributes<"dialog"> {
 	id: string;
 	title?: string;
@@ -115,11 +145,11 @@ const {
 		const dialog = event.target.closest<HTMLDialogElement>("dialog[data-modal]");
 		if (
 			dialog &&
-			event.target !== dialog &&
-			dialog.dataset.closeOnBackdrop !== "true"
-		) return;
-
-		dialog?.close();
+			event.target === dialog &&
+			dialog.dataset.closeOnBackdrop === "true"
+		) {
+			dialog.close();
+		}
 		
 	});
 

@@ -1,0 +1,155 @@
+import { BOOK_ATTR, BOOK_SELECT, datasetKey } from "@constant";
+
+/* ==========================================================================
+   Los nodos del visor
+   --------------------------------------------------------------------------
+   Se piden todos al montar y se guardan en un objeto. Un `querySelector` por
+   nodo, escrito en el sitio donde se usa, obliga a repetir el selector cada
+   vez y a comprobar en cada lectura que el nodo existe. Esta tabla lo resuelve
+   una vez: si falta algo, revienta al montar y no al hacer clic.
+   ========================================================================== */
+
+/**
+ * Qué busca cada nodo.
+ *
+ * El tipo de `BookNodes` sale de esta tabla, así que añadir un nodo es añadirlo
+ * aquí y nada más: no puede quedar un `interface` desincronizado de la búsqueda.
+ */
+const NODES = {
+	overlay: BOOK_SELECT.overlay,
+	backdrop: BOOK_SELECT.backdrop,
+	/** El marco se posiciona y se dimensiona desde el visor. */
+	frame: BOOK_SELECT.frame,
+	inner: BOOK_SELECT.inner,
+	block: BOOK_SELECT.block,
+	/** El libro cerrado de la tarjeta: de aquí sale el libro al abrirse. */
+	anchor: BOOK_SELECT.anchor,
+	/** Donde Astro deja las hojas antes de que las coja el motor. */
+	pages: BOOK_SELECT.pages,
+	toolbar: BOOK_SELECT.toolbar,
+	footer: BOOK_SELECT.footer,
+	close: BOOK_SELECT.close,
+	prev: BOOK_SELECT.prev,
+	next: BOOK_SELECT.next,
+	/** Índice del libro: va por dobleces, no por hojas. */
+	range: BOOK_SELECT.range,
+	pageLabel: BOOK_SELECT.pageLabel,
+	media: BOOK_SELECT.media,
+	mediaBody: BOOK_SELECT.mediaBody,
+	mediaAlt: BOOK_SELECT.mediaAlt,
+	mediaBack: BOOK_SELECT.mediaBack,
+} as const;
+
+/** Botones: se les hace clic. */
+type Buttons = "close" | "prev" | "next" | "mediaBack";
+
+/** Deslizadores: además se les lee y se les escribe `value`. */
+type Ranges = "range";
+
+/** Nodos que el visor maneja, ya resueltos y tipados por su nombre. */
+export type BookNodes = {
+	[Name in keyof typeof NODES]: Name extends Ranges
+		? HTMLInputElement
+		: Name extends Buttons
+			? HTMLButtonElement
+			: HTMLElement;
+};
+
+/** Resuelve todos los nodos del visor, o falla diciendo cuál falta. */
+export const pickBookNodes = (root: ParentNode): BookNodes =>
+	Object.fromEntries(
+		Object.entries(NODES).map(([name, selector]) => {
+			const node = root.querySelector<HTMLElement>(selector);
+			if (!node) throw new Error(`El visor del libro no encuentra ${selector}`);
+			return [name, node];
+		}),
+	) as BookNodes;
+
+/* ==========================================================================
+   Fotografías y videos
+   --------------------------------------------------------------------------
+   Ampliar una hoja es abrir un medio encima del libro. Hay tres, y cada uno se
+   construye de una forma, así que van los tres juntos: añadir un cuarto es una
+   entrada más en la tabla, no un `else` más en el visor.
+   ========================================================================== */
+
+/** Lo que el visor necesita saber de un medio abierto. */
+export interface OpenMedia {
+	type: "image" | "video" | "embed";
+	src: string;
+	alt: string;
+}
+
+const VIDEO_FILE = /\.(mp4|webm|ogv|mov)(\?|#|$)/i;
+const YOUTUBE_ID =
+	/(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{6,12})/;
+
+/** Cómo se decide qué tipo de medio es una URL. El primero que encaja gana. */
+const MEDIA_RULES: readonly { type: OpenMedia["type"]; test: RegExp }[] = [
+	{ type: "video", test: VIDEO_FILE },
+	{ type: "embed", test: YOUTUBE_ID },
+];
+
+const buildImage = ({ src, alt }: OpenMedia): HTMLElement => {
+	const image = document.createElement("img");
+	image.src = src;
+	image.alt = alt;
+	image.decoding = "async";
+	image.className = "max-h-[75svh] w-auto rounded-xl object-contain";
+	return image;
+};
+
+const buildVideo = ({ src }: OpenMedia): HTMLElement => {
+	const video = document.createElement("video");
+	video.src = src;
+	video.controls = true;
+	video.autoplay = true;
+	video.loop = true;
+	video.playsInline = true;
+	video.className = "max-h-[75svh] w-full rounded-xl bg-black";
+	return video;
+};
+
+const buildEmbed = ({ src, alt }: OpenMedia): HTMLElement => {
+	const id = YOUTUBE_ID.exec(src)?.[1];
+
+	const frame = document.createElement("iframe");
+	frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+	frame.title = alt;
+	frame.allow =
+		"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+	frame.allowFullscreen = true;
+	frame.className = "aspect-video w-full rounded-xl border-0";
+	return frame;
+};
+
+const MEDIA_BUILDERS: Record<OpenMedia["type"], (media: OpenMedia) => HTMLElement> =
+	{ image: buildImage, video: buildVideo, embed: buildEmbed };
+
+/** Construye el elemento que corresponde al tipo de medio. */
+export const buildMedia = (media: OpenMedia): HTMLElement =>
+	MEDIA_BUILDERS[media.type](media);
+
+/** Clasifica una URL. Si nada encaja es una imagen, que es el caso normal. */
+export const mediaTypeOf = (src: string): OpenMedia["type"] =>
+	MEDIA_RULES.find((rule) => rule.test.test(src))?.type ?? "image";
+
+/**
+ * El medio que hay detrás de un elemento ampliable, o `null` si no lo hay.
+ *
+ * El video manda sobre la imagen: una hoja que trae los dos enseña el video.
+ * El texto alternativo sale del propio elemento para no duplicarlo.
+ */
+export const mediaUnder = (target: HTMLElement): OpenMedia | null => {
+	const labelled = target.getAttribute("aria-label") ?? "";
+	const videoUrl = target.dataset[datasetKey(BOOK_ATTR.videoUrl)];
+
+	if (videoUrl) {
+		return { type: mediaTypeOf(videoUrl), src: videoUrl, alt: labelled };
+	}
+
+	const image = target.querySelector("img");
+	return image
+		? { type: "image", src: image.currentSrc || image.src, alt: image.alt }
+		: null;
+};

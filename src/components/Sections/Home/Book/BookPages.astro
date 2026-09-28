@@ -1,0 +1,21 @@
+---
+import BookPage from "./BookPage.astro";
+import { BOOK_PAGES } from "@constant";
+
+/**
+ * Las hojas del libro, escritas en el servidor.
+ *
+ * `page-flip` no acepta cadenas de HTML: necesita nodos reales que pueda mover
+ * dentro de su contenedor. En vez de reconstruirlos en el cliente, Astro los
+ * renderiza una vez y el visor se los entrega tal cual.
+ *
+ * El contenedor va oculto porque estas hojas no se muestran aquí: su destino
+ * es el visor. En cuanto se abre, el motor las recoge y las muestra. Escribir
+ * el libro en el servidor y no en el navegador es lo que permite que funcione
+ * sin React y sin hidratar nada.
+ */
+---
+
+<div data-book-pages hidden>
+  {BOOK_PAGES.map((page) => <BookPage {...page} />)}
+</div>

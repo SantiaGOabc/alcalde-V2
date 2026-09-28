@@ -1,0 +1,56 @@
+---
+import { Image } from "astro:assets";
+import { Button } from "@components";
+import { BOOK_META } from "@constant";
+
+/**
+ * El libro cerrado, en 3D, dentro de la tarjeta de la sección.
+ *
+ * Es el punto de partida del visor: el botón de "Abrir libro" y este libro
+ * comparten el mismo disparador (`data-book-open`), así que el lector puede
+ * abrirlo desde cualquiera de los dos.
+ *
+ * El 3D es CSS puro (`transform-style: preserve-3d` sobre seis caras) en vez de
+ * WebGL. Además de no cargar una librería de gráficos por un elemento
+ * decorativo, el rótulo de la tapa queda como texto real: se lee nítido a
+ * cualquier tamaño, es seleccionable y lo anuncian los lectores de pantalla.
+ * La geometría y la animación viven en `src/styles/flipbook.css`.
+ */
+interface Props {
+  /** Texto accesible del botón, para no repetir el rótulo de la tapa. */
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<Button
+  type="button"
+  variant="ghost"
+  data-book-open
+  aria-label={label}
+  className="book-closed group w-full cursor-pointer rounded-2xl border-0 bg-transparent p-0 hover:bg-transparent"
+>
+  <span class="book-closed__stage" data-book-anchor aria-hidden="true">
+    <span class="book-closed__shadow" />
+    <span class="book-closed__float">
+      <span class="book-closed__book">
+        <span class="book-closed__face book-closed__face--cover shadow-7xl">
+          <Image
+            src={BOOK_META.coverImage}
+            alt=""
+            width={1024}
+            height={1365}
+            class="book-closed__cover-image"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="book-closed__cover-veil" />
+          <span class="book-closed__shine" />
+        </span>
+        <span class="book-closed__face book-closed__face--spine" />
+        <span class="book-closed__face book-closed__face--foreedge" />
+      </span>
+    </span>
+  </span>
+</Button>

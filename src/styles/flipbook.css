@@ -1,0 +1,344 @@
+@reference "tailwindcss";
+
+/* ==========================================================================
+   El libro
+   --------------------------------------------------------------------------
+   Solo hay reglas aquí para lo que el lenguaje de utilidades no sabe decir.
+   Todo lo demás —color, tipografía, distribución, sombras— son utilidades en el
+   componente; lo que aparece con `@apply` es lo que sí depende de la geometría
+   del 3D o de cómo escribe JavaScript el marco, y por eso tiene que vivir
+   junto a la regla que la usa.
+
+   Tres temas:
+
+   1. Las caras del libro cerrado: un sistema de coordenadas en CSS puro.
+   2. El marco del visor, cuya posición y tamaño escribe JavaScript en línea.
+   3. Los internos de `page-flip`, que son de la librería y no tienen clases
+      nuestras. Además su hoja de estilos trae un error tipográfico
+      (`.sft__wrapper` donde iba `.stf__wrapper`), así que esa regla no existe
+      y hay que rehacerla.
+   ========================================================================== */
+
+:root {
+    /* Cómo deceleran el marco y las hojas. */
+    --book-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --book-transition: 0.55s;
+}
+
+/* ==========================================================================
+   Visor
+   ========================================================================== */
+
+/* El marco es una caja fija que el visor coloca y mueve. Sin transición no
+   habría apertura, así que esto no puede ser una utilidad.
+
+   Va con `overflow: hidden` porque cuando solo se ve la tapa el marco mide una
+   hoja pero el bloque de dentro sigue midiendo el doblece entero (ver
+   `place` en `createBookViewer.ts`): sin recortar, la mitad vacía del
+   doblece asomaría fuera del marco. */
+.book-viewer__frame {
+    @apply fixed z-1 overflow-hidden rounded-md;
+
+    top: 0;
+    left: 0;
+    will-change: left, top, width, height;
+    transition:
+        left var(--book-transition) var(--book-ease),
+        top var(--book-transition) var(--book-ease),
+        width var(--book-transition) var(--book-ease),
+        height var(--book-transition) var(--book-ease);
+}
+
+/* El libro vive dentro del marco a tamaño completo y se escala, para que la
+   apertura parezca que el libro sale de la tarjeta y crece hasta la pantalla.
+   `top left` como origen hace que la escala crezca desde la esquina. */
+.book-viewer__inner {
+    @apply relative;
+
+    transform-origin: top left;
+    will-change: transform;
+    transition: transform var(--book-transition) var(--book-ease);
+}
+
+/* Las hojas multiplican todos sus tamaños de letra por esta variable, así que
+   una sola escribe el tamaño del libro entero. El valor real lo calcula el
+   visor a partir del alto de hoja medido y de la preferencia elegida (ver
+   `applyTextScale` en `createBookViewer.ts`): una misma preferencia debe verse
+   igual de proporcionada en una hoja grande que en una pequeña, y eso una
+   regla de CSS fija no puede saberlo. El `1` de aquí es solo el valor antes de
+   que el visor mida por primera vez. */
+.book-viewer__inner {
+    --book-text-scale: 1;
+}
+
+/* `hidden` tiene que ganarle a las utilidades de `display`: Tailwind mete sus
+   clases en una capa propia y el navegador aplicaría el atributo antes, así que
+   sin esto un panel con `flex` se quedaría siempre visible. */
+[data-book-overlay][hidden],
+[data-book-media][hidden],
+[data-book-pages][hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   El libro cerrado en 3D
+   --------------------------------------------------------------------------
+   Seis caras y una perspectiva, en CSS puro. La proporción es la del modelo
+   original (1 : 1,6 de alto, 0,14 de canto) y el reposo está girado lo mismo
+   que allí, unos 31 grados, que es lo que deja ver la tapa y el lomo a la vez.
+   ========================================================================== */
+
+.book-closed {
+    /*
+     * Anchura de tapa, en centésimas del ancho del escenario. De ella salen la
+     * altura y el canto, igual que en el modelo, pero medida contra el
+     * contenedor y no en píxeles fijos: así el libro ocupa siempre la misma
+     * parte de su caja, se mida lo que se mida.
+     */
+    --book-cover-width: 80cqw;
+    --book-height: calc(var(--book-cover-width) * 1.6);
+    --book-thickness: calc(var(--book-cover-width) * 0.13);
+    /* Grados de giro en reposo y al pasar el puntero. */
+    --book-rest: -26deg;
+    --book-hover: -5deg;
+    /* Tinta de la tapa. Oscura a propósito: la tarjeta de la sección tiene un
+       bloque de color detrás, y una tapa del mismo color se fundiría con él y
+       el libro perdería la silueta. */
+    --book-ink: #0d0d20;
+    --book-ink-light: #23233f;
+}
+
+.book-closed__stage {
+    @apply relative flex aspect-3/4 w-full items-center justify-center;
+
+    /* Una sola perspectiva para todas las caras, o el 3D se desgarra. Declarar
+       el escenario como contenedor es lo que hace posibles los `cqw` de arriba. */
+    container-type: inline-size;
+    perspective: 1100px;
+}
+
+/* Sombra en el suelo. Va fuera del contenedor 3D porque no debe girar con el
+   libro: es la sombra que proyecta, no una parte de él. */
+.book-closed__shadow {
+    @apply absolute bottom-[11%] left-1/2 h-[9%] w-[58%] -translate-x-1/2;
+
+    background: radial-gradient(ellipse at center, rgb(17 24 39 / 0.4), transparent 70%);
+    filter: blur(7px);
+}
+
+/* La flotación va en un envoltorio propio para no pelearse con el giro: son dos
+   transformaciones distintas sobre el mismo libro. */
+.book-closed__float {
+    @apply block;
+
+    animation: book-bob 7s ease-in-out infinite;
+}
+
+.book-closed__book {
+    @apply relative block w-(--book-cover-width) h-(--book-height);
+
+    transform-style: preserve-3d;
+    transform: rotateY(var(--book-rest)) rotateX(1.2deg);
+    transition: transform 0.6s var(--book-ease);
+}
+
+.book-closed:hover .book-closed__book,
+.book-closed:focus-visible .book-closed__book {
+    transform: rotateY(var(--book-hover)) rotateX(3deg);
+}
+
+/* Todas las caras comparten alto, y cada una dice hacia dónde mira. */
+.book-closed__face {
+    @apply absolute top-0 h-full;
+
+    backface-visibility: hidden;
+}
+
+/* Tapa. Es la cara que mira al espectador y ocupa la cubierta entera. */
+.book-closed__face--cover {
+    @apply inset-0 overflow-hidden rounded-[2px_7px_7px_2px];
+
+    transform: translateZ(calc(var(--book-thickness) / 2));
+}
+
+.book-closed__cover-image {
+    @apply absolute inset-0 size-full object-cover;
+}
+
+/* El oscurecido y el brillo van horneados en la textura en el original; aquí son
+   dos capas sobre la foto, que dan el mismo relieve sin canvas ni WebGL. */
+.book-closed__cover-veil {
+    @apply absolute inset-0;
+
+    background: linear-gradient(
+        180deg,
+        rgb(10 10 26 / 0.38) 0%,
+        rgb(10 10 26 / 0.3) 45%,
+        rgb(10 10 26 / 0.68) 100%
+    );
+}
+
+.book-closed__cover-content {
+    @apply absolute inset-0 flex flex-col items-center justify-center gap-0.5 p-[12%] text-center text-white;
+}
+
+.book-closed__cover-line {
+    @apply font-extrabold leading-[1.18] tracking-tight;
+
+    /* El rótulo escala con el libro, como la textura del modelo. */
+    font-size: calc(var(--book-cover-width) * 0.15);
+    text-shadow: 0 2px 22px rgb(0 0 0 / 0.6);
+}
+
+.book-closed__shine {
+    @apply pointer-events-none absolute inset-0;
+
+    background: linear-gradient(
+        100deg,
+        transparent 20%,
+        rgb(255 255 255 / 0.08) 40%,
+        transparent 55%
+    );
+}
+
+/* Lomo: la cara que mira a la izquierda, la que se ve con el giro de reposo. */
+.book-closed__face--spine {
+    @apply left-0 h-(--book-height) w-(--book-thickness) rounded-[3px_0_0_3px];
+
+    transform:
+        translateX(calc(var(--book-thickness) / -2))
+        translateZ(calc(var(--book-thickness) / 2))
+        rotateY(-90deg);
+    background: linear-gradient(
+        90deg,
+        var(--book-ink) 0%,
+        var(--book-ink-light) 55%,
+        var(--book-ink) 100%
+    );
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.35);
+}
+
+/* Canto: la cara derecha, donde se ven los bordes de las páginas.
+
+   Las rayas del canto van con tramos duros (dos paradas por color) y no en
+   degradado: un degradado de pocos píxeles se remuestrea al tamaño real de la
+   pantalla y el navegador lo funde en una banda gris sucia, que es esa cosa
+   oscura entre las páginas. Un tramo de color sólido no tiene ese problema
+   porque no hay nada que mezclar. */
+.book-closed__face--foreedge {
+    @apply right-0 h-(--book-height) w-(--book-thickness) rounded-r-[3px];
+
+    transform:
+        translateX(calc(var(--book-thickness) / 2))
+        translateZ(calc(var(--book-thickness) / 2))
+        rotateY(90deg);
+    background: repeating-linear-gradient(
+        180deg,
+        #f8f4e7 0px,
+        #f8f4e7 5px,
+        #e4ddc7 5px,
+        #e4ddc7 6px
+    );
+}
+
+@keyframes book-bob {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+/* ==========================================================================
+   Internos de `page-flip`
+   ========================================================================== */
+
+.stf__wrapper {
+    @apply relative h-full w-full box-border;
+}
+
+.stf__item {
+    @apply overflow-hidden select-none;
+
+    /* Permite desplazar una hoja con el dedo en vertical, que es donde vive el
+       texto, sin que el motor entienda que se está intentando voltear. */
+    touch-action: pan-y;
+}
+
+.stf__item img {
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+}
+
+/* El cuerpo de una hoja de papel, cuando su texto no cabe entero en el alto
+   disponible. Sin esto se ve la barra de scroll de fábrica del sistema, con
+   sus flechitas de subir y bajar: rompe la ilusión de estar leyendo papel. Una
+   barra fina y sin flechas, del color de la tinta, pasa desapercibida. */
+.book-page__body {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.25) transparent;
+}
+
+.book-page__body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.book-page__body::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+}
+
+.book-page__body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.book-page__body::-webkit-scrollbar-thumb {
+    background: rgb(0 0 0 / 0.25);
+    border-radius: 999px;
+}
+
+/* ==========================================================================
+   Entrada del contenido de cada hoja
+   --------------------------------------------------------------------------
+   Las hojas se marcan con `data-page-shown` cuando pasan a verse, y el retardo
+   de cada bloque lo escribe el visor en `--book-delay`. Así el escalonado vive
+   en el CSS y el orden, en los datos.
+   ========================================================================== */
+
+.stf__item [data-book-reveal] {
+    @apply translate-y-3.5 opacity-0;
+
+    transition:
+        opacity 0.45s ease var(--book-delay, 0s),
+        transform 0.45s ease var(--book-delay, 0s);
+}
+
+.stf__item[data-page-shown] [data-book-reveal] {
+    @apply translate-y-0 opacity-100;
+}
+
+/* ==========================================================================
+   Sin movimiento
+   --------------------------------------------------------------------------
+   Si no hay animación, el visor no recibe `transitionend` y el resultado lo
+   ponen sus temporizadores de seguridad. Aquí solo se quitan las transiciones.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .book-closed__float {
+        animation: none;
+    }
+
+    .book-viewer__frame,
+    .book-viewer__inner,
+    .stf__item [data-book-reveal] {
+        transition: none;
+    }
+
+    .stf__item [data-book-reveal] {
+        @apply translate-y-0 opacity-100;
+    }
+}

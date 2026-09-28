@@ -4,7 +4,7 @@
    ========================================================================== */
 
 :root {
-    --home-accent: #472D82;
+    --home-accent: #493c83;
     --home-accent-strong: #695DA9;
     --home-ink: rgb(96, 96, 98);
     --hero-step: 7s;
@@ -120,7 +120,7 @@
 }
 
 .home-cta--primary:hover {
-    background-color: var(--home-accent-strong);
+    @apply bg-(--home-accent-strong)
 }
 
 .home-cta--ghost {

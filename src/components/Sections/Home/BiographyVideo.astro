@@ -1,5 +1,5 @@
 ---
-import { Section, Tipography, Link } from "@components";
+import { Section, Tipography, Link, Video } from "@components";
 
 interface Props {
   title: string;
@@ -59,13 +59,13 @@ const { title, description, buttons, video } = Astro.props;
     </div>
 
     <div class="lg:col-span-6 lg:origin-left lg:scale-110">
-      {/* TODO: FALTA CREAR UN COMPONENTE VIDEO E IMPORTARLO TANTO AQUI Y EN EL LIBRO */}
-      <figure class="w-full h-full m-0 shadow-md">
-          <video class="block aspect-16/10 w-full object-cover" controls playsinline preload="metadata">
-            <source src={video.url} type={video.type} />
-            Your browser does not support the video tag.
-          </video>
-      </figure>
+      <Video
+        src={video.url}
+        type={video.type}
+        poster={video.poster}
+        title={title}
+        class="shadow-md"
+      />
     </div>
   </div>
 </Section>

@@ -1,5 +1,5 @@
 ---
-import { Link } from "@components";
+import { Link, Button } from "@components";
 import { NAVBAR } from "@constant";
 // `--home-accent` vive aquí, y el navbar lo necesita en todas las páginas.
 import "@styles/home.css";
@@ -34,12 +34,12 @@ const links = [
   class="group fixed top-0 z-50 w-full border-b border-transparent text-white transition-[background-color,box-shadow] duration-300 data-[solid=true]:bg-(--home-accent) data-[solid=true]:border-white/10 data-[solid=true]:shadow-md"
 >
   <div class="page-container flex h-16 items-center justify-between">
-    <a
+    <Link
       href="/"
       class="text-xl font-bold tracking-tight text-white no-underline before:hidden after:hidden transition-transform hover:scale-105"
     >
       M<span class="text-indigo-300">.</span>R<span class="text-indigo-300">.</span>V
-    </a>
+  </Link>
 
     <ul class="hidden items-center gap-6 md:flex">
       {
@@ -60,13 +60,14 @@ const links = [
       }
     </ul>
 
-    <button
+    <Button
+      variant="ghost"
       id="menu-toggle"
       type="button"
       aria-controls="mobile-menu"
       aria-expanded="false"
       aria-label="Abrir menú"
-      class="relative grid size-10 place-items-center md:hidden"
+      className="relative grid size-10 place-items-center md:hidden"
     >
       <span
         aria-hidden="true"
@@ -80,7 +81,7 @@ const links = [
         aria-hidden="true"
         class="absolute h-0.5 w-6 translate-y-2 rounded-full bg-white transition-transform duration-300 group-data-[menu-open=true]:translate-y-0 group-data-[menu-open=true]:-rotate-45"
       ></span>
-    </button>
+  </Button>
   </div>
 </nav>
 

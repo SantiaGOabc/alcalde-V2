@@ -1,0 +1,354 @@
+@reference "tailwindcss";
+/* ==========================================================================
+   Gestión — tarjeta violeta
+   --------------------------------------------------------------------------
+   La variante que se renderiza hoy: selector por pastillas + desplegable, ficha
+   de la obra en tarjeta violeta redondeada y tira de miniaturas flotante.
+
+   La otra variante del visor (índice a la izquierda, esquinas rectas) sigue
+   viva en `management.css` y en `ProjectsViewerEditorial/`. Por eso estas
+   clases llevan el prefijo `.gestion-card-`: las dos hojas se importan a la vez
+   desde `Management.astro` y comparten nombres de clase que se pisarían
+   (.gestion-mini-item, .gestion-mini-contador, .gestion-punto, ...).
+
+   Colores: se usa el morado de marca del sitio (--brand-primary) para que no
+   convivan dos violetas, y un lila local para los acentos (kicker, puntos de
+   avance, aro de la miniatura activa), que sobre el morado oscuro necesitan
+   más contraste del que da la marca.
+   ========================================================================== */
+
+:root {
+    /* El mismo morado del navbar y el footer. */
+    --gestion-violeta: var(--brand-primary, #472d82);
+    /* Acento claro: sobre el violeta, el morado de marca no se lee. */
+    --gestion-lilac: #c9b8e8;
+
+    /* Radios. Se escriben a mano a propósito: este proyecto no sobrescribe los
+       tokens --radius-* de Tailwind, así que `rounded-xl` saldría 12px en vez
+       de los 24px con los que se diseñó la tarjeta. */
+    --gestion-r-tarjeta: 2.2rem; /* 35.2px, la esquina firma del diseño */
+    --gestion-r-panel: 1rem; /* barra de miniaturas y desplegable */
+    --gestion-r-item: 1.5rem; /* ítems del desplegable */
+    --gestion-r-chip: 1rem; /* miniaturas y flechitas */
+    --gestion-r-mini: 0.5rem; /* contador */
+
+    /* Capa local: solo ordena hijos de la tarjeta. */
+    --gestion-card-z-media: 10;
+}
+
+.gestion-card-vacio {
+    @apply py-16 text-center text-sm text-gray-500;
+}
+
+/* ==========================================================================
+   Envoltorio: pastillas arriba, tarjeta abajo
+   ========================================================================== */
+
+.gestion-card-visor {
+    @apply mx-auto flex w-full flex-col items-center;
+}
+
+/* Las flechas flotan en el canal que deja el padding lateral, así que la
+   tarjeta se separa del borde de la pantalla. */
+.gestion-card-carrusel {
+    @apply relative mt-8 w-full px-12 sm:px-16 lg:px-20;
+}
+
+.gestion-card-flecha {
+    @apply absolute top-1/2 z-10 -translate-y-1/2 transition-transform duration-200 hover:scale-110 active:scale-95;
+}
+
+.gestion-card-flecha--prev {
+    @apply left-0;
+}
+
+.gestion-card-flecha--next {
+    @apply right-0;
+}
+
+/* ==========================================================================
+   Tarjeta de la obra
+   ========================================================================== */
+
+.gestion-card {
+    @apply grid overflow-hidden border border-white/15 bg-(--gestion-violeta) text-white shadow-2xl;
+    border-radius: var(--gestion-r-tarjeta);
+    isolation: isolate;
+}
+
+.gestion-card-media {
+    @apply relative w-full bg-(--gestion-violeta);
+    aspect-ratio: 16 / 10;
+    z-index: var(--gestion-card-z-media);
+}
+
+/* La foto grande es un botón porque abre el lightbox. El `disabled` cubre el
+   caso de una obra sin galería, que igual muestra la portada. */
+.gestion-card-foto {
+    @apply absolute inset-0 block size-full cursor-zoom-in disabled:cursor-default;
+}
+
+.gestion-card-media img,
+.gestion-card-media video {
+    @apply absolute inset-0 size-full object-cover;
+    animation: gestion-card-fade-in 0.4s ease both;
+}
+
+.gestion-card-iniciales {
+    @apply absolute inset-0 grid place-items-center text-8xl font-black tracking-tighter text-white/10 select-none;
+}
+
+/* Velo inferior: le da contraste a la barra de miniaturas que va encima. */
+.gestion-card-velo {
+    @apply pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-slate-950/85 via-slate-950/30 to-transparent;
+}
+
+.gestion-card-texto {
+    @apply flex flex-col justify-between p-7 sm:p-9 lg:p-12;
+}
+
+.gestion-card-cabecera {
+    @apply mb-4 flex flex-wrap items-center justify-between gap-3;
+}
+
+.gestion-card-kicker {
+    @apply min-w-0 flex-1 truncate text-xs font-bold tracking-[0.24em] text-(--gestion-lilac) uppercase;
+}
+
+/* Estado de la obra: un punto de color, sin caja. */
+.gestion-card-estado {
+    @apply inline-flex shrink-0 items-center gap-2 text-[11px] font-semibold tracking-[0.14em] text-white/80 uppercase;
+}
+
+.gestion-card-estado::before {
+    @apply size-2 rounded-full bg-white/40;
+    content: '';
+}
+
+/* Tonos 400 en vez de los 500/600 del diseño sobre papel: el fondo acá es
+   violeta oscuro, y los tonos claros se leen mucho mejor. */
+.gestion-card-estado[data-estado='concluido']::before {
+    @apply bg-emerald-400;
+}
+
+.gestion-card-estado[data-estado='en-ejecucion']::before {
+    @apply bg-amber-400;
+}
+
+.gestion-card-estado[data-estado='en-planificacion']::before {
+    @apply bg-sky-400;
+}
+
+.gestion-card-titulo {
+    @apply line-clamp-2 text-2xl font-bold tracking-tight text-white text-balance sm:text-3xl lg:text-4xl;
+}
+
+.gestion-card-desc {
+    @apply mt-4 line-clamp-4 text-base text-white/90 lg:line-clamp-5 lg:text-lg;
+}
+
+/* Pie: "Obra 2 de 6" y los puntos de avance */
+.gestion-card-pie {
+    @apply mt-8 flex items-center justify-between gap-4 border-t border-white/10 pt-5;
+}
+
+.gestion-card-contador {
+    @apply text-xs font-semibold tracking-[0.22em] text-white/70 uppercase;
+}
+
+.gestion-card-contador strong {
+    @apply font-bold text-white;
+}
+
+.gestion-card-puntos {
+    @apply flex items-center gap-1.5;
+}
+
+.gestion-card-punto {
+    @apply h-1.5 w-2 cursor-pointer border-0 rounded-full bg-white/20 transition-all duration-300 hover:bg-white/40;
+}
+
+.gestion-card-punto--activo {
+    @apply w-6 bg-(--gestion-lilac);
+}
+
+@media (min-width: 40rem) {
+    .gestion-card {
+        @apply grid-cols-12;
+        height: 34rem;
+    }
+
+    .gestion-card-media {
+        @apply col-span-7 h-full;
+        aspect-ratio: auto;
+    }
+
+    .gestion-card-texto {
+        @apply col-span-5 h-full;
+    }
+}
+
+/* ==========================================================================
+   Pastillas de categoría
+   ========================================================================== */
+
+.gestion-card-pastillas {
+    @apply flex flex-wrap items-center justify-center gap-2.5;
+}
+
+.gestion-card-pastilla {
+    @apply cursor-pointer rounded-full border px-5 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-all duration-200;
+}
+
+.gestion-card-pastilla--activa {
+    @apply border-white bg-(--gestion-violeta)/20 text-slate-950 shadow-lg shadow-white/10;
+}
+
+.gestion-card-pastilla--inactiva {
+    @apply border-white/15 bg-(--gestion-violeta) text-white/90 hover:border-white/40 hover:bg-(--gestion-violeta)/80 hover:text-white;
+}
+
+.gestion-card-pastilla--mas {
+    @apply inline-flex items-center gap-2;
+}
+
+/* ==========================================================================
+   Desplegable "Más categorías"
+   ========================================================================== */
+
+.gestion-card-mas {
+    @apply relative;
+}
+
+/* Solo opacidad en la animación: el centrado horizontal de este bloque no debe
+   depender de `transform`, así que la entrada nunca lo puede pisar. */
+.gestion-card-menu {
+    @apply absolute top-full z-50 mt-3 w-[min(88vw,340px)] -translate-x-1/2 origin-top sm:right-0 sm:w-[460px] sm:origin-top-right sm:translate-x-0 md:w-[540px];
+    animation: gestion-card-menu-in 0.2s ease both;
+}
+
+.gestion-card-menu-panel {
+    @apply relative overflow-hidden border border-white/15 bg-(--gestion-violeta)/95 shadow-2xl shadow-black/80 backdrop-blur-xl;
+    border-radius: var(--gestion-r-panel);
+}
+
+.gestion-card-menu-cabecera {
+    @apply flex items-center justify-between border-b border-white/10 px-4 pt-3 pb-2;
+}
+
+.gestion-card-menu-titulo {
+    @apply text-[11px] font-bold tracking-[0.18em] text-slate-400 uppercase;
+}
+
+.gestion-card-menu-conteo {
+    @apply text-sm text-slate-200 tabular-nums;
+}
+
+.gestion-card-menu-cuadro {
+    @apply grid max-h-75 grid-cols-2 gap-1.5 overflow-y-auto p-2 sm:grid-cols-3;
+    scrollbar-width: none;
+}
+
+.gestion-card-menu-cuadro::-webkit-scrollbar {
+    display: none;
+}
+
+.gestion-card-menu-item {
+    @apply flex cursor-pointer items-center justify-between gap-2 px-3 py-2 text-left text-xs font-medium transition-all;
+    border-radius: var(--gestion-r-item);
+}
+
+.gestion-card-menu-item--activo {
+    @apply border border-(--gestion-lilac)/40 bg-(--gestion-violeta) font-bold text-white;
+}
+
+.gestion-card-menu-item--inactivo {
+    @apply border border-transparent text-slate-300 hover:border-white/10 hover:bg-white/5 hover:text-white;
+}
+
+.gestion-card-menu-check {
+    @apply shrink-0 text-(--gestion-lilac);
+}
+
+/* Pico que une el botón con el panel. */
+.gestion-card-menu-pico {
+    @apply absolute -top-[11px] left-1/2 block size-3 -translate-x-1/2 rotate-45 border-t border-l border-white/15 bg-slate-900/95 sm:right-8 sm:translate-x-0;
+    border-radius: 2px;
+}
+
+/* ==========================================================================
+   Barra de miniaturas (flota sobre la foto)
+   ========================================================================== */
+
+.gestion-card-mini {
+    @apply absolute inset-x-3 bottom-3 flex items-center gap-2.5 border border-white/15 bg-(--gestion-violeta) px-3 py-2 shadow-lg sm:inset-x-4 sm:bottom-4;
+    border-radius: var(--gestion-r-panel);
+    z-index: var(--gestion-card-z-media);
+}
+
+.gestion-card-mini-flecha {
+    @apply grid size-8 shrink-0 cursor-pointer place-items-center border border-white/20 bg-white/5 text-white transition hover:bg-white/15 active:scale-95;
+    border-radius: var(--gestion-r-chip);
+}
+
+.gestion-card-mini-tira {
+    @apply flex min-w-0 flex-1 snap-x snap-mandatory items-center gap-2 overflow-x-auto py-0.5;
+    scrollbar-width: none;
+}
+
+.gestion-card-mini-tira::-webkit-scrollbar {
+    display: none;
+}
+
+.gestion-card-mini-item {
+    @apply relative aspect-[16/10] w-14 shrink-0 snap-start cursor-pointer overflow-hidden transition duration-150 sm:w-[4.5rem];
+    border-radius: var(--gestion-r-chip);
+}
+
+.gestion-card-mini-item--activa {
+    @apply ring-2 ring-(--gestion-lilac) ring-offset-2;
+    /* El offset tiene que ser el color de la barra, no un gris: el aro se
+       dibuja en el padding de la barra, que es violeta. */
+    --tw-ring-offset-color: var(--gestion-violeta);
+}
+
+.gestion-card-mini-item--inactiva {
+    @apply opacity-70 hover:opacity-100;
+}
+
+.gestion-card-mini-play {
+    @apply grid size-5 place-items-center rounded-full bg-white/95 text-slate-900 shadow;
+}
+
+.gestion-card-mini-contador {
+    @apply shrink-0 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/90 tabular-nums;
+    border-radius: var(--gestion-r-mini);
+}
+
+@keyframes gestion-card-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes gestion-card-menu-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Las dos animaciones son transiciones cortas de opacidad. Con
+   `prefers-reduced-motion` no hay nada que ver salvo el cambio de contenido. */
+@media (prefers-reduced-motion: reduce) {
+    .gestion-card-media img,
+    .gestion-card-media video,
+    .gestion-card-menu {
+        animation: none;
+    }
+}

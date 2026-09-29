@@ -1,11 +1,13 @@
 ---
 /**
- * Visor de Gestión — tarjeta violeta.
+ * Visor de Gestión — VARIANTE EDITORIAL (la propuesta anterior).
  *
- * La isla no necesita saber de dónde salen las obras: se las pasa ya
- * agrupadas por categoría y con las imágenes optimizadas, que es lo único que
- * hace `prepararCategorias`. La variante editorial de
- * `../ProjectsViewerEditorial` usa el mismo extractor.
+ * Índice de áreas a la izquierda, ficha de la obra a la derecha y esquinas
+ * rectas, con filetes finos. No es la isla que se renderiza hoy — esa es
+ * `../ProjectsViewer`, la tarjeta violeta.
+ *
+ * Se conserva entera para poder volver a ella: en `Management.astro` basta
+ * cambiar el import (y el CSS sigue importado, así que no hay nada más que tocar).
  */
 import type { Obra } from '@constant';
 import { prepararCategorias } from '../visorObrasData';

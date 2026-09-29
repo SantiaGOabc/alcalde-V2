@@ -9,16 +9,17 @@ interface ArrowButtonProps {
 }
 
 const BASE =
-    'grid shrink-0 place-items-center rounded-full border border-white/20 bg-black/25 text-white backdrop-blur-lg transition-all duration-200 hover:bg-black/45 active:scale-95 disabled:pointer-events-none disabled:opacity-40';
+    'grid shrink-0 place-items-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-md transition-colors duration-200 hover:border-(--brand-primary) hover:bg-(--brand-primary) hover:text-white active:scale-95 disabled:pointer-events-none disabled:opacity-40';
 
 const SIZES = {
-    carousel: 'size-9 lg:size-10',
+    carousel: 'size-10 sm:size-12 lg:size-14',
     modal: 'size-11 p-3 lg:size-12',
 } as const;
 
 /**
- * Flecha de carrusel/lightbox compartida. Reemplaza al `ArrowButton` que
- * tenía el proyecto origen, con las clases del tema de este proyecto.
+ * Flecha de carrusel/lightbox compartida. El tamaño lo elige la variante, no el
+ * componente: la tarjeta violeta la monta sobre el fondo de la sección con
+ * `absolute` y le pasa sus propias clases de posición.
  */
 export default function ArrowButton({
     direction,

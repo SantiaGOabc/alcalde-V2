@@ -1,6 +1,16 @@
 ---
 import { Link, Button } from "@components";
 import { NAVBAR } from "@constant";
+// El logo se IMPORTA, no se escribe como ruta a mano. Un `src` escrito a mano lo
+// resuelve el navegador contra la URL de la página, así que el mismo camino
+// funcionaba en la home y daba 404 en `/about` o `/management`.
+//
+// Se pinta con un `<img>` normal y NO con `SmartImage` a propósito: `SmartImage`
+// manda las imágenes importadas por el servicio de imágenes de Astro, que necesita
+// `sharp`, y sin él el endpoint `/_image` responde 500 y el logo desaparece. Un
+// logo de 4 KB no gana nada optimizándose, así que se sirve el archivo tal cual
+// (Vite le pone un hash al nombre en la compilación) y no depende de nada.
+import logo from "@/assets/logo/logo-alcalde.png";
 // `--home-accent` vive aquí, y el navbar lo necesita en todas las páginas.
 import "@styles/home.css";
 
@@ -38,8 +48,16 @@ const links = [
       href="/"
       class="text-xl font-bold tracking-tight text-white no-underline before:hidden after:hidden transition-transform hover:scale-105"
     >
-      M<span class="text-indigo-300">.</span>R<span class="text-indigo-300">.</span>V
-  </Link>
+      <img
+        src={logo.src}
+        alt="Manfred Reyes Villa"
+        width={logo.width}
+        height={logo.height}
+        loading="eager"
+        decoding="async"
+        class="h-10 w-auto"
+      />
+    </Link>
 
     <ul class="hidden items-center gap-6 md:flex">
       {

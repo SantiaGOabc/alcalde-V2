@@ -1,5 +1,7 @@
 import type { ClosingContent } from "@types";
 import { CONTENT_HERO_HOME } from "../home/home";
+// La foto de la persona es local, de `public/alcalde/` (ver `src/utils/images.ts`).
+import { alcalde } from "@utils";
 
 /** Mismo hero (componente e imágenes) que la home, con su propio mensaje. */
 export const CONTENT_HERO_ABOUT = {
@@ -15,7 +17,7 @@ export const CONTENT_HERO_ABOUT = {
 export const SECTION_ABOUT_PERSON = {
   kicker: "Antes que el cargo",
   title: "Soy más que un título en una puerta",
-  imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_Z2rxRve.webp",
+  imageURL: alcalde("alcalde.jpg"),
   imageAlt: "Manfred Reyes Villa",
   imageCaption: "Manfred Reyes Villa Bacigalupi",
   paragraphs: [

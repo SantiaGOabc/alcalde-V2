@@ -17,12 +17,19 @@
  * galería que se recorre. Si `imagenes` está vacía, la tarjeta usa sola la
  * portada. Si no, la portada se usa como poster/fallback.
  *
- * Las fotos salen del deploy actual (manfredreyesvilla.netlify.app), igual
- * que el resto del contenido del sitio. Cuando haya un CMS o una API que las
- * sirva, este arreglo pasa a ser la respuesta transformada y nada más cambia.
+ * ── Sobre las fotos ────────────────────────────────────────────────────
+ * Las fotos salen de `public/`, nombradas con el ayudante de su carpeta
+ * (`raiz`, `alcalde` — ver `src/utils/images.ts`). Antes venían del deploy
+ * viejo de Netlify, que ya no responde y dejaba las tarjetas sin foto.
+ *
+ * OJO, dos de ellas son de relleno: no hay foto local del Puente Cala Cala ni
+ * del Parque Vial, así que se pone una foto de la ciudad para que la tarjeta no
+ * quede vacía. Cuando existan, se copian a `public/` y se cambian esas líneas.
  */
 
 import type { Encuadre } from '@types';
+import { alcalde, raiz } from '@utils';
+
 
 export interface ImagenObra {
     tipo?: 'foto' | 'video';
@@ -47,8 +54,6 @@ export interface Obra {
     imagenes?: ImagenObra[];
 }
 
-const FOTO = 'https://manfredreyesvilla.netlify.app/_astro/';
-
 export const OBRAS_GESTION: Obra[] = [
     {
         categoria: 'puentes',
@@ -58,15 +63,15 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Puentes',
         portada: {
-            src: `${FOTO}trabajos_plaza_de_las_banderas_931_2wD2Rc.webp`,
-            alt: 'Puente Cala Cala - Primer paso a desnivel',
+            src: alcalde('cinta.jpg'),
+            alt: 'Corte de cinta de una obra',
             encuadre: 'centro',
         },
         imagenes: [
             {
                 tipo: 'foto',
-                src: `${FOTO}trabajos_plaza_de_las_banderas_931_2wD2Rc.webp`,
-                alt: 'Vista del Puente Cala Cala',
+                src: alcalde('cinta.jpg'),
+                alt: 'Corte de cinta de una obra',
             },
         ],
     },
@@ -78,15 +83,15 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Puentes',
         portada: {
-            src: `${FOTO}parque_vial_5wRQF.webp`,
-            alt: 'Distribuidor Muyurina',
+            src: raiz('cocha.jpg'),
+            alt: 'Panorámica de la ciudad de Cochabamba',
             encuadre: 'centro',
         },
         imagenes: [
             {
                 tipo: 'foto',
-                src: `${FOTO}parque_vial_5wRQF.webp`,
-                alt: 'Distribuidor Muyurina',
+                src: raiz('cocha.jpg'),
+                alt: 'Panorámica de la ciudad de Cochabamba',
             },
         ],
     },
@@ -98,20 +103,20 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Espacio público',
         portada: {
-            src: `${FOTO}playa_turquesa_cona_cona.jfif_Z1uMk5q.webp`,
+            src: raiz('playaTurquesa.JPG'),
             alt: 'Complejo Recreacional Coña Coña - Playa Turquesa',
             encuadre: 'centro',
         },
         imagenes: [
             {
                 tipo: 'foto',
-                src: `${FOTO}playa_turquesa_cona_cona.jfif_Z1uMk5q.webp`,
+                src: raiz('playaTurquesa.JPG'),
                 alt: 'La playa artificial de Playa Turquesa',
             },
             {
                 tipo: 'video',
                 src: 'https://xfkfvabjxgfwjktaxhcs.supabase.co/storage/v1/object/public/media/videos/01_PLAYA_TURQUESA.mp4',
-                poster: `${FOTO}playa_turquesa_cona_cona.jfif_Z1uMk5q.webp`,
+                poster: raiz('playaTurquesa.JPG'),
                 alt: 'Video de la Playa Turquesa',
             },
         ],
@@ -124,20 +129,20 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'en-ejecucion',
         area: 'Medio ambiente',
         portada: {
-            src: `${FOTO}Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_2hX1Q8.webp`,
+            src: raiz('lagunaAlalay.jpeg'),
             alt: 'Laguna Alalay en proceso de recuperación',
             encuadre: 'centro',
         },
         imagenes: [
             {
                 tipo: 'foto',
-                src: `${FOTO}Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_2hX1Q8.webp`,
+                src: raiz('lagunaAlalay.jpeg'),
                 alt: 'La laguna Alalay recuperada',
             },
             {
                 tipo: 'video',
                 src: 'https://xfkfvabjxgfwjktaxhcs.supabase.co/storage/v1/object/public/media/videos/02_LAGUNA_ALALAY.mp4',
-                poster: `${FOTO}Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_2hX1Q8.webp`,
+                poster: raiz('lagunaAlalay.jpeg'),
                 alt: 'Video de la Laguna Alalay',
             },
         ],
@@ -150,14 +155,14 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Espacio público',
         portada: {
-            src: `${FOTO}trabajos_plaza_de_las_banderas_931_2wD2Rc.webp`,
-            alt: 'Obras en la Plaza de las Banderas',
+            src: raiz('plazaBanderas.jpg'),
+            alt: 'Plaza de las Banderas recuperada',
             encuadre: 'centro',
         },
         imagenes: [
             {
-                src: `${FOTO}trabajos_plaza_de_las_banderas_931_2wD2Rc.webp`,
-                alt: 'Los trabajos de la Plaza de las Banderas',
+                src: raiz('plazaBanderas.jpg'),
+                alt: 'La Plaza de las Banderas',
             },
         ],
     },
@@ -169,13 +174,13 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Ciudad Jardín',
         portada: {
-            src: `${FOTO}parque_vial_5wRQF.webp`,
-            alt: 'Parque Vial renovado',
+            src: raiz('teleferico.jpg'),
+            alt: 'El centro de la ciudad y sus áreas verdes',
             encuadre: 'centro',
         },
         imagenes: [
             {
-                src: `${FOTO}parque_vial_5wRQF.webp`,
+                src: raiz('teleferico.jpg'),
                 alt: 'El Parque Vial después de la renovación',
             },
         ],

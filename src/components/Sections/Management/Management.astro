@@ -23,21 +23,37 @@ const summary = `${pad(obras.length)} ${SECTION_MANAGEMENT_STATS.works} · ${pad
 ---
 
 <MainLayout title="Gestión" transparentNavbar>
-  <Hero id={sectionId("management.hero")} title={hero.title} description={hero.description} images={hero.images} />
+  <Hero
+    id={sectionId("management.hero")}
+    title={hero.title}
+    description={hero.description}
+    images={hero.images}
+  />
 
-  <Section variant="secondary" className="gestion-lienzo pt-20 pb-24 sm:pt-28 lg:pt-32 lg:pb-32">
+  <Section
+    variant="secondary"
+    className="gestion-lienzo pt-20 pb-24 sm:pt-28 lg:pt-32 lg:pb-32"
+  >
     <div class="page-container">
-      <header id={sectionId("management.header")} data-reveal class="border-t-2 border-gray-900 pt-5">
-        <div class="flex items-baseline justify-between gap-6">
-          <Tipography variant="eyebrow" color="accent">{SECTION_OBRAS_GESTION.kicker}</Tipography>
-          <Tipography variant="eyebrow" color="muted" class="tabular-nums">{summary}</Tipography>
-        </div>
-
+      <header
+        id={sectionId("management.header")}
+        data-reveal
+        class="border-t-2 border-gray-900 pt-5"
+      >
         <div class="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-16">
-          <Tipography as="h2" variant="display" class="lg:col-span-8">{header.title}</Tipography>
-          <Tipography variant="lead" color="secondary" class="lg:col-span-4 lg:self-end">
-            {header.description}
-          </Tipography>
+          <Tipography as="h2" variant="display" class="lg:col-span-8"
+            >{header.title}</Tipography
+          >
+          <div class="lg:col-span-4 lg:self-end">
+            <Tipography
+              variant="lead"
+              color="secondary"
+            >
+              {header.description}
+            </Tipography>
+            <Tipography variant="eyebrow" color="muted" class="tabular-nums mt-4"
+              >{summary}</Tipography>
+          </div>
         </div>
       </header>
 

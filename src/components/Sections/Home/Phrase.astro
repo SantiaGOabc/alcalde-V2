@@ -1,5 +1,5 @@
 ---
-import { Section, SafeImage } from "@components";
+import { Section, SafeImage, Tipography } from "@components";
 
 interface Props {
   phrase: string;
@@ -33,7 +33,7 @@ const {
 >
   <div
     class:list={[
-      "page-container grid items-center gap-14 lg:grid-cols-12 lg:gap-20",
+      "phrase-item__content page-container grid items-center gap-14 lg:grid-cols-12 lg:gap-20",
     ]}
   >
     <div
@@ -42,6 +42,15 @@ const {
         reverse && "lg:order-2",
       ]}
     >
+      <blockquote class="m-0">
+        <Tipography
+          as="cite"
+          variant="title"
+          class="block font-(family-name:--font-italic) font-normal italic"
+        >
+          “{phrase}”
+        </Tipography>
+      </blockquote>
     </div>
 
     <figure

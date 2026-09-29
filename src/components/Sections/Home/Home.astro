@@ -1,16 +1,17 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { Hero, BiographyVideo, Phrase, BeforeAfter, Book } from "@components";
+import { Hero, BiographyVideo, Phrase, BeforeAfter, Book, TikTokFeed } from "@components";
 import { sectionId } from "@/cms/anchors";
 import { getContent } from "@/lib/server";
 import "@styles/home.css";
 
-const [hero, biography, phrasesContent, beforeAfter, book] = await Promise.all([
+const [hero, biography, phrasesContent, beforeAfter, book, tiktok] = await Promise.all([
   getContent("home.hero"),
   getContent("home.biography"),
   getContent("home.phrases"),
   getContent("home.beforeAfter"),
   getContent("home.book"),
+  getContent("home.tiktok"),
 ]);
 
 const phrases = Object.entries(phrasesContent).map(
@@ -74,6 +75,9 @@ const phrases = Object.entries(phrasesContent).map(
       description={book.description}
       button={book.button}
     />
+  </div>
+  <div id={sectionId("home.tiktok")}>
+    <TikTokFeed/>
   </div>
 </MainLayout>
 

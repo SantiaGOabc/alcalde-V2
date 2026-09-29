@@ -1,4 +1,7 @@
 import { SECTION_PHRASES_CONTENT } from "../home/home";
+// La foto principal de cada pasión sale de las frases de la home (se mantiene así
+// a propósito); la del collage se elige aquí, también local.
+import { alcalde, raiz } from "@utils";
 
 export interface PasionImagen {
   src: string;
@@ -48,7 +51,7 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
     ],
     imagenes: [
       { src: SECTION_PHRASES_CONTENT.philosophy.imageURL, alt: "Manfred Reyes Villa" },
-      { src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0790_1zq6uG.webp", alt: "El alcalde en una obra" },
+      { src: alcalde("policia.jpeg"), alt: "Supervisión en obra" },
     ],
   },
   {
@@ -65,8 +68,8 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
       { titulo: "Lo que representan", texto: "El cimiento de cada meta alcanzada." },
     ],
     imagenes: [
-      { src: SECTION_PHRASES_CONTENT.family.imageURL, alt: "El alcalde compartiendo con escolares" },
-      { src: "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp", alt: "Fotografía familiar de Manfred Reyes Villa" },
+      { src: SECTION_PHRASES_CONTENT.family.imageURL, alt: "Una vecina de la comunidad" },
+      { src: alcalde("cinta.jpg"), alt: "Corte de cinta de una obra" },
     ],
   },
   {
@@ -86,7 +89,7 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
     ],
     imagenes: [
       { src: SECTION_PHRASES_CONTENT.pets.imageURL, alt: "Cercanía y protección a los animales" },
-      { src: "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_Z2rxRve.webp", alt: "Manfred Reyes Villa" },
+      { src: raiz("cocha.jpg"), alt: "Panorámica de la ciudad" },
     ],
   },
   {
@@ -103,8 +106,8 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
       { titulo: "Lo que defiendo", texto: "La identidad y el porvenir de la Llajta." },
     ],
     imagenes: [
-      { src: SECTION_PHRASES_CONTENT.community.imageURL, alt: "Espacios públicos recuperados en el centro de la ciudad" },
-      { src: "https://manfredreyesvilla.netlify.app/_astro/IMG_5929_ZxWrmu.webp", alt: "Plaza de las Banderas recuperada" },
+      { src: SECTION_PHRASES_CONTENT.community.imageURL, alt: "Los niños de la comunidad" },
+      { src: raiz("teleferico.jpg"), alt: "El centro de la ciudad" },
     ],
   },
 ];

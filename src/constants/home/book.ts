@@ -5,6 +5,10 @@ import type {
   BookPhoto,
   BookVideo,
 } from "@types";
+// Las rutas de `public/` no se escriben a mano: cada foto se nombra con el
+// ayudante de su carpeta (ver `src/utils/images.ts`), de modo que cambiar dónde
+// vive un archivo no obliga a recorrer el libro entero.
+import { alcalde, premio, raiz } from "@utils";
 import { SECTION_BOOK_CONTENT } from "./home";
 
 /* ==========================================================================
@@ -73,8 +77,10 @@ export const BOOK_META: BookMeta = {
    Fotografías
    --------------------------------------------------------------------------
    Las fotos están en `public/`, así que van como ruta y ya está: no hay que
-   importarlas ni registrar nada. Cuando se añada una, se escribe su ruta en
-   esta tabla y se le da un nombre, y la hoja correspondiente.
+   importarlas ni registrar nada. La ruta la pone el ayudante de la carpeta donde
+   vive cada una (`raiz`, `alcalde`, `premio`), así que aquí solo se escribe el
+   nombre del archivo y su texto alternativo. Cuando se añada una foto, se copia
+   a su carpeta, se registra en esta tabla con un nombre y se le da su hoja.
 
    `BookImage` acepta igual una URL, un archivo de `public/` o una imagen
    importada de `src/assets`, así que cambiar una de estas fotos por una
@@ -92,21 +98,21 @@ const titled = (
 ) => ({ ...image, name, ...extra });
 
 const PHOTO = {
-  cocha: photo("/cocha.jpg", "Panorámica de la ciudad de Cochabamba"),
-  alalay: photo("/lagunaAlalay.jpeg", "Laguna Alalay recuperada"),
-  turquesa: photo("/playaTurquesa.JPG", "Playa Turquesa, espacio público recuperado"),
-  banderas: photo("/plazaBanderas.jpg", "Plaza de las Banderas"),
-  teleferico: photo("/teleferico.jpg", "El teleférico y el centro de la ciudad"),
-  alcalde: photo("/alcalde/alcalde.jpg", "El alcalde trabajando"),
-  cinta: photo("/alcalde/cinta.jpg", "Corte de cinta de una obra"),
-  colegio: photo("/alcalde/colegio.webp", "Módulo educativo"),
-  ninos: photo("/alcalde/niños.webp", "Los niños de la comunidad"),
-  perrito: photo("/alcalde/perrito.webp", "Un perro de la comunidad"),
-  policia: photo("/alcalde/policia.jpeg", "Supervisión en obra"),
-  senora: photo("/alcalde/señora.webp", "Una vecina de la comunidad"),
-  premio1: photo("/premios/premio1.JPG", "Reconocimiento"),
-  premio2: photo("/premios/premio2.JPG", "Entrega de un premio"),
-  premio3: photo("/premios/premio3.jpeg", "Premio a la gestión municipal"),
+  cocha: photo(raiz("cocha.jpg"), "Panorámica de la ciudad de Cochabamba"),
+  alalay: photo(raiz("lagunaAlalay.jpeg"), "Laguna Alalay recuperada"),
+  turquesa: photo(raiz("playaTurquesa.JPG"), "Playa Turquesa, espacio público recuperado"),
+  banderas: photo(raiz("plazaBanderas.jpg"), "Plaza de las Banderas"),
+  teleferico: photo(raiz("teleferico.jpg"), "El teleférico y el centro de la ciudad"),
+  alcalde: photo(alcalde("alcalde.jpg"), "El alcalde trabajando"),
+  cinta: photo(alcalde("cinta.jpg"), "Corte de cinta de una obra"),
+  colegio: photo(alcalde("colegio.webp"), "Módulo educativo"),
+  ninos: photo(alcalde("niños.webp"), "Los niños de la comunidad"),
+  perrito: photo(alcalde("perrito.webp"), "Un perro de la comunidad"),
+  policia: photo(alcalde("policia.jpeg"), "Supervisión en obra"),
+  senora: photo(alcalde("señora.webp"), "Una vecina de la comunidad"),
+  premio1: photo(premio("premio1.JPG"), "Reconocimiento"),
+  premio2: photo(premio("premio2.JPG"), "Entrega de un premio"),
+  premio3: photo(premio("premio3.jpeg"), "Premio a la gestión municipal"),
 } as const;
 
 /** Video del libro. Cloudinary, igual que el video de la biografía. */

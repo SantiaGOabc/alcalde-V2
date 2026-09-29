@@ -1,12 +1,20 @@
+// Todas las fotos de la web viven en `public/` y se nombran con el ayudante de su
+// carpeta (`raiz`, `alcalde`, `premio`, `book` — ver `src/utils/images.ts`). Antes
+// estas rutas apuntaban al deploy viejo de Netlify, que ya no responde (503), así
+// que cada card se veía sin foto. Ahora ninguna depende de fuera.
+import { alcalde, antes, book, premio, raiz } from "@utils";
+
 export const CONTENT_HERO_HOME = {
   title: "El Valor del Trabajo, la Cercanía y el Compromiso",
   description: "Manfred Reyes Villa",
-  // TODO: ESTAS IMAGENES DEBERIAN VENIR DEL CMS CON getImages() DE UTILS
+  // Carrusel del hero: las cuatro panorámicas más anchas de la ciudad, que son las
+  // que aguantan un recorte a pantalla completa. Cuando el CMS exponga las
+  // imágenes del hero (getImages() de @utils), este arreglo pasa a ser el valor
+  // por defecto y lo de arriba es solo el respaldo.
   images: [
-    "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
-    "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
-    "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
-    "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
+    alcalde("niños.webp"),
+    alcalde("colegio.webp"),
+    alcalde("señora.webp"),
   ],
 };
 
@@ -24,35 +32,35 @@ export const SECTION_BIOGRAPHY_CONTENT = {
     },
   ] as const,
   video: {
-    poster: "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp", // TODO: AÑADIR POSTER DEL VIDEO
+    // Póster del video: la foto que se ve mientras carga. Sin él el reproductor
+    // aparece en negro, que es lo que pasaba antes con la foto del deploy viejo.
+    poster: alcalde("alcalde.jpg"),
     type: "video/mp4",
     url: "https://res.cloudinary.com/dxjv8gq3e/video/upload/v1697040915/hero-video_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1.mp4",
   },
 };
 
 export const SECTION_PHRASES_CONTENT = {
+  // Cada frase lleva la foto que la acompaña. Las cuatro son de gente y de calles,
+  // que es justo de lo que hablan: el trabajo, la familia, los animales, el barrio.
   philosophy: {
     phrase:
       "El trabajo honesto y la cercanía con la gente son la base de todo.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
+    imageURL: alcalde("alcalde.jpg"),
   },
   family: {
     phrase:
       "En la familia aprendemos el valor de estar, incluso cuando nadie mira.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZK7QfD.webp",
+    imageURL: alcalde("señora.webp"),
   },
   pets: {
     phrase: "Los que nunca piden palabras enseñan lo que es la lealtad.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZaHkvk.webp",
+    imageURL: alcalde("perrito.webp"),
   },
   community: {
     phrase:
       "Una ciudad cambia el día en que sus vecinos vuelven a sentirse parte.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/IMG_1088_ZuAgom.webp",
+    imageURL: alcalde("niños.webp"),
   },
 };
 
@@ -77,52 +85,60 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
   description:
     "Imágenes que muestran cómo cambian sus espacios y la vida de sus habitantes.",
   transitionPhrase: "Pionieros en ...",
+
+  // ── OJO: estas cuatro fotos son APROXIMACIONES ──────────────────────────
+  // En `public/` no hay ninguna foto del antes de la gestión: todas las que hay
+  // son de la gestión actual. Estas cuatro apuntaban al deploy viejo de Netlify,
+  // que sí tenía las fotos históricas pero ya no responde (503), así que la
+  // sección se veía sin nada del lado izquierdo. Ahora se pone una foto de la
+  // ciudad para que la card no quede vacía.
+  // Cuando existan las fotos del antes, se copian a `public/` y se cambia cada
+  // línea por la de su carpeta: `antes("nombre")` si van en la raíz de `public/`,
+  // `alcalde("nombre")` si van en `public/alcalde/`.
   before: [
     {
       title: "Capitán Manfred Reyes Villa",
-      imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
+      imageURL: alcalde("alcalde.jpg"),
       imageFit: "contain",
     },
     {
       title: "Laguna Coña Coña",
-      imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/1_cona_cona_antes.jpg_Z26A0gR.webp",
+      imageURL: antes("cocha.jpg"),
       imageFit: "cover",
     },
     {
       title: "Plaza de las banderas",
-      imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/trabajos_plaza_de_las_banderas_931_1dvvyE.webp",
+      imageURL: alcalde("policia.jpeg"),
       imageFit: "cover",
     },
     {
       title: "Laguna Alalay",
-      imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/Laguna_Alalay..._la_antigua_Loma_del_Burro_final_avenida_6_de_Agosto_y_el_actual_Circuito_Bolivia_en_1917._(2).jfif_1jkxLK.webp",
+      imageURL: antes("teleferico.jpg"),
       imageFit: "cover",
     },
   ],
 
+  // El "después" sí tiene foto propia de cada obra: son las fotos de los espacios
+  // recuperados, que es lo que el título del par anuncia.
   after: [
     {
       title: "Prefecto Manfred Reyes Villa",
-      imageURL: "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_Z2rxRve.webp",
+      imageURL: premio("premio2.JPG"),
       imageFit: "contain",
     },
     {
       title: "Playa Turquesa",
-      imageURL: "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
+      imageURL: raiz("playaTurquesa.JPG"),
       imageFit: "cover",
     },
     {
       title: "Plaza de las banderas",
-      imageURL: "https://manfredreyesvilla.netlify.app/_astro/IMG_5929_ZxWrmu.webp",
+      imageURL: raiz("plazaBanderas.jpg"),
       imageFit: "cover",
     },
     {
       title: "Laguna Alalay",
-      imageURL:
-        "https://manfredreyesvilla.netlify.app/_astro/Laguna_Alalay_el_proyecto_de_recuperacion_ambiental_mas_grande_del_pais.jpg_YDCwU.webp",
+      imageURL: raiz("lagunaAlalay.jpeg"),
       imageFit: "cover",
     },
   ],
@@ -133,8 +149,10 @@ export const SECTION_BOOK_CONTENT = {
   eyebrow: "El libro digital · Cochabamba",
   description:
     "Un recorrido en imágenes por las obras que transformaron Cochabamba, desde los años 90 hasta la gestión 2021–2026. Fotografías y videos, página por página.",
-  imageURL:
-    "https://manfredreyesvilla.netlify.app/_astro/6P9A2287_V5pXO.webp",
-  imageAlt: "Playa Turquesa, uno de los espacios transformados de Cochabamba",
+  // Foto de la tarjeta del libro y de su tapa: la misma imagen en los dos sitios,
+  // para que la tarjeta y el libro no puedan contradecirse.
+  imageURL: book("cover.jpg"),
+  imageAlt: "La tapa de Cocha, la mejor ciudad",
   button: "Abrir libro",
 };
+

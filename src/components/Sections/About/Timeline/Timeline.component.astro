@@ -23,22 +23,29 @@ const ANCHO_IMG_PLACA = 720;
  *  Si el remoto falla (cuota, timeout, 404) no tumba el render: se cae a la
  *  imagen original sin transformar. */
 const optimizar = async (imageURL: string): Promise<string> => {
-  try {
-    const { src } = await getImage({
-      src: imageURL,
-      width: ANCHO_IMG_PLACA,
-      inferSize: true,
-      quality: 70,
-      format: "webp",
-    });
-    return src;
-  } catch (error) {
-    console.warn(
-      `[about] No se pudo optimizar la imagen, se usa la original: ${imageURL}`,
-      error,
-    );
-    return imageURL;
-  }
+	// Una foto de `public/` (ruta que empieza por `/`) ya se sirve tal cual: no
+	// hay nada que reprocesar, y pasarla por el servicio de imágenes solo añade
+	// un salto. Además, el servicio necesita `sharp`, así que en un entorno sin
+	// él cada foto local sería un error. Es el mismo criterio que usa
+	// `ProjectsViewer.astro` con sus imágenes.
+	if (imageURL.startsWith('/')) return imageURL;
+
+	try {
+		const { src } = await getImage({
+			src: imageURL,
+			width: ANCHO_IMG_PLACA,
+			inferSize: true,
+			quality: 70,
+			format: 'webp',
+		});
+		return src;
+	} catch (error) {
+		console.warn(
+			`[about] No se pudo optimizar la imagen, se usa la original: ${imageURL}`,
+			error,
+		);
+		return imageURL;
+	}
 };
 
 const placaDe = async (hito: Hito, id: string): Promise<PlacaDolly> => ({

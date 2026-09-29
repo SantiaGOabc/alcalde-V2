@@ -1,4 +1,5 @@
 import type { Encuadre } from "@types";
+import { alcalde, premio } from "@utils";
 
 export type TipoHito = "historia" | "reconocimiento";
 
@@ -38,9 +39,8 @@ export const SECTION_ABOUT_TRAJECTORY = {
   title: "Línea de tiempo",
 };
 
-// TODO: ESTAS IMÁGENES VIENEN DEL DEPLOY ACTUAL (manfredreyesvilla.netlify.app),
-// igual que el resto de contenido del sitio. Cuando el CMS exponga los hitos
-// (getImages() de @utils) este arreglo pasa a ser la respuesta de la API.
+// Estas fotos son los valores por defecto: el CMS puede sobreescribirlas una por
+// una desde el panel. Para cambiar una, se cambia su línea de aquí.
 export const SECTION_ABOUT_HITOS: Hito[] = [
   // ── Pestaña "Trayectoria" ─────────────────────────────────────────────
   {
@@ -50,9 +50,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Alcalde de Cochabamba por cuatro periodos consecutivos",
     descripcion:
       "Es burgomaestre de Cochabamba durante cuatro periodos seguidos. En paralelo preside la Asociación de Gobiernos Municipales Autónomos de Bolivia, integra la Unión Internacional de Autoridades Locales (IULA) y representa a la Red Latinoamericana de Asociaciones Municipales ante la WACLAC, con base en Ginebra, Suiza.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0802_ZuLMnQ.webp",
-    imageAlt: "Manfred Reyes Villa",
+    imageURL: premio("premio1.JPG"),
+    imageAlt: "Reconocimiento a la gestión municipal",
     encuadre: "rostro",
   },
   {
@@ -62,9 +61,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Primer Prefecto electo de Cochabamba",
     descripcion:
       "Es el primer Prefecto del departamento de Cochabamba elegido democráticamente por voto directo de la ciudadanía.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0807_Z2rxRve.webp",
-    imageAlt: "Alcalde de Cochabamba",
+    imageURL: premio("premio2.JPG"),
+    imageAlt: "Entrega de un premio",
     encuadre: "rostro",
   },
   {
@@ -74,9 +72,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Alcalde de Cochabamba por quinta vez",
     descripcion:
       "Se re-postula a la Alcaldía en las elecciones subnacionales de 2021 representando a la agrupación política SÚMATE y es elegido Alcalde por quinta vez con el 55,63 % de los votos.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZK7QfD.webp",
-    imageAlt: "El alcalde con escolares",
+    imageURL: premio("premio3.jpeg"),
+    imageAlt: "Premio a la gestión municipal",
     encuadre: "centro",
   },
   {
@@ -86,9 +83,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Trabajar por Cochabamba",
     descripcion:
       "Llega a la silla edil como político con experiencia, trayectoria y grandes ideas, con el firme compromiso de trabajar por Cochabamba, siempre con honestidad, firmeza y capacidad.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/IMG_2941_ZaHkvk.webp",
-    imageAlt: "Cerca de la gente",
+    imageURL: alcalde("cinta.jpg"),
+    imageAlt: "Corte de cinta de una obra",
     encuadre: "centro",
   },
 
@@ -100,9 +96,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Presidente de la Asociación de Gobiernos Municipales de Bolivia",
     descripcion:
       "Es elegido Presidente de la Asociación de Gobiernos Municipales Autónomos de Bolivia durante su gestión como Alcalde de Cochabamba.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/DSC_0790_1zq6uG.webp",
-    imageAlt: "El alcalde en una obra",
+    imageURL: alcalde("policia.jpeg"),
+    imageAlt: "Supervisión en obra",
     encuadre: "centro",
   },
   {
@@ -112,9 +107,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Embajador de Ciudades Sostenibles",
     descripcion:
       'Es distinguido como "Embajador de la Organización Mundial de Ciudades Sostenibles 2026" en París, Francia.',
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/01%20ALCALDE%20FRANCIA%20OK_ZIxvbV.webp",
-    imageAlt: "Reconocimiento internacional",
+    imageURL: alcalde("alcalde.jpg"),
+    imageAlt: "Manfred Reyes Villa",
     encuadre: "rostro",
   },
   {
@@ -124,9 +118,8 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Cochabamba, ciudad sostenible",
     descripcion:
       "Una ciudad que recupera sus espejos de agua, sus parques y sus espacios públicos para devolverlos a la gente.",
-    imageURL:
-      "https://manfredreyesvilla.netlify.app/_astro/6P9A8685_21g61j.webp",
-    imageAlt: "Cochabamba de ayer",
+    imageURL: alcalde("colegio.webp"),
+    imageAlt: "Módulo educativo de la gestión",
     encuadre: "centro",
   },
 ];

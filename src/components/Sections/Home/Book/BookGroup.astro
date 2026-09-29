@@ -14,7 +14,8 @@ import type { BookPhoto } from "@types";
  * El reparto sale de la cuenta, no de un caso por combinación:
  *
  * - Una foto, sola.
- * - Dos, en fila.
+ * - Dos, una encima de la otra: la hoja es un retrato y dos fotos apaisadas en
+ *   fila quedaban diminutas y con el título partido en dos.
  * - Tres, dos arriba y una ancha debajo.
  * - Cuatro, en cuadrícula de dos por dos.
  * - Cinco, cuatro en cuadrícula y una ancha debajo.
@@ -30,7 +31,10 @@ interface Props {
 const { photos } = Astro.props;
 
 const total = photos.length;
-const columns = total <= 2 ? total : total <= 5 ? 2 : 3;
+// Una y dos van en una sola columna: con dos fotos la hoja se lee como una
+// columna de imágenes, no como dos miniaturas al lado (es el `double-vertical`
+// de la tabla de formas). A partir de tres, dos columnas.
+const columns = total <= 2 ? 1 : total <= 5 ? 2 : 3;
 
 // Tres y cinco ceden su última foto a una fila ancha: es la que respira y marca
 // el ritmo. Con seis o más, solo se ancha lo que no cabe en la última fila.

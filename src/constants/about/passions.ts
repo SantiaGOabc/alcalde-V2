@@ -1,18 +1,14 @@
 import { SECTION_PHRASES_CONTENT } from "../home/home";
-// La foto principal de cada pasión sale de las frases de la home (se mantiene así
-// a propósito); la del collage se elige aquí, también local.
 import { alcalde, raiz } from "@utils";
 
 export interface PasionImagen {
   src: string;
   alt: string;
 }
-
 export interface PasionDetalle {
   titulo: string;
   texto: string;
 }
-
 export interface Pasion {
   /** Ancla de la página (`#animales`); la usan el índice lateral y los "me gusta" de la intro. */
   id: string;
@@ -51,7 +47,7 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
     ],
     imagenes: [
       { src: SECTION_PHRASES_CONTENT.philosophy.imageURL, alt: "Manfred Reyes Villa" },
-      { src: alcalde("policia.jpeg"), alt: "Supervisión en obra" },
+      { src: raiz("cocha.jpg"), alt: "Supervisión en obra" },
     ],
   },
   {
@@ -69,7 +65,7 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
     ],
     imagenes: [
       { src: SECTION_PHRASES_CONTENT.family.imageURL, alt: "Una vecina de la comunidad" },
-      { src: alcalde("cinta.jpg"), alt: "Corte de cinta de una obra" },
+      { src: alcalde("20.webp"), alt: "Corte de cinta de una obra" },
     ],
   },
   {
@@ -89,7 +85,7 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
     ],
     imagenes: [
       { src: SECTION_PHRASES_CONTENT.pets.imageURL, alt: "Cercanía y protección a los animales" },
-      { src: raiz("cocha.jpg"), alt: "Panorámica de la ciudad" },
+      { src: alcalde("1.webp"), alt: "Panorámica de la ciudad" },
     ],
   },
   {
@@ -107,7 +103,7 @@ export const SECTION_ABOUT_PASIONES: Pasion[] = [
     ],
     imagenes: [
       { src: SECTION_PHRASES_CONTENT.community.imageURL, alt: "Los niños de la comunidad" },
-      { src: raiz("teleferico.jpg"), alt: "El centro de la ciudad" },
+      { src: alcalde("IMG_8396.jpg"), alt: "El centro de la ciudad" },
     ],
   },
 ];

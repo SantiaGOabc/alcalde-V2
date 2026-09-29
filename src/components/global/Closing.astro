@@ -1,0 +1,36 @@
+---
+import { ButtonAstro, Section, Tipography } from "@components";
+import type { ClosingContent } from "@types";
+
+interface Props {
+  content: ClosingContent;
+}
+
+const { kicker, phrase, description, primary, secondary } = Astro.props.content;
+---
+
+<Section variant="accent" className="bg-(--home-accent) py-24 sm:py-32 lg:py-40">
+  <div data-reveal class="page-container mx-auto max-w-4xl text-center">
+    <Tipography variant="eyebrow" color="inverse" class="mb-6 tracking-[0.3em] text-white/70">
+      {kicker}
+    </Tipography>
+    <Tipography as="blockquote" variant="quote" color="inverse" class="m-0 text-3xl leading-tight text-balance sm:text-5xl lg:text-6xl">
+      {phrase}
+    </Tipography>
+    <Tipography variant="lead" color="inverse" class="mx-auto mt-8 max-w-xl text-base text-white/80 sm:text-lg">
+      {description}
+    </Tipography>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <ButtonAstro
+        href={primary.href}
+        size="lg"
+        class="bg-white text-(--brand-primary) hover:bg-white/90 hover:brightness-100"
+      >
+        {primary.label}
+      </ButtonAstro>
+      <ButtonAstro href={secondary.href} variant="inverse" size="lg">
+        {secondary.label}
+      </ButtonAstro>
+    </div>
+  </div>
+</Section>

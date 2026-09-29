@@ -1,0 +1,19 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import { Login } from "@components";
+import Dashboard from "@/components/Sections/Admin/Dashboard/Dashboard.astro";
+import { isAdminConfigured, isValidAdminCode } from "@/lib/server";
+
+const { code } = Astro.params;
+
+// Un código incorrecto (o un panel sin configurar) es indistinguible de una ruta inexistente.
+if (!isAdminConfigured() || !isValidAdminCode(code)) {
+  return new Response(null, { status: 404 });
+}
+
+const user = Astro.locals.admin;
+---
+
+<MainLayout title="Panel de administración" noindex>
+  {user ? <Dashboard user={user} /> : <Login code={code} />}
+</MainLayout>

@@ -1,0 +1,26 @@
+---
+import { Image } from "astro:assets";
+import type { HTMLAttributes } from "astro/types";
+
+/**
+ * `<Image>` que tolera una URL vacía. El contenido viene del panel, donde una
+ * imagen puede estar todavía sin cargar (un elemento recién añadido): en ese caso
+ * se pinta un marcador gris del mismo tamaño en vez de romper toda la página.
+ */
+interface Props extends Omit<HTMLAttributes<"img">, "src" | "alt" | "width" | "height"> {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+const { src, alt, class: className, ...props } = Astro.props;
+---
+
+{
+  src ? (
+    <Image src={src} alt={alt} class={className} {...props} />
+  ) : (
+    <div role="img" aria-label={alt} class:list={["bg-gray-200", className]} />
+  )
+}

@@ -80,6 +80,12 @@ export default function ProjectGallery({
                 </button>
             )}
 
+            {item?.tipo !== 'video' && obra.imagenes.length > 0 && (
+                <span aria-hidden="true" className="gestion-media-zoom">
+                    Ampliar
+                </span>
+            )}
+
             {obra.imagenes.length > 1 && (
                 <span
                     aria-hidden="true"

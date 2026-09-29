@@ -1,0 +1,14 @@
+---
+/**
+ * Zona donde aparecen las notificaciones de `showToast()` (utils/toast.ts).
+ * Va una sola vez en el layout; es un `aria-live` para que los lectores de
+ * pantalla anuncien cada mensaje nuevo.
+ */
+---
+
+<div
+  id="toast-region"
+  aria-live="polite"
+  class="pointer-events-none fixed inset-x-0 bottom-0 z-[100] flex flex-col items-center gap-3 p-4 sm:items-end sm:p-6"
+>
+</div>

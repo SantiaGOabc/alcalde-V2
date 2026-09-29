@@ -1,6 +1,5 @@
 ---
-import { Image } from "astro:assets";
-import { Section } from "@components";
+import { Section, SafeImage } from "@components";
 
 interface Props {
   phrase: string;
@@ -64,7 +63,7 @@ const {
           variant === "primary" ? "bg-(--home-accent)" : "bg-gray-200",
         ]}
       >
-        <Image
+        <SafeImage
           src={imageURL}
           alt={phrase}
           width={1400}

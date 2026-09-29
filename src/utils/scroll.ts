@@ -35,13 +35,14 @@ export const bindScrollProgress = ({
 	property = '--progress',
 	start = 0,
 	end = 0,
-}: ScrollProgressOptions = {}): void => {
-	if (!target) return;
+}: ScrollProgressOptions = {}): (() => void) => {
+	const noop = () => undefined;
+	if (!target) return noop;
 
 	const reduceMotion =
 		window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
 
-	if (reduceMotion || !('IntersectionObserver' in window)) return;
+	if (reduceMotion || !('IntersectionObserver' in window)) return noop;
 
 	let frame = 0;
 
@@ -90,4 +91,11 @@ export const bindScrollProgress = ({
 	);
 
 	observer.observe(target);
+
+	return () => {
+		observer.disconnect();
+		window.removeEventListener('scroll', request);
+		window.removeEventListener('resize', request);
+		if (frame) cancelAnimationFrame(frame);
+	};
 };

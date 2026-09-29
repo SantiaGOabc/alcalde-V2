@@ -1,0 +1,60 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { Button } from "@components";
+import type { FormServiceName } from "@utils";
+
+interface Props extends HTMLAttributes<"form"> {
+  /** Servicio registrado en `FORM_SERVICES` que procesa el envío. */
+  service: FormServiceName;
+  submitText: string;
+  loadingText: string;
+  cancelText: string;
+  /** Notificación que se muestra al enviar bien (ver utils/toast.ts). */
+  successTitle: string;
+  successMessage: string;
+  /** Notificación por defecto si el envío falla y el servidor no da un motivo. */
+  errorTitle: string;
+  errorMessage: string;
+}
+
+const {
+  service,
+  submitText,
+  loadingText,
+  cancelText,
+  successTitle,
+  successMessage,
+  errorTitle,
+  errorMessage,
+  class: className,
+  ...props
+} = Astro.props;
+---
+
+<form
+  data-form
+  data-service={service}
+  data-status="idle"
+  data-success-title={successTitle}
+  data-success-message={successMessage}
+  data-error-title={errorTitle}
+  data-error-message={errorMessage}
+  class:list={["group", className]}
+  {...props}
+>
+  <slot />
+
+  <div class="mt-4 flex flex-col items-center gap-3 border-t border-slate-100 pt-4 sm:flex-row">
+    <Button type="submit" className="w-full sm:w-auto sm:min-w-32">
+      <span class="group-data-[status=submitting]:hidden">{submitText}</span>
+      <span class="hidden group-data-[status=submitting]:inline">{loadingText}</span>
+    </Button>
+    <Button type="reset" variant="outline" className="w-full sm:w-auto">{cancelText}</Button>
+  </div>
+</form>
+
+<script>
+  import { bindForms, onPageLoad } from "@utils";
+
+  onPageLoad(bindForms);
+</script>

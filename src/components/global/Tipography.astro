@@ -1,41 +1,58 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import { cn } from '@utils';
+
+type Variant =
+  | 'h1' | 'h2' | 'h3'
+  | 'body' | 'body-sm' | 'muted'
+  | 'eyebrow' | 'display' | 'title' | 'quote' | 'lead';
+
+type Color = 'primary' | 'secondary' | 'muted' | 'accent' | 'inverse' | 'inherit';
 
 interface Props extends HTMLAttributes<'p'> {
-  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'small';
-  variant?: 'h1' | 'h2' | 'h3' | 'body' | 'body-sm' | 'muted';
-  color?: 'primary' | 'secondary' | 'muted' | 'inherit';
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'small' | 'blockquote' | 'cite' | 'figcaption' | 'dt' | 'dd';
+  variant?: Variant;
+  color?: Color;
 }
 
-const { 
-  as: Tag = 'p', 
-  variant = 'body', 
+const {
+  as: Tag = 'p',
+  variant = 'body',
   color = 'primary',
-  class: className, 
-  ...props 
+  class: className,
+  ...props
 } = Astro.props;
 
-const variantClasses = {
+const VARIANTS: Record<Variant, string> = {
   h1: 'text-4xl font-extrabold tracking-tight lg:text-5xl font-sans',
   h2: 'text-3xl font-semibold tracking-tight font-sans',
   h3: 'text-2xl font-semibold tracking-tight font-sans',
   body: 'text-base leading-7',
   'body-sm': 'text-sm leading-6',
   muted: 'text-sm text-gray-500 dark:text-gray-400',
+  /** Antetítulo de sección: versalitas con mucho espaciado. */
+  eyebrow: 'text-xs font-semibold uppercase tracking-[0.25em]',
+  /** Titular grande de sección. */
+  display: 'text-4xl font-bold leading-[1.1] tracking-tight text-balance sm:text-5xl lg:text-6xl',
+  /** Titular de capítulo o tarjeta. */
+  title: 'text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl',
+  /** Cita destacada. */
+  quote: 'text-2xl font-medium italic leading-9 sm:text-3xl sm:leading-11',
+  /** Párrafo de entrada, más grande que el cuerpo. */
+  lead: 'text-lg leading-8',
 };
 
-const colorClasses = {
-  primary: 'text-gray-90',
+const COLORS: Record<Color, string> = {
+  primary: 'text-gray-900',
   secondary: 'text-gray-600',
   muted: 'text-gray-500',
+  accent: 'text-(--brand-accent)',
+  inverse: 'text-white',
   inherit: '',
 };
 
-const classes = [
-  variantClasses[variant],
-  colorClasses[color],
-  className
-].filter(Boolean).join(' ');
+// `cn` resuelve conflictos de Tailwind: una clase pasada por `class` gana a la de la variante.
+const classes = cn(VARIANTS[variant], COLORS[color], className);
 ---
 
 <Tag class={classes} {...props}>

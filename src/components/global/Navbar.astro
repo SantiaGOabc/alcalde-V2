@@ -1,25 +1,45 @@
 ---
-import {Link} from "@components";
+import { Link } from "@components";
 import { NAVBAR } from "@constant";
 
-import "@styles/home.css";
+interface Props {
+  /** Sobre un hero: sin fondo hasta hacer scroll. Si no, sólido desde el inicio. */
+  transparent?: boolean;
+  /** Ruta del panel; solo llega cuando quien mira es el administrador con sesión. */
+  adminHref?: string | null;
+}
+
+const { transparent = false, adminHref = null } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const links = [
+  ...NAVBAR.map((link) => ({ ...link, isAdmin: false })),
+  ...(adminHref ? [{ path: adminHref, label: 'Panel', isAdmin: true }] : []),
+];
 ---
 
 <nav
   id="site-navbar"
   aria-label="Navegación principal"
-  class="fixed top-0 z-50 w-full bg-transparent shadow-sm transition-all duration-300"
+  data-transparent={transparent}
+  data-solid={!transparent}
+  data-menu-open="false"
+  class="group fixed top-0 z-50 w-full text-white transition-[background-color,box-shadow] duration-300 data-[solid=true]:bg-(--home-accent) data-[solid=true]:shadow-md"
 >
   <div class="page-container flex h-16 items-center justify-between">
-    <a href="/" class="text-lg font-semibold no-underline before:hidden after:hidden">M.R.V</a>
-    <ul class="flex items-center gap-6">
+    <a href="/" class="text-lg font-semibold text-white no-underline">M.R.V</a>
+
+    <ul class="hidden items-center gap-6 md:flex">
       {
-        NAVBAR.map((nav) => (
+        links.map((nav) => (
           <li>
             <Link
               href={nav.path}
-              aria-current={nav.path === Astro.url.pathname ? "page" : undefined}
-              class="text-lg font-semibold text-gray-200 no-underline before:hidden after:hidden"
+              aria-current={nav.path === currentPath ? "page" : undefined}
+              class:list={[
+                "border-b-2 border-transparent pb-0.5 text-lg font-semibold text-white/80 no-underline transition-colors hover:text-white aria-[current=page]:border-white aria-[current=page]:text-white",
+                nav.isAdmin && "rounded-full border-2 border-white/60 px-4 py-1 hover:border-white",
+              ]}
             >
               {nav.label}
             </Link>
@@ -27,25 +47,64 @@ import "@styles/home.css";
         ))
       }
     </ul>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      aria-label="Abrir menú"
+      class="relative grid size-10 place-items-center md:hidden"
+    >
+      <span
+        aria-hidden="true"
+        class="absolute h-0.5 w-6 -translate-y-2 rounded-full bg-white transition-transform duration-300 group-data-[menu-open=true]:translate-y-0 group-data-[menu-open=true]:rotate-45"
+      ></span>
+      <span
+        aria-hidden="true"
+        class="absolute h-0.5 w-6 rounded-full bg-white transition-opacity duration-200 group-data-[menu-open=true]:opacity-0"
+      ></span>
+      <span
+        aria-hidden="true"
+        class="absolute h-0.5 w-6 translate-y-2 rounded-full bg-white transition-transform duration-300 group-data-[menu-open=true]:translate-y-0 group-data-[menu-open=true]:-rotate-45"
+      ></span>
+    </button>
   </div>
 </nav>
 
+<!--
+  El menú móvil es hermano del <nav>, no hijo: un `backdrop-filter` en el
+  padre lo volvería contenedor de los `fixed` y el overlay dejaría de cubrir
+  toda la pantalla. Queda por debajo (z-40) para que el botón siga visible.
+-->
+<div
+  id="mobile-menu"
+  data-open="false"
+  inert
+  class="group/menu invisible fixed inset-0 z-40 flex items-center justify-center bg-(--home-accent) opacity-0 transition-[opacity,visibility] duration-300 data-[open=true]:visible data-[open=true]:opacity-100 md:hidden"
+>
+  <ul class="flex flex-col items-center gap-8 text-center">
+    {
+      links.map((nav, index) => (
+        <li
+          style={`--delay: ${index * 70 + 100}ms`}
+          class="translate-y-6 opacity-0 transition-[opacity,transform] duration-500 group-data-[open=true]/menu:translate-y-0 group-data-[open=true]/menu:opacity-100 group-data-[open=true]/menu:[transition-delay:var(--delay)]"
+        >
+          <Link
+            href={nav.path}
+            aria-current={nav.path === currentPath ? "page" : undefined}
+            class="text-3xl font-semibold text-white/75 no-underline transition-colors hover:text-white aria-[current=page]:text-white"
+          >
+            {nav.label}
+          </Link>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
 <script>
-  import { getElementById } from "@utils";
-  const navbar = getElementById("site-navbar");
-  
-  if (navbar) {
-    const updateNavbar = () => {
-      const isScrolled = window.scrollY > 16;
+  import { initNavbar, onPageLoad } from "@utils";
 
-      navbar.classList.toggle("bg-transparent", !isScrolled);
-      navbar.classList.toggle("bg-(--home-accent)", isScrolled);
-      navbar.classList.toggle("shadow-sm", !isScrolled);
-      navbar.classList.toggle("shadow-md", isScrolled);
-      navbar.classList.toggle("backdrop-blur-sm", isScrolled);
-    };
-
-    updateNavbar();
-    window.addEventListener("scroll", updateNavbar, { passive: true });
-  }
+  onPageLoad(initNavbar);
 </script>

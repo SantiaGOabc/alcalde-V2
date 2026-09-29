@@ -1,0 +1,10 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { FIELD_CLASS } from "./fieldStyles";
+
+type Props = HTMLAttributes<"textarea">;
+
+const { class: className, ...props } = Astro.props;
+---
+
+<textarea class:list={[FIELD_CLASS, "block min-h-24 resize-none", className]} {...props}></textarea>

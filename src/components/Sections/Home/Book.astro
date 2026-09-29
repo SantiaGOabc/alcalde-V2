@@ -90,8 +90,12 @@ const { title, eyebrow, description, button } = Astro.props;
   // Directo al módulo y no por el barril: el barril también reexporta
   // componentes `.astro`, y arrastrarlos al cliente intentaría compilar
   // `astro:assets` en el navegador.
+  import { onPageLoad } from "@utils";
   import { createBookViewer } from "./Book/createBookViewer";
 
-  // Idempotente: si el script corre dos veces no monta un segundo visor.
-  createBookViewer(document);
+  // Un visor por página; al salir se le quitan los oyentes globales (teclado, resize).
+  onPageLoad(() => {
+    const viewer = createBookViewer(document);
+    return () => viewer?.destroy();
+  });
 </script>

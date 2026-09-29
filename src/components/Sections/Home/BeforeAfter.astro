@@ -18,8 +18,9 @@ interface Props {
 }
 
 const { title, description, transitionPhrase, before, after } = Astro.props;
+// Solo pares completos: si a una de las dos fotos todavía le falta la URL, la pareja no se muestra.
 const comparisons = before.flatMap((beforeImage, index) =>
-  after[index] ? [{ before: beforeImage, after: after[index] }] : [],
+  beforeImage.imageURL && after[index]?.imageURL ? [{ before: beforeImage, after: after[index] }] : [],
 );
 
 const COMPARISON = "comparison" as const;
@@ -227,9 +228,10 @@ const slides = comparisons.flatMap((comparison, index) => [
 </Section>
 
 <script>
-  import { $$, observeVisibility } from "@utils";
+  import { $$, observeVisibility, onPageLoad } from "@utils";
 
-  $$("[data-before-after-slider]").forEach((sliderElement) => {
+  const initSliders = () =>
+    $$("[data-before-after-slider]").forEach((sliderElement) => {
     const slider = sliderElement as HTMLElement;
     const slides = Array.from(
       slider.querySelectorAll("[data-slide]"),
@@ -365,4 +367,6 @@ const slides = comparisons.flatMap((comparison, index) => [
       threshold: 0.35,
     });
   });
+
+  onPageLoad(initSliders);
 </script>

@@ -1,13 +1,13 @@
 ---
-import { Image } from "astro:assets";
-import { Section, Tipography } from "@components";
-import { MAILBOX_CONTENT } from "@constant";
-import MailboxForm from "./MailBoxForm.tsx";
+import { Form, FormField, Input, Section, Select, Textarea, Tipography, SafeImage } from "@components";
+import { MAILBOX_MESSAGE_TYPES } from "@constant";
+import { sectionId } from "@/cms/anchors";
+import { getContent } from "@/lib/server";
 
-const { title, description, imageURL, imageAlt } = MAILBOX_CONTENT;
+const { title, description, imageURL, imageAlt, form } = await getContent("mailbox");
 ---
 
-<Section variant="secondary" className="pt-20 pb-12 sm:pt-24 sm:pb-16 flex justify-center items-center min-h-[calc(100vh-80px)] bg-slate-100">
+<Section id={sectionId("mailbox")} variant="secondary" className="pt-20 pb-12 sm:pt-24 sm:pb-16 flex justify-center items-center min-h-[calc(100vh-80px)] bg-slate-100">
   <div class="w-full max-w-5xl bg-white rounded-[2rem] p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row gap-8 lg:gap-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
     <div class="w-full lg:w-[55%] flex flex-col justify-center">
       <header class="mb-6">
@@ -18,12 +18,40 @@ const { title, description, imageURL, imageAlt } = MAILBOX_CONTENT;
           {description}
         </Tipography>
       </header>
-      <MailboxForm client:visible />
+
+      <Form
+        service="mailbox"
+        submitText={form.submitButton}
+        loadingText={form.loadingText}
+        cancelText={form.cancelButton}
+        successTitle={form.successTitle}
+        successMessage={form.successMessage}
+        errorTitle={form.errorTitle}
+        errorMessage={form.errorMessage}
+        class="flex flex-col gap-4 w-full"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField id="fullName" label={form.fullNameLabel}>
+            <Input variant="field" id="fullName" name="fullName" type="text" placeholder={form.fullNamePlaceholder} required />
+          </FormField>
+          <FormField id="email" label={form.emailLabel}>
+            <Input variant="field" id="email" name="email" type="email" placeholder={form.emailPlaceholder} required />
+          </FormField>
+        </div>
+
+        <FormField id="type" label={form.typeLabel}>
+          <Select id="type" name="type" options={MAILBOX_MESSAGE_TYPES} placeholder={form.typePlaceholder} required />
+        </FormField>
+
+        <FormField id="message" label={form.messageLabel}>
+          <Textarea id="message" name="message" class="h-24" required />
+        </FormField>
+      </Form>
     </div>
 
     <div class="w-full lg:w-[45%] flex items-center justify-center">
       <div class="relative w-full rounded-[1.5rem] overflow-hidden shadow-sm aspect-4/5 lg:aspect-auto lg:h-[520px] max-h-[520px]">
-        <Image 
+        <SafeImage 
           src={imageURL} 
           alt={imageAlt}
           width={600}

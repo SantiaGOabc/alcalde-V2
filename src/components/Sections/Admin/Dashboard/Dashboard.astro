@@ -1,0 +1,19 @@
+---
+import { Section } from "@components";
+import { type AdminUser, countUnreadMessages, listContent } from "@/lib/server";
+import CmsPanel from "./CmsPanel.tsx";
+
+interface Props {
+  user: AdminUser;
+}
+
+const { user } = Astro.props;
+// Las obras y los mensajes se piden por páginas desde el panel; aquí solo lo necesario para pintar.
+const [sections, initialUnread] = await Promise.all([listContent(), countUnreadMessages()]);
+---
+
+<Section variant="secondary" className="min-h-[calc(100vh-80px)] bg-slate-50 pt-24 pb-16">
+  <div class="mx-auto w-full max-w-480">
+    <CmsPanel client:load username={user.username} sections={sections} initialUnread={initialUnread} />
+  </div>
+</Section>

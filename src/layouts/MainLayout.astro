@@ -1,8 +1,21 @@
 ---
-import { Navbar, Footer } from "@components"
+import { ClientRouter } from 'astro:transitions';
+import { Navbar, Footer, ToastRegion } from "@components"
+import { getAdminPanelPath } from '@/lib/server';
 import '../styles/global.css';
 
-const { title } = Astro.props;
+interface Props {
+	title: string;
+	/** El navbar nace sin fondo (páginas que abren con un hero). */
+	transparentNavbar?: boolean;
+	/** Excluye la página de los buscadores (panel de administración). */
+	noindex?: boolean;
+}
+
+const { title, transparentNavbar = false, noindex = false } = Astro.props;
+
+// Solo un administrador con sesión recibe el enlace al panel (no aparece para nadie más).
+const adminHref = Astro.locals.admin ? getAdminPanelPath() : null;
 ---
 <!doctype html>
 <html lang="es">
@@ -11,13 +24,17 @@ const { title } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="description" content="Alcaldía V2" />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
 		<title>{title}</title>
+		<!-- Navegación SPA: cambia de página sin recargar (los scripts usan onPageLoad, ver utils/lifecycle.ts). -->
+		<ClientRouter />
 	</head>
 	<body class="flex min-h-screen flex-col">
-		<Navbar />
+		<Navbar transparent={transparentNavbar} adminHref={adminHref} />
 		<main class="flex-1">
 			<slot />
 		</main>
 		<Footer />
+		<ToastRegion />
 	</body>
 </html>

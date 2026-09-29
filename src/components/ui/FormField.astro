@@ -1,0 +1,17 @@
+---
+interface Props {
+  /** Id del control que envuelve; el `<label>` apunta a él. */
+  id: string;
+  label: string;
+  class?: string;
+}
+
+const { id, label, class: className } = Astro.props;
+---
+
+<div class:list={["flex flex-col gap-1.5", className]}>
+  <label for={id} class="text-[11px] font-bold tracking-wide text-slate-700 uppercase">
+    {label}
+  </label>
+  <slot />
+</div>

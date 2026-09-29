@@ -8,10 +8,21 @@ export const MAILBOX_CONTENT = {
         fullNamePlaceholder:"Ej. Emiliano Gomez",
         emailLabel:"Correo Electronico",
         emailPlaceholder:"emiliano@gmail.com",
+        typeLabel: "Tipo de mensaje",
+        typePlaceholder: "Selecciona una opcion",
         messageLabel:"Mensaje",
         cancelButton:"Cancelar",
         submitButton:"Enviar",
         loadingText:"Enviando",
-        successMessage: "Mensaje enviado correctamente"
+        successTitle: "¡Gracias por escribirnos!",
+        successMessage: "Mensaje enviado correctamente",
+        errorTitle: "No se pudo enviar",
+        errorMessage: "No pudimos enviar tu mensaje. Intenta nuevamente."
     }
 };
+
+/** Tipos de mensaje que el ciudadano puede enviar. `value` es lo que recibe el servicio. */
+export const MAILBOX_MESSAGE_TYPES = [
+    { value: "sugerencia", label: "Sugerencia" },
+    { value: "felicitacion", label: "Felicitación" },
+] as const;

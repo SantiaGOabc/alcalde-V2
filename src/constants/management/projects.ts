@@ -192,4 +192,6 @@ export const SECTION_GESTION = {
 /** Antetítulo del visor, ya dentro de la cabecera de la página. */
 export const SECTION_OBRAS_GESTION = {
     kicker: 'Obras de la gestión',
+    /** Título del índice de categorías del visor. */
+    areasTitle: 'Áreas de trabajo',
 };

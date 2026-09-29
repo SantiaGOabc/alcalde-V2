@@ -1,34 +1,57 @@
 ---
-import { Section, Tipography } from "@components";
+import MainLayout from "@layouts/MainLayout.astro";
+import { Closing, Hero, Section, Tipography } from "@components";
+import { SECTION_MANAGEMENT_STATS, SECTION_OBRAS_GESTION } from "@constant";
+import { sectionId } from "@/cms/anchors";
+import { getContent, getPublishedWorks } from "@/lib/server";
+import ProjectsViewer from "./ProjectsViewer/ProjectsViewer.astro";
+import "@styles/management.css";
+import "@styles/gallery.css";
 
-interface Props {
-  title: string;
-  description: string;
-  variant?: "primary" | "secondary" | "accent";
-}
+const [hero, header, closing, obras] = await Promise.all([
+  getContent("management.hero"),
+  getContent("management.header"),
+  getContent("management.closing"),
+  getPublishedWorks(),
+]);
 
-const { title, description, variant = "primary" } = Astro.props;
+const pad = (value: number) => String(value).padStart(2, "0");
+
+// Línea de datos con las obras publicadas: "06 obras · 04 áreas".
+const areas = new Set(obras.map((obra) => obra.categoria)).size;
+const summary = `${pad(obras.length)} ${SECTION_MANAGEMENT_STATS.works} · ${pad(areas)} ${SECTION_MANAGEMENT_STATS.areas}`;
 ---
 
-<Section variant={variant} className="py-16 sm:py-20 lg:py-24">
-  <div class="page-container">
-    <header class="max-w-3xl">
-      <Tipography
-        as="h1"
-        color="inherit"
-        class="text-3xl font-semibold leading-tight text-balance text-gray-900 sm:text-4xl lg:text-5xl"
-      >
-        {title}
-      </Tipography>
-      <Tipography
-        as="p"
-        color="inherit"
-        class="mt-4 max-w-2xl text-base leading-7 text-gray-600 text-pretty sm:text-lg"
-      >
-        {description}
-      </Tipography>
-    </header>
+<MainLayout title="Gestión" transparentNavbar>
+  <Hero id={sectionId("management.hero")} title={hero.title} description={hero.description} images={hero.images} />
 
-    <slot />
-  </div>
-</Section>
+  <Section variant="secondary" className="gestion-lienzo pt-20 pb-24 sm:pt-28 lg:pt-32 lg:pb-32">
+    <div class="page-container">
+      <header id={sectionId("management.header")} data-reveal class="border-t-2 border-gray-900 pt-5">
+        <div class="flex items-baseline justify-between gap-6">
+          <Tipography variant="eyebrow" color="accent">{SECTION_OBRAS_GESTION.kicker}</Tipography>
+          <Tipography variant="eyebrow" color="muted" class="tabular-nums">{summary}</Tipography>
+        </div>
+
+        <div class="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-16">
+          <Tipography as="h2" variant="display" class="lg:col-span-8">{header.title}</Tipography>
+          <Tipography variant="lead" color="secondary" class="lg:col-span-4 lg:self-end">
+            {header.description}
+          </Tipography>
+        </div>
+      </header>
+
+      <div id={sectionId("management.works")} class="mt-16 lg:mt-24">
+        <ProjectsViewer obras={obras} />
+      </div>
+    </div>
+  </Section>
+
+  <div id={sectionId("management.closing")}><Closing content={closing} /></div>
+</MainLayout>
+
+<script>
+  import { initRevealOnScroll } from "@utils";
+
+  initRevealOnScroll();
+</script>

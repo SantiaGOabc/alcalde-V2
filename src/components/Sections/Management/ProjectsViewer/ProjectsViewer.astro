@@ -4,18 +4,26 @@ import { imagePosition } from '@utils';
 import {
   CATEGORIAS_GESTION,
   LABELS_CATEGORIA,
-  OBRAS_GESTION,
   SECCION_CATEGORIA,
-  SECTION_OBRAS_GESTION,
 } from '@constant';
 import type { Obra, ImagenObra } from '@constant';
 import type { CategoriaObra, ObraImagen, ObraVisor } from '@types';
 import { ProjectsViewer as ProjectsViewerIsland } from './index';
 
+interface Props {
+  /** Obras ya publicadas (de la base de datos o, en su defecto, de los constants). */
+  obras: Obra[];
+}
+
+const { obras: obrasFuente } = Astro.props;
+
 const ANCHO_PORTADA = 900;
 const ANCHO_THUMB = 220;
 
 const optimizar = async (imageURL: string, width: number): Promise<string> => {
+  // Las imágenes subidas desde el panel (/media/<id>) ya son locales: se sirven tal cual.
+  if (imageURL.startsWith('/')) return imageURL;
+
   try {
     const { src } = await getImage({
       src: imageURL,
@@ -64,7 +72,7 @@ const prepararImagen = async (imagen: ImagenObra): Promise<ObraImagen> => {
 };
 
 const obras: ObraVisor[] = await Promise.all(
-  OBRAS_GESTION.map(async (obra, i) => {
+  obrasFuente.map(async (obra, i) => {
     const galeria = obra.imagenes?.length ? obra.imagenes : [obra.portada];
     const imagenes = await Promise.all(galeria.map(prepararImagen));
 
@@ -101,11 +109,6 @@ const categorias: CategoriaObra[] = slugsOrdenados.map((id) => ({
   obras: obras.filter((o) => o.categoria === id),
 }));
 
-const { kicker } = SECTION_OBRAS_GESTION;
 ---
-
-<p class="mt-14 text-xs font-semibold uppercase tracking-[0.3em] text-(--gestion-accent)">
-  {kicker}
-</p>
 
 <ProjectsViewerIsland client:visible categorias={categorias} />

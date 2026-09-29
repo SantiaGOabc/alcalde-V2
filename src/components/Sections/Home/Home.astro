@@ -1,17 +1,19 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
 import { Hero, BiographyVideo, Phrase, BeforeAfter, Book } from "@components";
-import {
-  CONTENT_HERO_HOME,
-  SECTION_PHRASES_CONTENT,
-  SECTION_BIOGRAPHY_CONTENT,
-  SECTION_BEFORE_AFTER_CONTENT,
-  SECTION_BOOK_CONTENT,
-
-} from "@constant";
+import { sectionId } from "@/cms/anchors";
+import { getContent } from "@/lib/server";
 import "@styles/home.css";
 
-const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
+const [hero, biography, phrasesContent, beforeAfter, book] = await Promise.all([
+  getContent("home.hero"),
+  getContent("home.biography"),
+  getContent("home.phrases"),
+  getContent("home.beforeAfter"),
+  getContent("home.book"),
+]);
+
+const phrases = Object.entries(phrasesContent).map(
   ([, content], position) => {
     const variant: "primary" | "secondary" =
       position % 2 === 0 ? "secondary" : "primary";
@@ -26,20 +28,23 @@ const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
 );
 ---
 
-<MainLayout title="Inicio">
+<MainLayout title="Inicio" transparentNavbar>
   <Hero
-    title={CONTENT_HERO_HOME.title}
-    description={CONTENT_HERO_HOME.description}
-    images={CONTENT_HERO_HOME.images}
+    id={sectionId("home.hero")}
+    title={hero.title}
+    description={hero.description}
+    images={hero.images}
   />
-  <BiographyVideo 
-    title={SECTION_BIOGRAPHY_CONTENT.title}
-    description={SECTION_BIOGRAPHY_CONTENT.description}
-    buttons={SECTION_BIOGRAPHY_CONTENT.buttons}
-    video={SECTION_BIOGRAPHY_CONTENT.video}
-  />
+  <div id={sectionId("home.biography")}>
+    <BiographyVideo
+      title={biography.title}
+      description={biography.description}
+      buttons={biography.buttons}
+      video={biography.video}
+    />
+  </div>
 
-  <div class="phrase-slider" style={`--items: ${phrases.length}`}>
+  <div id={sectionId("home.phrases")} class="phrase-slider" style={`--items: ${phrases.length}`}>
     {
       phrases.map((phrase, index) => (
         <Phrase
@@ -53,26 +58,27 @@ const phrases = Object.entries(SECTION_PHRASES_CONTENT).map(
       ))
     }
   </div>
-  <BeforeAfter 
-    title={SECTION_BEFORE_AFTER_CONTENT.title}
-    description={SECTION_BEFORE_AFTER_CONTENT.description}
-    transitionPhrase={SECTION_BEFORE_AFTER_CONTENT.transitionPhrase}
-    before={SECTION_BEFORE_AFTER_CONTENT.before}
-    after={SECTION_BEFORE_AFTER_CONTENT.after}
-    
-  />
-  <Book 
-    title={SECTION_BOOK_CONTENT.title}
-    eyebrow={SECTION_BOOK_CONTENT.eyebrow}
-    description={SECTION_BOOK_CONTENT.description}
-    button={SECTION_BOOK_CONTENT.button}
-  />
+  <div id={sectionId("home.beforeAfter")}>
+    <BeforeAfter
+      title={beforeAfter.title}
+      description={beforeAfter.description}
+      transitionPhrase={beforeAfter.transitionPhrase}
+      before={beforeAfter.before}
+      after={beforeAfter.after}
+    />
+  </div>
+  <div id={sectionId("home.book")}>
+    <Book
+      title={book.title}
+      eyebrow={book.eyebrow}
+      description={book.description}
+      button={book.button}
+    />
+  </div>
 </MainLayout>
 
 <script>
-  import { bindScrollProgress, $ } from "@utils";
+  import { $, bindScrollProgress, onPageLoad } from "@utils";
 
-  const slider = $(".phrase-slider") as HTMLElement;
-  if(slider) 
-    bindScrollProgress({ target: slider });
+  onPageLoad(() => bindScrollProgress({ target: $(".phrase-slider") }));
 </script>

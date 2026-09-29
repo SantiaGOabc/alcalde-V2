@@ -1,0 +1,15 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { FIELD_CLASS } from "./fieldStyles";
+
+interface Props extends HTMLAttributes<"input"> {
+  /** `bare` no aporta estilo visual (rangos, controles a medida); `field` es el campo de formulario. */
+  variant?: "bare" | "field";
+}
+
+const { variant = "bare", class: className, ...props } = Astro.props;
+
+const baseClass = "block w-full disabled:cursor-not-allowed disabled:opacity-50";
+---
+
+<input class:list={[baseClass, variant === "field" && FIELD_CLASS, className]} {...props} />

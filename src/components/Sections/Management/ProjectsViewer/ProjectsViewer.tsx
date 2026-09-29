@@ -3,7 +3,6 @@ import { ESTADOS_GESTION } from '@constant';
 import { useProyectosVisor } from '@/hooks';
 import type { CategoriaObra } from '@types';
 import GalleryModal from '@/components/ui/GalleryModal';
-import ArrowButton from '@/components/ui/ArrowButton';
 import CategorySelector from './CategorySelector';
 import ProjectGallery from './ProjectGallery';
 
@@ -16,7 +15,27 @@ export type ProyectosVisorProps = ProjectsViewerProps;
 const getCurrentIndex = (idx: number, total: number) =>
     total === 0 ? 1 : (((idx % total) + total) % total) + 1;
 
-/** Projects showcase island with category pills, image slider, and modal lightbox. */
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** Flecha de la ficha: el trazo apunta a la izquierda o a la derecha. */
+function ArrowIcon({ direction }: { direction: 'left' | 'right' }) {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            className="size-4"
+        >
+            <path d={direction === 'left' ? 'm15 18-6-6 6-6' : 'm9 18 6-6-6-6'} />
+        </svg>
+    );
+}
+
+/** Visor de obras: índice de áreas a la izquierda y la ficha de la obra a la derecha. */
 export default function ProjectsViewer({ categorias }: ProjectsViewerProps) {
     const {
         categoria,
@@ -43,6 +62,7 @@ export default function ProjectsViewer({ categorias }: ProjectsViewerProps) {
     }
 
     const estado = obra.estado ? ESTADOS_GESTION[obra.estado] : undefined;
+    const numeroActual = getCurrentIndex(obraIdx, total);
     const imagenesGaleria = obra.imagenes.map((i) => ({
         src: i.src,
         titulo: i.titulo,
@@ -56,54 +76,49 @@ export default function ProjectsViewer({ categorias }: ProjectsViewerProps) {
                 onCambiar={cambiarCategoria}
             />
 
-            <div className="gestion-marco">
-                {total > 1 && (
-                    <ArrowButton
-                        direction="left"
-                        onClick={anterior}
-                        aria-label={`Obra anterior en ${categoria.label}`}
-                        className="absolute top-1/2 left-0 z-20 -translate-y-1/2"
-                    />
-                )}
+            <article
+                key={obra.id}
+                id="obra-panel"
+                role="tabpanel"
+                aria-label={`Obras: ${categoria.label}`}
+                className="gestion-obra"
+            >
+                <ProjectGallery
+                    obra={obra}
+                    imagenIdx={imagenIdx}
+                    onCambiarImagen={cambiarImagen}
+                    onAbrir={abrirModal}
+                />
 
-                <article
-                    key={obra.id}
-                    id="obra-panel"
-                    role="tabpanel"
-                    aria-label={`Obras: ${categoria.label}`}
-                    className="gestion-obra"
-                >
-                    <ProjectGallery
-                        obra={obra}
-                        imagenIdx={imagenIdx}
-                        onCambiarImagen={cambiarImagen}
-                        onAbrir={abrirModal}
-                    />
+                <div className="gestion-obra-texto">
+                    <div>
+                        <p aria-hidden="true" className="gestion-obra-num">
+                            {pad(numeroActual)}
+                        </p>
 
-                    <div className="gestion-obra-texto">
-                        <div className="space-y-3.5">
-                            <div className="flex flex-wrap items-center gap-2.5">
-                                <span className="gestion-seccion">
-                                    {obra.area ?? categoria.seccion}
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                            <span className="gestion-seccion">
+                                {obra.area ?? categoria.seccion}
+                            </span>
+                            {estado && (
+                                <span className="gestion-estado" data-estado={obra.estado}>
+                                    {estado}
                                 </span>
-                                {estado && (
-                                    <span className="gestion-estado">{estado}</span>
-                                )}
-                            </div>
-
-                            <h3 className="gestion-obra-titulo">{obra.titulo}</h3>
-
-                            <p className="gestion-obra-desc">{obra.descripcion}</p>
+                            )}
                         </div>
 
-                        {total > 1 && (
-                            <div className="gestion-avance">
-                                <p aria-live="polite" className="gestion-avance-texto">
-                                    Obra <span>{getCurrentIndex(obraIdx, total)}</span> de{' '}
-                                    {total}
-                                </p>
+                        <h3 className="gestion-obra-titulo">{obra.titulo}</h3>
 
-                                <div className="flex items-center gap-1.5">
+                        <p className="gestion-obra-desc">{obra.descripcion}</p>
+                    </div>
+
+                    {total > 1 && (
+                        <div className="gestion-avance">
+                            <div className="min-w-0">
+                                <p aria-live="polite" className="gestion-avance-texto">
+                                    <span>{pad(numeroActual)}</span> / {pad(total)}
+                                </p>
+                                <div className="mt-3 flex items-center gap-1.5">
                                     {categoria.obras.map((o, i) => (
                                         <button
                                             key={o.id}
@@ -118,19 +133,29 @@ export default function ProjectsViewer({ categorias }: ProjectsViewerProps) {
                                     ))}
                                 </div>
                             </div>
-                        )}
-                    </div>
-                </article>
 
-                {total > 1 && (
-                    <ArrowButton
-                        direction="right"
-                        onClick={siguiente}
-                        aria-label={`Obra siguiente en ${categoria.label}`}
-                        className="absolute top-1/2 right-0 z-20 -translate-y-1/2"
-                    />
-                )}
-            </div>
+                            <div className="flex shrink-0 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={anterior}
+                                    aria-label={`Obra anterior en ${categoria.label}`}
+                                    className="gestion-flecha"
+                                >
+                                    <ArrowIcon direction="left" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={siguiente}
+                                    aria-label={`Obra siguiente en ${categoria.label}`}
+                                    className="gestion-flecha"
+                                >
+                                    <ArrowIcon direction="right" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </article>
 
             {modalAbierto &&
                 imagenesGaleria.length > 0 &&

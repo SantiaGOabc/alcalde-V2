@@ -1,48 +1,28 @@
 ---
-import { Section, Tipography } from "@components";
-import Timeline from "./Timeline/Timeline.component.astro";
+import MainLayout from "@layouts/MainLayout.astro";
+import { Hero, Person, Passions, Timeline, Closing } from "@components";
+import { sectionId } from "@/cms/anchors";
+import { getContent } from "@/lib/server";
 
-interface Props {
-  title?: string;
-  description?: string;
-  variant?: "primary" | "secondary" | "accent";
-}
-
-const { title, description, variant = "primary" } = Astro.props;
-const hasCustomHeader = Boolean(title);
+const [hero, person, passions, hitos, closing] = await Promise.all([
+  getContent("about.hero"),
+  getContent("about.person"),
+  getContent("about.passions"),
+  getContent("about.hitos"),
+  getContent("about.closing"),
+]);
 ---
 
-{
-  hasCustomHeader ? (
-    <Section variant={variant} className="py-16 sm:py-20 lg:py-24">
-      <div class="page-container mb-8">
-        <header class="max-w-3xl">
-          <Tipography
-            as="h1"
-            color="inherit"
-            class="text-3xl font-semibold leading-tight text-balance text-gray-900 sm:text-4xl lg:text-5xl"
-          >
-            {title}
-          </Tipography>
-          {
-            description && (
-              <Tipography
-                as="p"
-                color="inherit"
-                class="mt-4 max-w-2xl text-base leading-7 text-gray-600 text-pretty sm:text-lg"
-              >
-                {description}
-              </Tipography>
-            )
-          }
-        </header>
-      </div>
+<MainLayout title="Sobre mí" transparentNavbar>
+  <Hero id={sectionId("about.hero")} title={hero.title} description={hero.description} images={hero.images} />
+  <div id={sectionId("about.person")}><Person content={person} /></div>
+  <div id={sectionId("about.passions")}><Passions content={passions} /></div>
+  <div id={sectionId("about.hitos")}><Timeline variant="primary" hitos={hitos.items} /></div>
+  <div id={sectionId("about.closing")}><Closing content={closing} /></div>
+</MainLayout>
 
-      <slot />
-    </Section>
-  ) : (
-    <Timeline variant={variant}>
-      <slot />
-    </Timeline>
-  )
-}
+<script>
+  import { initRevealOnScroll } from "@utils";
+
+  initRevealOnScroll();
+</script>

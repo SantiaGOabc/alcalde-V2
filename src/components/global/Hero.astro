@@ -9,7 +9,9 @@ interface Props {
 	id?: string;
 }
 
-const { title, description, images = [], id } = Astro.props;
+const { title, description, images: allImages = [], id } = Astro.props;
+// Las imágenes sin URL (aún sin cargar en el panel) no forman parte del carrusel.
+const images = allImages.filter(Boolean);
 ---
 
 <Section className="home-hero relative isolate grid min-h-svh place-items-center overflow-hidden text-center text-white" id={id}>

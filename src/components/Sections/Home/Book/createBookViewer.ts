@@ -58,6 +58,8 @@ export interface BookViewer {
 	close(): void;
 	/** Fase actual, por si hace falta inspeccionarla. */
 	phase(): BookPhase;
+	/** Quita los oyentes globales (teclado, resize): se llama al salir de la página. */
+	destroy(): void;
 }
 
 /** Las hojas que el motor deposita, y los bloques que entran escalonados. */
@@ -574,5 +576,13 @@ export const createBookViewer = (root: ParentNode): BookViewer | null => {
 
 	bind();
 
-	return { open, close, phase: () => state.phase };
+	return {
+		open,
+		close,
+		phase: () => state.phase,
+		destroy: () => {
+			document.removeEventListener("keydown", onKeyDown);
+			window.removeEventListener("resize", onResize);
+		},
+	};
 };

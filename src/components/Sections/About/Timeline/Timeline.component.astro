@@ -6,7 +6,6 @@ import { ajustaImagen, resumen } from "@utils";
 import type { PlacaDolly, TabDolly } from "@types";
 import {
   FILTROS_HITO,
-  SECTION_ABOUT_HITOS,
   SECTION_ABOUT_INTRO,
   SECTION_ABOUT_TRAJECTORY,
 } from "@constant";
@@ -55,17 +54,18 @@ const placaDe = async (hito: Hito, id: string): Promise<PlacaDolly> => ({
 });
 
 interface Props {
+  hitos: Hito[];
   variant?: "primary" | "secondary" | "accent";
 }
 
-const { variant = "primary" } = Astro.props;
+const { hitos, variant = "primary" } = Astro.props;
 const { title } = SECTION_ABOUT_TRAJECTORY;
 
 // Un tab por filtro, con los hitos de esa pestaña. Solo los hitos con foto se
 // convierten en placa: los que no la tienen se quedan fuera de la galería.
 const tabs: TabDolly[] = await Promise.all(
   FILTROS_HITO.map(async (filtro) => {
-    const conFoto = SECTION_ABOUT_HITOS.filter((hito) => hito.tipo === filtro.id);
+    const conFoto = hitos.filter((hito) => hito.tipo === filtro.id);
 
     return {
       id: filtro.id,
@@ -89,7 +89,7 @@ const tabs: TabDolly[] = await Promise.all(
         {SECTION_ABOUT_INTRO.title}
       </p>
       <Tipography
-        as="h1"
+        as="h2"
         color="inherit"
         class="text-3xl font-semibold leading-tight text-balance text-gray-900 sm:text-4xl lg:text-5xl"
       >

@@ -1,0 +1,122 @@
+---
+import { Section, Tipography, SafeImage } from "@components";
+import type { CmsContent } from "@/cms/sections";
+
+interface Props {
+  content: CmsContent<"about.passions">;
+}
+
+const { header, items } = Astro.props.content;
+
+/** "01", "02"… para el número de capítulo. */
+const numeral = (index: number) => String(index + 1).padStart(2, "0");
+---
+
+<Section variant="secondary" className="py-20 sm:py-28 lg:py-36">
+  <div class="page-container">
+    <header data-reveal class="mx-auto mb-16 max-w-3xl text-center lg:mb-24">
+      <Tipography variant="eyebrow" color="accent" class="mb-3">{header.kicker}</Tipography>
+      <Tipography as="h2" variant="display">{header.titulo}</Tipography>
+      <Tipography variant="lead" color="secondary" class="mt-6">{header.descripcion}</Tipography>
+    </header>
+
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <nav aria-label="Mis pasiones" class="hidden lg:col-span-2 lg:block">
+        <ol class="sticky top-28 flex flex-col gap-4 border-l border-gray-200 pl-5">
+          {
+            items.map((item, index) => (
+              <li>
+                <a
+                  href={`#${item.id}`}
+                  data-passion-link={item.id}
+                  class="flex items-baseline gap-3 text-sm font-semibold text-gray-400 no-underline transition-colors hover:text-gray-700 aria-[current=true]:text-(--brand-primary)"
+                >
+                  <span class="text-lg font-semibold">{numeral(index)}</span>
+                  {item.kicker}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="flex flex-col gap-28 lg:col-span-10 lg:gap-40">
+        {
+          items.map((item, index) => (
+            <article id={item.id} data-passion={item.id} class="scroll-mt-28">
+              <header data-reveal>
+                <Tipography variant="eyebrow" color="accent">
+                  {numeral(index)} · {item.kicker}
+                </Tipography>
+                <Tipography as="h3" variant="title" class="mt-3 max-w-3xl">
+                  {item.titulo}
+                </Tipography>
+              </header>
+
+              <div class="mt-10 grid items-start gap-10 md:grid-cols-12 lg:gap-14">
+                <div
+                  data-reveal
+                  class:list={[
+                    "relative mx-auto w-full max-w-md pb-12 md:col-span-6 md:max-w-none",
+                    index % 2 === 1 && "md:order-2",
+                  ]}
+                >
+                  <SafeImage
+                    src={item.imagenes[0].src}
+                    alt={item.imagenes[0].alt}
+                    width={800}
+                    height={1000}
+                    loading="lazy"
+                    class="aspect-4/5 w-4/5 rounded-3xl object-cover object-top shadow-lg"
+                  />
+                  <SafeImage
+                    src={item.imagenes[1].src}
+                    alt={item.imagenes[1].alt}
+                    width={600}
+                    height={600}
+                    loading="lazy"
+                    class:list={[
+                      "absolute bottom-0 aspect-square w-1/2 rounded-2xl border-4 border-white object-cover shadow-xl",
+                      index % 2 === 1 ? "left-0 -rotate-3" : "right-0 rotate-3",
+                    ]}
+                  />
+                </div>
+
+                <div data-reveal class="md:col-span-6">
+                  <Tipography as="blockquote" variant="quote" class="border-l-2 border-(--brand-accent) pl-5">
+                    {item.frase}
+                  </Tipography>
+                  <div class="mt-8 space-y-4">
+                    {item.historia.map((paragraph) => (
+                      <Tipography color="secondary">{paragraph}</Tipography>
+                    ))}
+                  </div>
+                  <dl class="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                    {
+                      item.detalles.map((detalle) => (
+                        <div class="border-t border-gray-200 pt-4">
+                          <Tipography as="dt" variant="eyebrow" color="accent" class="tracking-wider">
+                            {detalle.titulo}
+                          </Tipography>
+                          <Tipography as="dd" variant="body-sm" color="secondary" class="mt-1">
+                            {detalle.texto}
+                          </Tipography>
+                        </div>
+                      ))
+                    }
+                  </dl>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  import { bindSectionNav, onPageLoad } from "@utils";
+
+  onPageLoad(() => bindSectionNav({ sections: "[data-passion]", links: "[data-passion-link]" }));
+</script>

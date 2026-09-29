@@ -1,9 +1,9 @@
 @reference "tailwindcss";
 /* ==========================================================================
-   Gestión — tarjeta violeta
+   Gestión — tarjeta gris suave
    --------------------------------------------------------------------------
    La variante que se renderiza hoy: selector por pastillas + desplegable, ficha
-   de la obra en tarjeta violeta redondeada y tira de miniaturas flotante.
+   de la obra en tarjeta redondeada y tira de miniaturas flotante.
 
    La otra variante del visor (índice a la izquierda, esquinas rectas) sigue
    viva en `management.css` y en `ProjectsViewerEditorial/`. Por eso estas
@@ -11,16 +11,30 @@
    desde `Management.astro` y comparten nombres de clase que se pisarían
    (.gestion-mini-item, .gestion-mini-contador, .gestion-punto, ...).
 
-   Colores: se usa el morado de marca del sitio (--brand-primary) para que no
-   convivan dos violetas, y un lila local para los acentos (kicker, puntos de
-   avance, aro de la miniatura activa), que sobre el morado oscuro necesitan
-   más contraste del que da la marca.
+   Colores (cambio pedido): la tarjeta pasó de violeta a gris suave, así que
+   todo lo que estaba calibrado para fondo oscuro (texto, velos, bordes) se
+   invirtió a gris oscuro. El morado de marca queda como único acento:
+     · el título central de la obra,
+     · la pastilla de categoría seleccionada, que se pinta de morado,
+     · el punto de avance activo y el ítem elegido del desplegable.
+   La barra de miniaturas es la excepción: flota sobre la foto, así que sigue
+   oscura aunque la tarjeta sea clara.
    ========================================================================== */
 
 :root {
-    /* El mismo morado del navbar y el footer. */
+    /* Morado oscuro de marca (navbar, footer). Es el único acento. */
     --gestion-violeta: var(--brand-primary, #472d82);
-    /* Acento claro: sobre el violeta, el morado de marca no se lee. */
+
+    /* Gris suave de la tarjeta. También lo usan el panel del desplegable y la
+       pastilla de categoría sin seleccionar, que son la misma superficie clara. */
+    --gestion-gris: #e7e7e4;
+
+    /* La barra de miniaturas flota sobre la foto, que puede ser de cualquier
+       tono, así que esta franja sigue oscura y no se invirtió con la tarjeta. */
+    --gestion-franja: #2b2e33;
+
+    /* Lila: solo en superficies oscuras (el aro de la miniatura activa y el
+       check del ítem morado del desplegable). Sobre el gris no se lee. */
     --gestion-lilac: #c9b8e8;
 
     /* Radios. Se escriben a mano a propósito: este proyecto no sobrescribe los
@@ -70,14 +84,18 @@
    Tarjeta de la obra
    ========================================================================== */
 
+/* Tarjeta de la obra: fondo gris suave (antes violeta) y texto oscuro, que es
+   lo que deja el morado de marca libre para el título. */
 .gestion-card {
-    @apply grid overflow-hidden border border-white/15 bg-(--gestion-violeta) text-white shadow-2xl;
+    @apply grid overflow-hidden border border-gray-300/60 bg-(--gestion-gris) text-gray-900 shadow-2xl;
     border-radius: var(--gestion-r-tarjeta);
     isolation: isolate;
 }
 
+/* El fondo de la foto: es lo que se ve detrás de un video o de una imagen que
+   aún no carga, así que acompaña al de la tarjeta. */
 .gestion-card-media {
-    @apply relative w-full bg-(--gestion-violeta);
+    @apply relative w-full bg-(--gestion-gris);
     aspect-ratio: 16 / 10;
     z-index: var(--gestion-card-z-media);
 }
@@ -94,8 +112,10 @@
     animation: gestion-card-fade-in 0.4s ease both;
 }
 
+/* Placeholder cuando la obra no tiene foto: sobre fondo claro tiene que ser un
+   gris, no un blanco (con blanco no se vería nada). */
 .gestion-card-iniciales {
-    @apply absolute inset-0 grid place-items-center text-8xl font-black tracking-tighter text-white/10 select-none;
+    @apply absolute inset-0 grid place-items-center text-8xl font-black tracking-tighter text-gray-900/10 select-none;
 }
 
 /* Velo inferior: le da contraste a la barra de miniaturas que va encima. */
@@ -111,65 +131,72 @@
     @apply mb-4 flex flex-wrap items-center justify-between gap-3;
 }
 
+/* Área de la obra. Sobre el gris claro el lila no se lee, así que pasa a gris
+   medio para no competir con el título morado. */
 .gestion-card-kicker {
-    @apply min-w-0 flex-1 truncate text-xs font-bold tracking-[0.24em] text-(--gestion-lilac) uppercase;
+    @apply min-w-0 flex-1 truncate text-xs font-bold tracking-[0.24em] text-gray-500 uppercase;
 }
 
 /* Estado de la obra: un punto de color, sin caja. */
 .gestion-card-estado {
-    @apply inline-flex shrink-0 items-center gap-2 text-[11px] font-semibold tracking-[0.14em] text-white/80 uppercase;
+    @apply inline-flex shrink-0 items-center gap-2 text-[11px] font-semibold tracking-[0.14em] text-gray-600 uppercase;
 }
 
 .gestion-card-estado::before {
-    @apply size-2 rounded-full bg-white/40;
+    @apply size-2 rounded-full bg-gray-400;
     content: '';
 }
 
-/* Tonos 400 en vez de los 500/600 del diseño sobre papel: el fondo acá es
-   violeta oscuro, y los tonos claros se leen mucho mejor. */
+/* Tonos 600: el fondo de la tarjeta pasó a gris claro, y los 400 de antes se
+   perdían contra él. */
 .gestion-card-estado[data-estado='concluido']::before {
-    @apply bg-emerald-400;
+    @apply bg-emerald-600;
 }
 
 .gestion-card-estado[data-estado='en-ejecucion']::before {
-    @apply bg-amber-400;
+    @apply bg-amber-600;
 }
 
 .gestion-card-estado[data-estado='en-planificacion']::before {
-    @apply bg-sky-400;
+    @apply bg-sky-600;
 }
 
+/* Título central de la obra: el morado oscuro de marca sobre el gris suave. Es
+   el único texto morado de la tarjeta. */
 .gestion-card-titulo {
-    @apply line-clamp-2 text-2xl font-bold tracking-tight text-white text-balance sm:text-3xl lg:text-4xl;
+    @apply line-clamp-2 text-2xl font-bold tracking-tight text-(--gestion-violeta) text-balance sm:text-3xl lg:text-4xl;
 }
 
 .gestion-card-desc {
-    @apply mt-4 line-clamp-4 text-base text-white/90 lg:line-clamp-5 lg:text-lg;
+    @apply mt-4 line-clamp-4 text-base text-gray-600 lg:line-clamp-5 lg:text-lg;
 }
 
 /* Pie: "Obra 2 de 6" y los puntos de avance */
 .gestion-card-pie {
-    @apply mt-8 flex items-center justify-between gap-4 border-t border-white/10 pt-5;
+    @apply mt-8 flex items-center justify-between gap-4 border-t border-gray-300/70 pt-5;
 }
 
 .gestion-card-contador {
-    @apply text-xs font-semibold tracking-[0.22em] text-white/70 uppercase;
+    @apply text-xs font-semibold tracking-[0.22em] text-gray-500 uppercase;
 }
 
 .gestion-card-contador strong {
-    @apply font-bold text-white;
+    @apply font-bold text-gray-900;
 }
 
 .gestion-card-puntos {
     @apply flex items-center gap-1.5;
 }
 
+/* Puntos de avance de las obras: grises los que no están seleccionados y morado
+   el que sí, que además es el más ancho. El gris es un tono real y no un blanco
+   translúcido, porque sobre la tarjeta clara un blanco no se vería. */
 .gestion-card-punto {
-    @apply h-1.5 w-2 cursor-pointer border-0 rounded-full bg-white/20 transition-all duration-300 hover:bg-white/40;
+    @apply h-1.5 w-2 cursor-pointer border-0 rounded-full bg-gray-400 transition-all duration-300 hover:bg-gray-500;
 }
 
 .gestion-card-punto--activo {
-    @apply w-6 bg-(--gestion-lilac);
+    @apply w-6 bg-(--gestion-violeta);
 }
 
 @media (min-width: 40rem) {
@@ -189,7 +216,12 @@
 }
 
 /* ==========================================================================
-   Pastillas de categoría
+   Pastillas de categoría (los globitos de arriba de la card)
+   --------------------------------------------------------------------------
+   Cambio pedido, y además estaba del revés: antes la pastilla sin seleccionar
+   era la morada y la elegida era una mancha violeta clarita. Ahora la que no
+   está elegida es gris con el contorno morado, y al seleccionarla se pinta de
+   morado oscuro con el texto blanco.
    ========================================================================== */
 
 .gestion-card-pastillas {
@@ -201,11 +233,11 @@
 }
 
 .gestion-card-pastilla--activa {
-    @apply border-white bg-(--gestion-violeta)/20 text-slate-950 shadow-lg shadow-white/10;
+    @apply border-(--gestion-violeta) bg-(--gestion-violeta) text-white shadow-lg shadow-(--gestion-violeta)/25;
 }
 
 .gestion-card-pastilla--inactiva {
-    @apply border-white/15 bg-(--gestion-violeta) text-white/90 hover:border-white/40 hover:bg-(--gestion-violeta)/80 hover:text-white;
+    @apply border-(--gestion-violeta)/45 bg-(--gestion-gris) text-gray-600 hover:border-(--gestion-violeta) hover:text-(--gestion-violeta);
 }
 
 .gestion-card-pastilla--mas {
@@ -227,8 +259,10 @@
     animation: gestion-card-menu-in 0.2s ease both;
 }
 
+/* El desplegable se apoya sobre la tarjeta, así que su panel también es gris;
+   el morado queda para el ítem que está elegido. */
 .gestion-card-menu-panel {
-    @apply relative overflow-hidden border border-white/15 bg-(--gestion-violeta)/95 shadow-2xl shadow-black/80 backdrop-blur-xl;
+    @apply relative overflow-hidden border border-white/15 bg-(--gestion-carta)/95 shadow-2xl shadow-black/80 backdrop-blur-xl;
     border-radius: var(--gestion-r-panel);
 }
 
@@ -280,8 +314,10 @@
    Barra de miniaturas (flota sobre la foto)
    ========================================================================== */
 
+/* Barra de miniaturas: flota sobre la foto, así que sigue el gris de la tarjeta
+   y no el violeta de antes. */
 .gestion-card-mini {
-    @apply absolute inset-x-3 bottom-3 flex items-center gap-2.5 border border-white/15 bg-(--gestion-violeta) px-3 py-2 shadow-lg sm:inset-x-4 sm:bottom-4;
+    @apply absolute inset-x-3 bottom-3 flex items-center gap-2.5 border border-white/15 bg-(--gestion-carta) px-3 py-2 shadow-lg sm:inset-x-4 sm:bottom-4;
     border-radius: var(--gestion-r-panel);
     z-index: var(--gestion-card-z-media);
 }
@@ -308,8 +344,8 @@
 .gestion-card-mini-item--activa {
     @apply ring-2 ring-(--gestion-lilac) ring-offset-2;
     /* El offset tiene que ser el color de la barra, no un gris: el aro se
-       dibuja en el padding de la barra, que es violeta. */
-    --tw-ring-offset-color: var(--gestion-violeta);
+       dibuja en el padding de la barra, que ahora es gris grafito. */
+    --tw-ring-offset-color: var(--gestion-carta);
 }
 
 .gestion-card-mini-item--inactiva {

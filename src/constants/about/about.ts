@@ -50,7 +50,7 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Alcalde de Cochabamba por cuatro periodos consecutivos",
     descripcion:
       "Es burgomaestre de Cochabamba durante cuatro periodos seguidos. En paralelo preside la Asociación de Gobiernos Municipales Autónomos de Bolivia, integra la Unión Internacional de Autoridades Locales (IULA) y representa a la Red Latinoamericana de Asociaciones Municipales ante la WACLAC, con base en Ginebra, Suiza.",
-    imageURL: premio("premio1.JPG"),
+    imageURL: alcalde("cinta.jpg"),
     imageAlt: "Reconocimiento a la gestión municipal",
     encuadre: "rostro",
   },
@@ -61,7 +61,7 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Primer Prefecto electo de Cochabamba",
     descripcion:
       "Es el primer Prefecto del departamento de Cochabamba elegido democráticamente por voto directo de la ciudadanía.",
-    imageURL: premio("premio2.JPG"),
+    imageURL: alcalde("prefecto.jpg"),
     imageAlt: "Entrega de un premio",
     encuadre: "rostro",
   },
@@ -72,7 +72,7 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Alcalde de Cochabamba por quinta vez",
     descripcion:
       "Se re-postula a la Alcaldía en las elecciones subnacionales de 2021 representando a la agrupación política SÚMATE y es elegido Alcalde por quinta vez con el 55,63 % de los votos.",
-    imageURL: premio("premio3.jpeg"),
+    imageURL: alcalde("IMG_2941.jpg"),
     imageAlt: "Premio a la gestión municipal",
     encuadre: "centro",
   },
@@ -96,7 +96,7 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Presidente de la Asociación de Gobiernos Municipales de Bolivia",
     descripcion:
       "Es elegido Presidente de la Asociación de Gobiernos Municipales Autónomos de Bolivia durante su gestión como Alcalde de Cochabamba.",
-    imageURL: alcalde("policia.jpeg"),
+    imageURL: premio("premio1.JPG"),
     imageAlt: "Supervisión en obra",
     encuadre: "centro",
   },
@@ -107,7 +107,7 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Embajador de Ciudades Sostenibles",
     descripcion:
       'Es distinguido como "Embajador de la Organización Mundial de Ciudades Sostenibles 2026" en París, Francia.',
-    imageURL: alcalde("alcalde.jpg"),
+    imageURL: premio("premio2.JPG"),
     imageAlt: "Manfred Reyes Villa",
     encuadre: "rostro",
   },
@@ -118,7 +118,7 @@ export const SECTION_ABOUT_HITOS: Hito[] = [
     titulo: "Cochabamba, ciudad sostenible",
     descripcion:
       "Una ciudad que recupera sus espejos de agua, sus parques y sus espacios públicos para devolverlos a la gente.",
-    imageURL: alcalde("colegio.webp"),
+    imageURL: premio("premio3.jpeg"),
     imageAlt: "Módulo educativo de la gestión",
     encuadre: "centro",
   },

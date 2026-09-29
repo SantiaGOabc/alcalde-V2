@@ -63,14 +63,14 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Puentes',
         portada: {
-            src: alcalde('cinta.jpg'),
+            src: raiz('puenteCalaCala.png'),
             alt: 'Corte de cinta de una obra',
             encuadre: 'centro',
         },
         imagenes: [
             {
                 tipo: 'foto',
-                src: alcalde('cinta.jpg'),
+                src: raiz('puenteCalaCala.png'),
                 alt: 'Corte de cinta de una obra',
             },
         ],
@@ -83,14 +83,14 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Puentes',
         portada: {
-            src: raiz('cocha.jpg'),
+            src: raiz('puenteMuyurina.jfif'),
             alt: 'Panorámica de la ciudad de Cochabamba',
             encuadre: 'centro',
         },
         imagenes: [
             {
                 tipo: 'foto',
-                src: raiz('cocha.jpg'),
+                src: raiz('puenteMuyurina.jfif'),
                 alt: 'Panorámica de la ciudad de Cochabamba',
             },
         ],
@@ -174,13 +174,13 @@ export const OBRAS_GESTION: Obra[] = [
         estado: 'concluido',
         area: 'Ciudad Jardín',
         portada: {
-            src: raiz('teleferico.jpg'),
+            src: raiz('parque vial.jpg'),
             alt: 'El centro de la ciudad y sus áreas verdes',
             encuadre: 'centro',
         },
         imagenes: [
             {
-                src: raiz('teleferico.jpg'),
+                src: raiz('parque vial.jpg'),
                 alt: 'El Parque Vial después de la renovación',
             },
         ],

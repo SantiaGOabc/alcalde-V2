@@ -14,10 +14,24 @@ const [hero, person, passions, hitos, closing] = await Promise.all([
 ---
  
 <MainLayout title="Sobre mí" transparentNavbar>
+  <!--
+    ORDEN DE LAS SECCIONES: banner → línea de tiempo → el resto.
+
+    La línea de tiempo va justo debajo del banner porque es lo que da el peso de
+    la página y porque su índice (tabs de trayectoria y reconocimientos) queda
+    arriba del todo, sin tener que pasar por las fotos y las pasiones para
+    llegar. Lo que va después —la persona, las pasiones y el cierre— conserva su
+    orden anterior entre sí.
+
+    El orden es solo de lectura: los ids (`about-person`, `about-pasiones`…) los
+    genera `sectionId` y no dependen de la posición, así que los enlaces del
+    panel y el "lo que me llena el corazón" de la sección de la persona siguen
+    llevando a su sitio.
+  -->
   <Hero id={sectionId("about.hero")} title={hero.title} description={hero.description} images={hero.images} />
+  <div id={sectionId("about.hitos")}><Timeline variant="primary" hitos={hitos.items} /></div>
   <div id={sectionId("about.person")}><Person content={person} /></div>
   <div id={sectionId("about.passions")}><Passions content={passions} /></div>
-  <div id={sectionId("about.hitos")}><Timeline variant="primary" hitos={hitos.items} /></div>
   <div id={sectionId("about.closing")}><Closing content={closing} /></div>
 </MainLayout>
 

@@ -1,0 +1,92 @@
+---
+import {Button, SafeImage} from "@components";
+
+interface Props {
+  src: string;
+  type?: string;
+  poster?: string;
+  title?: string;
+  class?: string;
+}
+
+const {
+  src,
+  type,
+  poster,
+  title = "Video",
+  class: className,
+} = Astro.props;
+
+const youtubeId =
+  /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{6,12})/.exec(
+    src,
+  )?.[1];
+---
+
+<div
+  class:list={[
+    "relative aspect-16/10 w-full overflow-hidden bg-black",
+    className,
+  ]}
+>
+  {
+    youtubeId ? (
+      <Button
+        type="button"
+        className="group absolute inset-0 block h-full w-full cursor-pointer border-0 bg-black p-0"
+        data-youtube-id={youtubeId}
+        data-video-title={title}
+        aria-label={`Reproducir ${title}`}
+      >
+        <SafeImage
+          src={poster ?? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`}
+          alt=""
+          width={1280}
+          height={720}
+          loading="lazy"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <span class="absolute inset-0 grid place-items-center bg-black/20 transition-colors group-hover:bg-black/35">
+          <span class="grid h-16 w-16 place-items-center rounded-full bg-red-600 shadow-lg transition-transform group-hover:scale-105">
+            <span class="ml-1 h-0 w-0 border-y-10 border-y-transparent border-l-16 border-l-white" />
+          </span>
+        </span>
+      </Button>
+    ) : (
+      <video
+        class="block aspect-16/10 w-full object-cover"
+        controls
+        playsinline
+        preload="metadata"
+        poster={poster}
+      >
+        <source src={src} type={type} />
+        Your browser does not support the video tag.
+      </video>
+    )
+  }
+</div>
+
+<script>
+    import { $$ } from "@utils";
+  $$<HTMLButtonElement>("[data-youtube-id]").forEach((button) => {
+    button.addEventListener(
+      "click",
+      () => {
+        const id = button.dataset.youtubeId;
+        if (!id) return;
+
+        const frame = document.createElement("iframe");
+        frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        frame.title = button.dataset.videoTitle ?? "Video de YouTube";
+        frame.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        frame.allowFullscreen = true;
+        frame.loading = "lazy";
+        frame.className = "absolute inset-0 h-full w-full border-0";
+        button.replaceWith(frame);
+      },
+      { once: true },
+    );
+  });
+</script>

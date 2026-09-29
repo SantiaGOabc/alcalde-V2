@@ -1,5 +1,5 @@
 ---
-import { Section, Tipography } from "@components";
+import { Section } from "@components";
 import { ELFSIGHT_TIKTOK_APP_ID } from "@constant";
 
 /**
@@ -13,13 +13,10 @@ import { ELFSIGHT_TIKTOK_APP_ID } from "@constant";
  * tocarlo (sin eso lo empaquetaría como módulo y le añadiría `type="module"`).
  * Por eso el div del widget lleva el atributo `data-elfsight-app-lazy` de
  * Elfsight: el widget no se descarga hasta que entra en pantalla.
+ *
+ * El contenido no es del CMS: los videos se administran desde el panel de
+ * Elfsight, y aquí solo se declara el id de la app (`ELFSIGHT_TIKTOK_APP_ID`).
  */
-interface Props {
-  eyebrow: string;
-  title: string;
-  description: string;
-}
-
 ---
 
 <Section variant="primary" className="py-10 sm:py-15 lg:py-20">

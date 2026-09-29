@@ -14,7 +14,6 @@ import {
   SECTION_GESTION,
   SECTION_MANAGEMENT_CLOSING,
   SECTION_PHRASES_CONTENT,
-  SECTION_TIKTOK_CONTENT,
 } from '@constant';
 
 /** Página pública donde se ve cada sección: es lo que muestra la vista previa. */
@@ -41,7 +40,6 @@ export const CMS_SECTIONS = {
   'home.phrases': { ...PAGES.home, label: 'Frases', defaults: SECTION_PHRASES_CONTENT },
   'home.beforeAfter': { ...PAGES.home, label: 'Antes y después', defaults: SECTION_BEFORE_AFTER_CONTENT },
   'home.book': { ...PAGES.home, label: 'Libro digital (tarjeta)', defaults: SECTION_BOOK_CONTENT },
-  'home.tiktok': { ...PAGES.home, label: 'Feed de TikTok', defaults: SECTION_TIKTOK_CONTENT },
 
   'about.hero': { ...PAGES.about, label: 'Hero', defaults: CONTENT_HERO_ABOUT },
   'about.person': { ...PAGES.about, label: 'La persona', defaults: SECTION_ABOUT_PERSON },

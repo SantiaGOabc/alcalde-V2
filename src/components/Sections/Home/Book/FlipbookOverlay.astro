@@ -112,28 +112,43 @@ import { Button, Input, Tipography } from "@components";
        (img, video o embed) lo crea el visor, que es quien sabe de dónde salió.
        Ojo: aquí no puede haber ninguna utilidad de `display`, porque el
        atributo `hidden` y `flex` se pisarían y el panel nunca se escondería. -->
-  <div data-book-media hidden class="fixed inset-0 z-20 bg-black/85 p-6 backdrop-blur-sm">
-    <div class="flex h-full flex-col items-center justify-center gap-3">
-      <Button
+  <div
+    data-book-media
+    hidden
+    class="fixed inset-0 z-20 bg-black/92 p-5 backdrop-blur-md sm:p-8"
+  >
+    <div class="flex h-full flex-col items-center justify-center gap-4">
+      <button
         type="button"
-        variant="ghost"
         data-book-media-back
-        className="cursor-pointer self-start rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
+        class="absolute top-5 left-5 inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-(--home-accent) focus-visible:outline-none sm:top-8 sm:left-8"
       >
-        &larr; Volver al libro
-      </Button>
+        <svg viewBox="0 0 16 16" class="size-3 fill-current" aria-hidden="true">
+          <path
+            d="M7.78 2.72a.75.75 0 0 1 0 1.06L4.56 7h8.19a.75.75 0 0 1 0 1.5H4.56l3.22 3.22a.75.75 0 0 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0Z"
+          ></path>
+        </svg>
+        Volver al libro
+      </button>
+
       <div
         data-book-media-body
-        class="flex max-h-[75svh] w-full max-w-5xl items-center justify-center overflow-hidden rounded-xl"
+        class="flex max-h-[78svh] w-full max-w-5xl items-center justify-center overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10"
       >
       </div>
-      <Tipography
-        as="p"
-        data-book-media-alt
-        color="inherit"
-        class="max-w-3xl text-center text-sm text-white/70"
-      >
-      </Tipography>
+
+      <div class="flex max-w-3xl flex-col items-center gap-1 text-center">
+        <Tipography
+          as="p"
+          data-book-media-alt
+          color="inherit"
+          class="text-sm leading-relaxed text-white/85"
+        >
+        </Tipography>
+        <Tipography as="p" color="inherit" class="text-[0.7rem] text-white/35">
+          Esc para volver al libro
+        </Tipography>
+      </div>
     </div>
   </div>
 </div>

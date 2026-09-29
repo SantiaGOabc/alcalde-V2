@@ -1,197 +1,221 @@
 ---
-import { Image } from "astro:assets";
-import { Button, Tipography } from "@components";
-import type { BookPage } from "@types";
+import { Tipography } from "@components";
+import type { BookBanner, BookPage } from "@types";
 import { BOOK_ATTR, BOOK_META } from "@constant";
+import BookGroup from "./BookGroup.astro";
+// Se importa con otro nombre que su tipo (`BookBanner`) para que convivan en el
+// mismo archivo: uno es el dato de la banda, el otro la tarjeta que la pinta.
+import BookBannerCard from "./BookBanner.astro";
+import BookImage from "./BookImage.astro";
+import { photosOfPage } from "./bookBento";
+import { photoSize } from "./bookPhoto";
 
+/**
+ * La plantilla de una hoja del libro.
+ *
+ * El libro es un álbum de fotografías, así que hay dos hoja distintas y no se
+ * mezclan:
+ *
+ * 1. La de contenido (`page`): SOLO fotos, en bento, ni un título encima. Las
+ *    fotos van pegadas al papel con un margen pequeño entre ellas, que es lo
+ *    que las separa y las hace parecer recortes y no un mosaico encajado.
+ * 2. La de blanco (`section`): papel sin nada y el título CENTRADO en el medio
+ *    de la plana. Es la que rotula un bloque y va cada dos hojas de contenido.
+ *
+ * Con eso se cierran las otras dos, que no dependen de los datos:
+ *
+ * 3. La tapa: la foto de portada con el rótulo encima.
+ * 4. La contraportada: la cita de cierre y los créditos.
+ *
+ * Cuál se dibuja lo dice `kind` en los datos, y añadir una hoja es añadir un
+ * objeto, sin tocar ningún componente.
+ */
 interface Props extends BookPage {}
 
-const { kind, label, kicker, body, caption, image, gallery, video, works } =
-  Astro.props;
+const page = Astro.props as BookPage;
+const { kind, label } = page;
 
 const reveal = { [BOOK_ATTR.reveal]: "" };
-const expand = { [BOOK_ATTR.expand]: "" };
 const labelAttr = { [BOOK_ATTR.label]: label };
+
+const items = photosOfPage(page);
+
+const coverSize = photoSize(BOOK_META.coverImage, 3 / 4);
+
+/**
+ * La banda de video de la hoja, venga como venga.
+ *
+ * `video` es el atajo de una línea y `banner` la versión con rótulo. Los dos
+ * pintan la misma tarjeta: así una página que solo necesita un video no tiene
+ * que aprenderse la forma de la banda.
+ */
+const band: BookBanner | undefined =
+  page.banner ??
+  (page.video
+    ? { title: "Ver el video", subtitle: page.video.alt, video: page.video }
+    : undefined);
 ---
 
 {
   kind === "cover" && (
-    <article {...labelAttr} class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-sm bg-(--home-accent) p-7 text-white">
-      <Image
-        src={BOOK_META.coverImage}
-        alt={BOOK_META.coverAlt}
-        width={1024}
-        height={1365}
-        class="absolute inset-0 -z-10 size-full object-cover"
-        loading="lazy"
-        decoding="async"
+    <article
+      {...labelAttr}
+      class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-sm text-white"
+    >
+      <BookImage
+        image={{ src: BOOK_META.coverImage, alt: BOOK_META.coverAlt }}
+        width={coverSize.width}
+        height={coverSize.height}
+        class="absolute inset-0 -z-30 size-full object-cover"
+        sizes="(min-width: 1024px) 46vw, 96vw"
       />
       <div
         aria-hidden="true"
-        class="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/35 to-black/45"
+        class="absolute inset-0 -z-20 bg-linear-to-t from-black/90 via-black/45 to-black/35"
       />
+
+      {/* El rótulo de la tapa. Son los mismos datos que lee el libro cerrado en
+          3D, y no están repetidos en ninguna parte: la tapa del visor y la
+          tarjeta de la sección no pueden decir cosas distintas. */}
+      <div class="book-page__cover relative flex flex-col items-start gap-2 p-7">
+        <span class="rounded-full border border-white/25 bg-black/35 px-2.5 py-0.5 text-[0.6rem] font-semibold tracking-[0.2em] text-white/85 uppercase backdrop-blur-sm">
+          {BOOK_META.coverBadge}
+        </span>
+
+        <Tipography
+          as="h1"
+          color="inherit"
+          {...reveal}
+          class="text-[calc(1.9rem*var(--book-text-scale))] leading-[1.05] font-extrabold tracking-tight text-balance"
+        >
+          {BOOK_META.coverLines.map((line) => (
+            <span class="block">{line}</span>
+          ))}
+        </Tipography>
+
+        <span
+          aria-hidden="true"
+          class="mt-1 h-px w-14 bg-white/60"
+        />
+
+        <Tipography
+          as="p"
+          color="inherit"
+          {...reveal}
+          class="text-[calc(0.8rem*var(--book-text-scale))] text-white/75"
+        >
+          {BOOK_META.coverNote}
+        </Tipography>
+
+        <Tipography
+          as="p"
+          color="inherit"
+          {...reveal}
+          class="mt-3 flex items-center gap-1.5 text-[calc(0.68rem*var(--book-text-scale))] font-semibold text-white/55 uppercase"
+        >
+          {BOOK_META.coverHint}
+          <svg viewBox="0 0 16 16" class="size-3 animate-pulse fill-current" aria-hidden="true">
+            <path d="M2.72 7.78a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 1.06L4.56 7h8.19a.75.75 0 0 1 0 1.5H4.56l3.47 3.47a.75.75 0 0 1-1.06 1.06L2.72 8.84a.75.75 0 0 1 0-1.06Z" />
+          </svg>
+        </Tipography>
+      </div>
     </article>
   )
 }
 
 {
   kind === "back" && (
-    <article {...labelAttr} class="book-page relative isolate flex h-full flex-col items-center justify-center overflow-hidden rounded-sm bg-(--home-accent) p-7 text-center text-white">
+    <article
+      {...labelAttr}
+      class="book-page relative isolate flex h-full flex-col items-center justify-center gap-4 overflow-hidden rounded-sm p-7 text-center text-white"
+    >
       <div
         aria-hidden="true"
         class="absolute inset-0 -z-10 bg-linear-to-br from-(--home-accent) via-(--home-accent-strong) to-(--home-accent)"
       />
-      <header class="flex flex-col gap-3">
-        <Tipography
-          as="h3"
-          color="inherit"
-          {...reveal}
-          class="text-[calc(1.6rem*var(--book-text-scale))] font-bold"
-        >
-          {BOOK_META.backTitle}
-        </Tipography>
-        <Tipography
-          as="p"
-          color="inherit"
-          {...reveal}
-          class="max-w-[28ch] text-[calc(0.95rem*var(--book-text-scale))] text-white/75"
-        >
-          {BOOK_META.backText}
-        </Tipography>
-      </header>
+
+      <Tipography
+        as="h3"
+        color="inherit"
+        {...reveal}
+        class="text-[calc(1.6rem*var(--book-text-scale))] leading-tight font-bold text-balance"
+      >
+        {BOOK_META.backTitle}
+      </Tipography>
+
+      <span aria-hidden="true" {...reveal} class="h-px w-16 bg-white/50" />
+
+      <Tipography
+        as="p"
+        color="inherit"
+        {...reveal}
+        class="max-w-[30ch] text-[calc(0.95rem*var(--book-text-scale))] text-white/75"
+      >
+        {BOOK_META.backText}
+      </Tipography>
+
+      <Tipography
+        as="p"
+        color="inherit"
+        {...reveal}
+        class="mt-3 max-w-[34ch] text-[calc(0.7rem*var(--book-text-scale))] leading-relaxed text-white/55"
+      >
+        {BOOK_META.backCredits}
+      </Tipography>
     </article>
   )
 }
 
 {
   /*
-    Una hoja de papel del libro real es una foto a sangre con el título
-    montado encima, no una ficha blanca con texto: por eso la imagen (o, si
-    no hay ninguna todavía, el degradado de la marca) va de fondo a la página
-    entera y el texto se apoya sobre ella, igual que en el PDF de origen. El
-    velo de abajo es lo que hace que ese texto se lea encima de cualquier
-    foto, clara u oscura.
+    La hoja de contenido: SOLO fotos. Ni título encima, ni franja, ni párrafo.
+    El título de cada bloque va en su propia hoja en blanco, la de `section`,
+    que separa los bloques de dos en dos.
   */
-  kind === "page" && (
-    <article {...labelAttr} class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-sm text-white">
-      {image && (
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={1000}
-          height={1500}
-          class="absolute inset-0 -z-20 size-full object-cover object-[50%_30%]"
-          loading="lazy"
-          decoding="async"
-        />
-      )}
+  kind === "page" && items.length > 0 && (
+    <article
+      {...labelAttr}
+      class="book-page book-page--bento relative isolate h-full overflow-hidden rounded-sm bg-neutral-100 p-2"
+    >
+      <BookGroup photos={items} />
 
-      {!image && (
-        <div
+      {band && (
+        <div {...reveal} class="absolute inset-x-0 bottom-0 z-10 p-1">
+          <BookBannerCard banner={band} />
+        </div>
+      )}
+    </article>
+  )
+}
+
+{
+  /*
+    La hoja de blanco: papel, y el título EN EL CENTRO de la plana. Es la que
+    dice de qué va el bloque de fotos que viene detrás, y va cada dos hojas para
+    que el libro respire y el título se lea sin ninguna foto alrededor.
+  */
+  kind === "section" && (
+    <article
+      {...labelAttr}
+      class="book-page book-page--section relative isolate flex h-full items-center justify-center overflow-hidden rounded-sm bg-white px-6 text-center"
+    >
+      <header {...reveal} class="flex flex-col items-center gap-3">
+        <span
           aria-hidden="true"
-          class="absolute inset-0 -z-20 bg-linear-to-br from-(--home-accent) via-(--home-accent-strong) to-(--home-accent)"
+          class="h-px w-12 bg-neutral-300"
         />
-      )}
-
-      <div
-        aria-hidden="true"
-        class="absolute inset-0 -z-10 bg-linear-to-t from-black/92 via-black/45 to-black/10"
-      />
-
-      <div class="book-page__body relative flex h-full flex-col justify-end gap-3 overflow-y-auto overscroll-contain px-6 pt-7 pb-6">
-        {kicker && (
-          <Tipography
-            as="p"
-            color="inherit"
-            {...reveal}
-            class="text-[calc(0.68rem*var(--book-text-scale))] font-semibold tracking-[0.18em] text-white/80 uppercase"
-          >
-            {kicker}
-          </Tipography>
-        )}
-
         <Tipography
           as="h2"
           color="inherit"
-          {...reveal}
-          class="text-[calc(1.5rem*var(--book-text-scale))] leading-[1.1] font-extrabold"
+          class="text-[calc(1.6rem*var(--book-text-scale))] leading-[1.15] font-extrabold tracking-tight text-balance text-neutral-900"
         >
           {label}
         </Tipography>
-
-        {body && (
-          <Tipography
-            as="p"
-            color="inherit"
-            {...reveal}
-            class="text-[calc(0.88rem*var(--book-text-scale))] leading-[1.6] text-white/85"
-          >
-            {body}
-          </Tipography>
-        )}
-
-        {gallery && (
-          <div {...reveal} class="flex gap-2.5">
-            {gallery.map((photo) => (
-              <figure
-                {...expand}
-                class="min-w-0 flex-1 overflow-hidden rounded-lg border border-white/20"
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={720}
-                  height={960}
-                  class="aspect-3/4 size-full object-cover object-[50%_30%]"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-            ))}
-          </div>
-        )}
-
-        {video && (
-          <Button
-            type="button"
-            variant="ghost"
-            {...expand}
-            {...{ [BOOK_ATTR.videoUrl]: video.src }}
-            aria-label={`Ampliar video: ${video.alt}`}
-            className="w-fit cursor-pointer rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[calc(0.8rem*var(--book-text-scale))] font-semibold text-white backdrop-blur-sm hover:bg-white/20"
-          >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-              <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-            </svg>
-            Ver video
-          </Button>
-        )}
-
-        {caption && (
-          <Tipography
-            as="p"
-            color="inherit"
-            class="text-[calc(0.78rem*var(--book-text-scale))] text-white/60 italic"
-          >
-            {caption}
-          </Tipography>
-        )}
-
-        {works && works.length > 0 && (
-          <ul {...reveal} class="mt-1 flex flex-col gap-0.5 rounded-lg bg-black/35 px-3 py-2 backdrop-blur-sm">
-            {works.map((work) => (
-              <li class="flex items-baseline justify-between gap-3 border-b border-white/15 py-1.5 text-[calc(0.8rem*var(--book-text-scale))] leading-snug last:border-b-0">
-                <span>{work.name}</span>
-                {work.year && (
-                  <em class="shrink-0 font-bold text-white not-italic">
-                    {work.year}
-                  </em>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+        <span
+          aria-hidden="true"
+          class="h-px w-12 bg-neutral-300"
+        />
+      </header>
     </article>
   )
 }

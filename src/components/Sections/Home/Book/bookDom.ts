@@ -78,6 +78,8 @@ export interface OpenMedia {
 	type: "image" | "video" | "embed";
 	src: string;
 	alt: string;
+	/** Póster de un video. Sin él, el reproductor arranca en negro. */
+	poster?: string;
 }
 
 const VIDEO_FILE = /\.(mp4|webm|ogv|mov)(\?|#|$)/i;
@@ -95,18 +97,36 @@ const buildImage = ({ src, alt }: OpenMedia): HTMLElement => {
 	image.src = src;
 	image.alt = alt;
 	image.decoding = "async";
-	image.className = "max-h-[75svh] w-auto rounded-xl object-contain";
+	// `w-auto` y no `w-full`: con el ancho al 100 % una foto vertical se
+	// estiraría hasta quedar más alta que la pantalla. Aquí manda el alto y el
+	// ancho se acomoda.
+	image.className = "book-media__frame max-h-[72svh] w-auto rounded-xl object-contain";
 	return image;
 };
 
-const buildVideo = ({ src }: OpenMedia): HTMLElement => {
+/**
+ * El reproductor.
+ *
+ * El póster no es adorno: sin él el primer fotograma del video aparece sobre un
+ * rectángulo negro, que es justo lo que hace que un reproductor parezca roto.
+ *
+ * Se reproducen en bucle y solos porque el libro se lee pasando hojas, y un
+ * video parado a media escena se queda ahí esperando a que nadie vuelva.
+ */
+const buildVideo = ({ src, poster }: OpenMedia): HTMLElement => {
 	const video = document.createElement("video");
 	video.src = src;
+	if (poster) video.poster = poster;
 	video.controls = true;
 	video.autoplay = true;
 	video.loop = true;
 	video.playsInline = true;
-	video.className = "max-h-[75svh] w-full rounded-xl bg-black";
+	// El bucle y la reproducción automática necesitan que el archivo esté
+	// preparado; con `none` algunos navegadores no arrancan hasta el primer
+	// toque, que es justo lo que se quiere evitar aquí.
+	video.preload = "auto";
+	video.className =
+		"book-media__frame max-h-[72svh] w-auto rounded-xl bg-black object-contain";
 	return video;
 };
 
@@ -119,7 +139,8 @@ const buildEmbed = ({ src, alt }: OpenMedia): HTMLElement => {
 	frame.allow =
 		"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
 	frame.allowFullscreen = true;
-	frame.className = "aspect-video w-full rounded-xl border-0";
+	frame.className =
+		"book-media__frame aspect-video w-full max-w-5xl rounded-xl border-0";
 	return frame;
 };
 
@@ -145,7 +166,8 @@ export const mediaUnder = (target: HTMLElement): OpenMedia | null => {
 	const videoUrl = target.dataset[datasetKey(BOOK_ATTR.videoUrl)];
 
 	if (videoUrl) {
-		return { type: mediaTypeOf(videoUrl), src: videoUrl, alt: labelled };
+		const poster = target.dataset[datasetKey(BOOK_ATTR.videoPoster)];
+		return { type: mediaTypeOf(videoUrl), src: videoUrl, alt: labelled, poster };
 	}
 
 	const image = target.querySelector("img");

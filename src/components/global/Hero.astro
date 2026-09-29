@@ -1,6 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import { Section, Tipography } from "@components";
+import { SmartImage } from "@components";
 
 interface Props {
 	title: string;
@@ -23,7 +23,7 @@ const images = allImages.filter(Boolean);
 				style={`--hero-count: ${images.length}`}
 			>
 				{images.map((src, index) => (
-					<Image
+					<SmartImage
 						src={src}
 						alt=""
 						width={1920}

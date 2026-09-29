@@ -1,6 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import { Button, Input, Section, Tipography } from "@components";
+import { SmartImage } from "@components";
 import { ArrowLeft, ArrowRight } from "@icons";
 
 type ComparacionImagen = {
@@ -98,7 +98,7 @@ const slides = comparisons.flatMap((comparison, index) => [
                       class="absolute inset-y-0 left-0 w-1/2 overflow-hidden"
                       data-mayor-before
                     >
-                      <Image
+                      <SmartImage
                         src={slide.before.imageURL}
                         alt={`Antes: ${slide.before.title}`}
                         class={`size-full select-none object-cover ${slide.before.imageFit === "contain" ? "object-top" : "object-center"}`}
@@ -113,7 +113,7 @@ const slides = comparisons.flatMap((comparison, index) => [
                       class="absolute inset-y-0 right-0 w-1/2 overflow-hidden"
                       data-mayor-after
                     >
-                      <Image
+                      <SmartImage
                         src={slide.after.imageURL}
                         alt={`Después: ${slide.after.title}`}
                         class={`size-full select-none object-cover ${slide.after.imageFit === "contain" ? "object-top" : "object-center"}`}
@@ -143,7 +143,7 @@ const slides = comparisons.flatMap((comparison, index) => [
                   </>
                 ) : slide.kind === COMPARISON ? (
                   <>
-                    <Image
+                    <SmartImage
                       src={slide.before.imageURL}
                       alt={`Antes: ${slide.before.title}`}
                       class={`absolute inset-0 size-full select-none object-cover ${slide.before.imageFit === "contain" ? "object-top" : "object-center"}`}
@@ -158,7 +158,7 @@ const slides = comparisons.flatMap((comparison, index) => [
                       data-after-layer
                       style="clip-path: inset(0 0 0 50%)"
                     >
-                      <Image
+                      <SmartImage
                         src={slide.after.imageURL}
                         alt={`Después: ${slide.after.title}`}
                         class={`absolute inset-0 size-full select-none object-cover ${slide.after.imageFit === "contain" ? "object-top" : "object-center"}`}

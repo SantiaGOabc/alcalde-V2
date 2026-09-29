@@ -1,0 +1,101 @@
+---
+import type { BookBanner } from "@types";
+import BookImage from "./BookImage.astro";
+import { imageUrl } from "./bookPhoto";
+
+/**
+ * La banda de video de una hoja.
+ *
+ * No es un reproductor: es la tapa. Muestra el rótulo del video y un botón, y al
+ * pulsarlo el visor abre el reproductor por encima del libro. Poner el
+ * `<video>` dentro de la hoja ataría el motor de volteo a un elemento que se
+ * reproduce solo y habría que pausar al girar; así el video solo existe
+ * mientras se está viendo.
+ *
+ * Recibe el `banner` entero y no sus campos sueltos: la misma banda se pinta en
+ * varias formas del bento, y desgranarla en cada una hacía que añadir un campo
+ * al rótulo fueran cinco sitios que editar en vez de uno.
+ *
+ * Es un `<button>` nativo y no el `Button` de `ui/`: aquel es un contenedor
+ * React con su propio relleno y su radio, y aquí el ancho, el relleno y el
+ * radio son parte del dibujo. Mezclarlos es pelearse con utilidades que
+ * compiten entre sí.
+ *
+ * El degradado sale de la marca, no de un color suelto, para que la banda
+ * pertenezca al mismo libro que la tapa. Con `poster` la banda tiene una foto
+ * detrás y el velo solo tiene que oscurecer lo justo para que el rótulo se lea;
+ * sin él, el degradado es la banda entera.
+ */
+interface Props {
+  banner: BookBanner;
+}
+
+const { banner } = Astro.props;
+const { video, title, subtitle, actionLabel = "Reproducir" } = banner;
+const poster = banner.poster ?? null;
+---
+
+<button
+  type="button"
+  data-book-expand
+  data-book-video-url={video.src}
+  data-book-video-poster={poster ? imageUrl(poster) : undefined}
+  aria-label={`Reproducir: ${title}`}
+  class="book-banner group relative flex w-full cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-lg border border-white/15 bg-linear-to-r from-(--home-accent) via-(--home-accent-strong) to-(--home-accent) px-3 py-2.5 text-left transition-colors duration-300 hover:border-white/30 focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:outline-none"
+>
+  {
+    poster && (
+      <>
+        <BookImage
+          image={poster}
+          width={960}
+          height={540}
+          class="absolute inset-0 size-full object-cover"
+          sizes="(min-width: 1024px) 38vw, 90vw"
+        />
+        <span
+          aria-hidden="true"
+          class="absolute inset-0 bg-linear-to-r from-black/85 via-black/60 to-black/40"
+        />
+      </>
+    )
+  }
+
+  <span class="relative z-10 flex min-w-0 items-center gap-2.5">
+    <span
+      aria-hidden="true"
+      class="grid size-8 shrink-0 place-items-center rounded-full bg-linear-to-tr from-amber-300 to-amber-400 text-black shadow-lg transition-transform duration-300 group-hover:scale-110"
+    >
+      <svg viewBox="0 0 24 24" class="ml-0.5 size-4 fill-current">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+    </span>
+
+    <span class="flex min-w-0 flex-col">
+      <span
+        class="truncate text-[calc(0.78rem*var(--book-text-scale))] font-bold text-white transition-colors duration-300 group-hover:text-amber-200"
+      >
+        {title}
+      </span>
+      {
+        subtitle && (
+          <span class="truncate text-[calc(0.66rem*var(--book-text-scale))] leading-tight text-white/70">
+            {subtitle}
+          </span>
+        )
+      }
+    </span>
+  </span>
+
+  <span
+    aria-hidden="true"
+    class="relative z-10 flex shrink-0 items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[0.6rem] font-semibold text-white backdrop-blur-sm transition-colors duration-300 group-hover:bg-amber-300 group-hover:text-black"
+  >
+    {actionLabel}
+    <svg viewBox="0 0 16 16" class="size-2.5" fill="currentColor">
+      <path
+        d="M8.22 2.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 8.5H3.75a.75.75 0 0 1 0-1.5h8.19L8.22 3.78a.75.75 0 0 1 0-1.06Z"
+      ></path>
+    </svg>
+  </span>
+</button>

@@ -1,0 +1,74 @@
+---
+import { Image } from "astro:assets";
+import type { BookImage } from "@types";
+import { photoSize } from "./bookPhoto";
+
+/**
+ * Una foto del libro, venga de donde venga.
+ *
+ * `astro:assets` solo sabe hacer una cosa: descargar y reprocesar. Para una foto
+ * importada de `src/assets` —que llega como `ImageMetadata`, con sus medidas— es
+ * justo lo que se quiere. Para una ruta de `public/` o una URL no hay nada que
+ * reprocesar, y además es un problema: Astro baja la imagen AL CONSTRUIR, así
+ * que si el servidor de las fotos remotas tarda o se cae, el build entero falla
+ * y la web se queda sin generar. Por eso aquí las dos cosas van separadas:
+ *
+ * - `string` (una URL o un archivo de `public/`) → un `<img>` de los de
+ *   siempre. El navegador la pide cuando la pinta y no hay build que se rompa.
+ * - `ImageMetadata` (un `import` de `src/assets`) → el servicio de imágenes.
+ *
+ * `width` y `height` se le pasan a los dos: sin medidas el navegador no puede
+ * reservar el hueco y la hoja salta mientras la foto llega.
+ *
+ * El tipo `BookImage` deja las dos opciones abiertas, y el desempate se hace
+ * aquí, una vez, para que cambiar una foto de sitio no toque ni los datos ni el
+ * resto del libro.
+ */
+interface Props {
+  image: BookImage;
+  /** Ancho de la caja donde se pinta. */
+  width: number;
+  /**
+   * Alto de la caja. No se usa tal cual: de él solo se lee la proporción, que
+   * es lo que hay que inventarle a una foto suelta. Si se omite se asume una
+   * proporción vertical, la forma de hoja del libro.
+   */
+  height?: number;
+  class?: string;
+  loading?: "lazy" | "eager";
+  sizes?: string;
+  alt?: string;
+}
+
+const { image, width, height, class: className, loading = "lazy", sizes, alt } =
+  Astro.props;
+
+const size = photoSize(image.src, height ? width / height : 3 / 4);
+const etiqueta = alt ?? image.alt;
+---
+
+{
+  typeof image.src === "string" ? (
+    <img
+      src={image.src}
+      alt={etiqueta}
+      width={size.width}
+      height={size.height}
+      class={className}
+      loading={loading}
+      decoding="async"
+      sizes={sizes}
+    />
+  ) : (
+    <Image
+      src={image.src}
+      alt={etiqueta}
+      width={size.width}
+      height={size.height}
+      class={className}
+      loading={loading}
+      decoding="async"
+      sizes={sizes}
+    />
+  )
+}

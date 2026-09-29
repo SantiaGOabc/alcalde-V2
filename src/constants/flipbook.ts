@@ -158,6 +158,8 @@ export const BOOK_ATTR = {
   reveal: "data-book-reveal",
   /** URL del video de un elemento ampliable. */
   videoUrl: "data-book-video-url",
+  /** Foto de portada de ese video: es el póster del reproductor. */
+  videoPoster: "data-book-video-poster",
   /** Hoja ya visitada: dispara su contenido. La pinta el visor. */
   shown: "data-page-shown",
 } as const;

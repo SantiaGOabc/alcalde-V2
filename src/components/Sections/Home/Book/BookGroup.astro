@@ -1,0 +1,67 @@
+---
+import BentoCard from "./BentoCard.astro";
+import type { BookPhoto } from "@types";
+
+/**
+ * Un grupo de fotos sobre el papel.
+ *
+ * La hoja se parte en dos grupos —arriba y abajo del título— y este componente
+ * dibuja cualquiera de los dos. No pregunta por la forma de la hoja ni por
+ * cuántas fotos hay en total: solo recibe las suyas y las coloca, que es
+ * justamente lo que le deja al título sitio en el medio sin que el grupo tenga
+ * que saber por qué está donde está.
+ *
+ * El reparto sale de la cuenta, no de un caso por combinación:
+ *
+ * - Una foto, sola.
+ * - Dos, en fila.
+ * - Tres, dos arriba y una ancha debajo.
+ * - Cuatro, en cuadrícula de dos por dos.
+ * - Cinco, cuatro en cuadrícula y una ancha debajo.
+ * - Seis o más, en tres columnas; si sobran filas, la última va ancha.
+ *
+ * Todas las celdas se estiran con `min-h-0`: sin eso, una rejilla con filas
+ * `auto` se calcula más alta que su hueco y las fotos se salen del papel.
+ */
+interface Props {
+	photos: readonly BookPhoto[];
+}
+
+const { photos } = Astro.props;
+
+const total = photos.length;
+const columns = total <= 2 ? total : total <= 5 ? 2 : 3;
+
+// Tres y cinco ceden su última foto a una fila ancha: es la que respira y marca
+// el ritmo. Con seis o más, solo se ancha lo que no cabe en la última fila.
+const headCount = total === 3 || total === 5 ? total - 1 : Math.floor(total / columns) * columns;
+
+const head = photos.slice(0, headCount);
+const tail = photos.slice(headCount);
+const rows = Math.max(1, Math.ceil(head.length / columns));
+---
+
+<div class="flex h-full w-full min-h-0 flex-col gap-1.5">
+  {
+    head.length > 0 && (
+      <div
+        class="grid min-h-0 flex-1 gap-1.5"
+        style={`grid-template-columns:repeat(${columns},minmax(0,1fr));grid-template-rows:repeat(${rows},minmax(0,1fr))`}
+      >
+        {head.map((photo) => (
+          <div class="min-h-0">
+            <BentoCard photo={photo} class="h-full" />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    tail.map((photo) => (
+      <div class="min-h-0 flex-[1.35]">
+        <BentoCard photo={photo} class="h-full" />
+      </div>
+    ))
+  }
+</div>

@@ -1,0 +1,60 @@
+---
+import { Image } from "astro:assets";
+import type { HTMLAttributes } from "astro/types";
+import type { ImageMetadata } from "astro";
+
+/**
+ * Una imagen del sitio, venga de donde venga.
+ *
+ * Existe por un problema concreto: `astro:assets` no sabe dibujar las dos cosas
+ * a la vez, y la que no sabe es una imagen que ya está publicada.
+ *
+ * Para una foto importada de `src/assets` —que llega como `ImageMetadata`, con
+ * sus medidas— el servicio de imágenes es justo lo que se quiere: redimensiona,
+ * convierte y sirve. Para una URL o una ruta de `public/` no hay nada que
+ * reprocesar, y el servicio se convierte en un problema: Astro descarga la
+ * imagen AL CONSTRUIR para poder medirla, así que si ese servidor tarda, se
+ * queda sin conexión o devuelve un error, la compilación entera falla y `dist`
+ * se queda sin generar. La web aparece entonces sin estilos, en blanco, y sin
+ * fotos. Es un fallo que no depende del código que se está tocando.
+ *
+ * Aquí se separan las dos cosas:
+ *
+ * - `string` (URL o archivo de `public/`) → un `<img>` de los de siempre. El
+ *   navegador la pide cuando la pinta y no hay build que pueda romperse.
+ * - `ImageMetadata` (un `import` de `src/assets`) → el servicio de imágenes.
+ *
+ * `width` y `height` se le pasan a los dos: sin medidas el navegador no puede
+ * reservar el hueco y todo el contenido da un salto al cargar.
+ *
+ * El resto de atributos (`class`, `style`, `draggable`, `loading`…) se aceptan
+ * tal cual y van al `<img>`, que es donde tenían que estar.
+ */
+interface Props extends Omit<HTMLAttributes<"img">, "src" | "width" | "height"> {
+  src: string | ImageMetadata;
+  alt: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, alt, width, height, ...rest } = Astro.props;
+
+const imported = typeof src === "string" ? undefined : src;
+---
+
+{
+  imported ? (
+    <Image
+      src={imported}
+      alt={alt}
+      width={width}
+      height={height}
+      class={rest.class as string}
+      loading={rest.loading as "lazy" | "eager"}
+      decoding={rest.decoding as "async" | "sync" | "auto"}
+      sizes={rest.sizes}
+    />
+  ) : (
+    <img src={src as string} alt={alt} width={width} height={height} {...rest} />
+  )
+}

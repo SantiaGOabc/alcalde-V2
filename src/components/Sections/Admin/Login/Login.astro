@@ -1,6 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import { Section, Tipography } from "@components";
+import { SmartImage } from "@components";
 import { LOGIN_CONTENT } from "@constant";
 import LoginForm from "./LoginForm.tsx";
 
@@ -35,7 +35,7 @@ const { title, subtitle, description, imageURL, imageAlt } = LOGIN_CONTENT;
     <!-- Columna Derecha: Imagen Institucional Split-Card -->
     <div class="w-full lg:w-[45%] flex items-center justify-center">
       <div class="relative w-full rounded-[1.5rem] overflow-hidden shadow-sm aspect-4/5 lg:aspect-auto lg:h-[540px] max-h-[540px] bg-slate-900">
-        <Image 
+        <SmartImage 
           src={imageURL} 
           alt={imageAlt}
           width={600}

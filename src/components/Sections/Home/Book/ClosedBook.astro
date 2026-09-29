@@ -1,20 +1,24 @@
 ---
-import { Image } from "astro:assets";
 import { Button } from "@components";
 import { BOOK_META } from "@constant";
+import BookImage from "./BookImage.astro";
 
 /**
  * El libro cerrado, en 3D, dentro de la tarjeta de la sección.
  *
- * Es el punto de partida del visor: el botón de "Abrir libro" y este libro
- * comparten el mismo disparador (`data-book-open`), así que el lector puede
- * abrirlo desde cualquiera de los dos.
+ * Es lo primero que ve el lector y lo primero que tiene que decir: qué es este
+ * objeto. Por eso el rótulo de la tapa está aquí y no solo dentro del visor:
+ * fuera se lee el título, el periodo y que el libro se abre; dentro ya se está
+ * leyendo. Los dos rótulos salen de los mismos `BOOK_META`, así que no pueden
+ * contradecirse.
  *
  * El 3D es CSS puro (`transform-style: preserve-3d` sobre seis caras) en vez de
  * WebGL. Además de no cargar una librería de gráficos por un elemento
  * decorativo, el rótulo de la tapa queda como texto real: se lee nítido a
- * cualquier tamaño, es seleccionable y lo anuncian los lectores de pantalla.
- * La geometría y la animación viven en `src/styles/flipbook.css`.
+ * cualquier tamaño, se puede seleccionar y lo announces los lectores de
+ * pantalla que no lo ignoran —el escenario va con `aria-hidden` porque el
+ * botón que lo envuelve ya dice para qué sirve—. La geometría y la animación
+ * viven en `src/styles/flipbook.css`.
  */
 interface Props {
   /** Texto accesible del botón, para no repetir el rótulo de la tapa. */
@@ -36,16 +40,38 @@ const { label } = Astro.props;
     <span class="book-closed__float">
       <span class="book-closed__book">
         <span class="book-closed__face book-closed__face--cover shadow-7xl">
-          <Image
-            src={BOOK_META.coverImage}
-            alt=""
+          <BookImage
+            image={{ src: BOOK_META.coverImage, alt: "" }}
             width={1024}
             height={1365}
             class="book-closed__cover-image"
-            loading="lazy"
-            decoding="async"
+            sizes="(min-width: 1024px) 30vw, 70vw"
           />
           <span class="book-closed__cover-veil" />
+
+          {/* El rótulo va en HTML y no horneado en la foto: así se lee nítido a
+              cualquier tamaño y el texto se puede seleccionar. La foto de la
+              tapa es siempre la misma; el rótulo es lo que cambia con la marca. */}
+          <span class="book-closed__cover-content">
+            <span class="book-closed__cover-badge">{BOOK_META.coverBadge}</span>
+            <span class="book-closed__cover-lines">
+              {BOOK_META.coverLines.map((line) => (
+                <span class="book-closed__cover-line">{line}</span>
+              ))}
+            </span>
+            <span class="book-closed__cover-rule" />
+            <span class="book-closed__cover-note">{BOOK_META.coverNote}</span>
+          </span>
+
+          <span class="book-closed__cover-foot">
+            <span class="book-closed__cover-hint">
+              {BOOK_META.coverHint}
+              <svg viewBox="0 0 16 16" class="book-closed__cover-arrow" fill="currentColor">
+                <path d="M2.72 7.78a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 1.06L4.56 7h8.19a.75.75 0 0 1 0 1.5H4.56l3.47 3.47a.75.75 0 0 1-1.06 1.06L2.72 8.84a.75.75 0 0 1 0-1.06Z" />
+              </svg>
+            </span>
+          </span>
+
           <span class="book-closed__shine" />
         </span>
         <span class="book-closed__face book-closed__face--spine" />

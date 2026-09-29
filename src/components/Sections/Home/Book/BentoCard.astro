@@ -1,0 +1,69 @@
+---
+import type { BookPhoto } from "@types";
+import BookImage from "./BookImage.astro";
+
+/**
+ * Una celda del bento.
+ *
+ * Es un `button` y no un `div` con un manejador porque "abre esta foto en grande"
+ * es exactamente lo que hace un botón: así la celda se puede tabular, se activa
+ * con Enter y con Espacio, y el lector de pantalla la anuncia. `data-book-expand`
+ * es lo que el visor busca para abrir la foto y para que el motor de volteo no
+ * confunda el clic con un intento de pasar página.
+ *
+ * El título va en el pie de la celda, centrado y en blanco, sobre un velo negro
+ * que sube desde abajo. El velo es lo que hace que se lea igual sobre una foto
+ * clara que sobre una oscura; sin él, un título blanco se pierde en el cielo de
+ * una foto de exterior.
+ */
+interface Props {
+  photo: BookPhoto;
+  class?: string;
+}
+
+const { photo, class: extra = "" } = Astro.props;
+const name = photo.name ?? photo.alt;
+const variant = photo.title ?? "overlay";
+---
+
+<button
+  type="button"
+  data-book-expand
+  aria-label={`Ampliar: ${name}`}
+  class:list={[
+    "book-card group relative block w-full cursor-pointer overflow-hidden rounded-lg bg-black text-left select-none",
+    "focus-visible:ring-2 focus-visible:ring-(--home-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-100 focus-visible:outline-none",
+    extra,
+  ]}
+>
+  <BookImage
+    image={photo}
+    width={1000}
+    class="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+    sizes="(min-width: 1024px) 40vw, 90vw"
+  />
+
+  {
+    photo.badge && (
+      <span class="absolute top-1.5 left-1.5 z-10 rounded-full border border-white/20 bg-black/55 px-2 py-0.5 text-[0.55rem] font-semibold tracking-wider text-white/90 uppercase backdrop-blur-md">
+        {photo.badge}
+      </span>
+    )
+  }
+
+  {
+    variant === "overlay" && (
+      <>
+        <span
+          aria-hidden="true"
+          class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/90 via-black/45 to-transparent"
+        />
+        <span class="absolute inset-x-0 bottom-0 flex justify-center px-2.5 pt-6 pb-2">
+          <span class="line-clamp-2 text-center text-[calc(0.78rem*var(--book-text-scale))] leading-tight font-bold text-white text-balance drop-shadow-md">
+            {name}
+          </span>
+        </span>
+      </>
+    )
+  }
+</button>

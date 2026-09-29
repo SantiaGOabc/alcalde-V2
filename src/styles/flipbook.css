@@ -179,15 +179,70 @@
 }
 
 .book-closed__cover-content {
-    @apply absolute inset-0 flex flex-col items-center justify-center gap-0.5 p-[12%] text-center text-white;
+    @apply absolute inset-0 flex flex-col items-center justify-center gap-2 p-[13%] text-center text-white;
 }
 
-.book-closed__cover-line {
-    @apply font-extrabold leading-[1.18] tracking-tight;
+.book-closed__cover-lines {
+    @apply flex flex-col;
+}
 
-    /* El rótulo escala con el libro, como la textura del modelo. */
-    font-size: calc(var(--book-cover-width) * 0.15);
-    text-shadow: 0 2px 22px rgb(0 0 0 / 0.6);
+/* El rótulo escala con el libro, como la textura del modelo: de ahí que el
+   tamaño se calcule a partir del ancho de la tapa y no con un `rem` fijo. Con
+   `cqw` el rótulo se lee igual de grande en un móvil y en una pantalla grande,
+   que es justo lo que pasa al redimensionar la ventana. */
+.book-closed__cover-line {
+    @apply leading-[1.12] font-extrabold tracking-tight;
+
+    font-size: calc(var(--book-cover-width) * 0.155);
+    text-shadow: 0 2px 22px rgb(0 0 0 / 0.65);
+}
+
+.book-closed__cover-badge {
+    @apply rounded-full border border-white/30 px-[3%] py-[0.6%] text-white/90 uppercase;
+
+    font-size: calc(var(--book-cover-width) * 0.045);
+    letter-spacing: 0.22em;
+    backdrop-filter: blur(2px);
+}
+
+.book-closed__cover-rule {
+    @apply block h-px w-[18%] bg-white/60;
+}
+
+.book-closed__cover-note {
+    @apply leading-tight text-white/75;
+
+    font-size: calc(var(--book-cover-width) * 0.058);
+    text-shadow: 0 1px 12px rgb(0 0 0 / 0.6);
+}
+
+/* La pista va pegada al pie de la tapa, no en el centro: es lo último que se lee
+   y tiene que quedar lejos del rótulo para que los dos no se mezclen. */
+.book-closed__cover-foot {
+    @apply absolute inset-x-0 bottom-[6%] flex justify-center;
+}
+
+.book-closed__cover-hint {
+    @apply flex items-center gap-[2%] text-white/80 uppercase;
+
+    font-size: calc(var(--book-cover-width) * 0.042);
+    letter-spacing: 0.18em;
+}
+
+.book-closed__cover-arrow {
+    width: calc(var(--book-cover-width) * 0.05);
+    animation: book-arrow 1.8s ease-in-out infinite;
+}
+
+@keyframes book-arrow {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(25%);
+    }
 }
 
 .book-closed__shine {
@@ -273,31 +328,47 @@
     -webkit-touch-callout: none;
 }
 
-/* El cuerpo de una hoja de papel, cuando su texto no cabe entero en el alto
-   disponible. Sin esto se ve la barra de scroll de fábrica del sistema, con
-   sus flechitas de subir y bajar: rompe la ilusión de estar leyendo papel. Una
-   barra fina y sin flechas, del color de la tinta, pasa desapercibida. */
-.book-page__body {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(0 0 0 / 0.25) transparent;
+/* ==========================================================================
+   La hoja de papel
+   --------------------------------------------------------------------------
+   Hay dos papeles distintos y se distinguen a propósito:
+
+   - La hoja de contenido lleva las fotos pegadas encima, con un margen
+     pequeño entre ellas. El papel es lo que las separa y las hace parecer
+     recortes y no un mosaico encajado.
+   - La hoja de título va completamente en blanco, con el rótulo solo en el
+     medio. Es la que corta el libro en bloques.
+
+   Ninguna lleva sombra propia: la que las despega del dorso la pone el motor de
+   volteo, que ya sombrea la hoja entera. Ponerle otra sería duplicarla.
+   ========================================================================== */
+
+.book-page--bento,
+.book-page--section {
+    background-color: var(--color-white);
 }
 
-.book-page__body::-webkit-scrollbar {
-    width: 5px;
+/* ==========================================================================
+   El reproductor
+   --------------------------------------------------------------------------
+   El reproductor del visor es un `<video>` pelado: se le ve todo el aparato. Lo
+   único que se puede arreglar por CSS es el marco, y es lo que más importa,
+   porque es lo que separa "estoy viendo un video" de "hay un video en una
+   página".
+   ========================================================================== */
+
+.book-media__frame {
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.55);
 }
 
-.book-page__body::-webkit-scrollbar-button {
-    display: none;
-    height: 0;
+/* Los controles nativos son feos, pero son los únicos que funcionan en todos
+   los navegadores y los que sabe usar el teclado. Se afinan, no se sustituyen. */
+.book-media__frame::-webkit-media-controls-panel {
+    background: rgb(0 0 0 / 0.55);
 }
 
-.book-page__body::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.book-page__body::-webkit-scrollbar-thumb {
-    background: rgb(0 0 0 / 0.25);
-    border-radius: 999px;
+.book-media__frame::-webkit-media-controls-enclosure {
+    border-radius: 0.75rem;
 }
 
 /* ==========================================================================
@@ -328,7 +399,8 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-    .book-closed__float {
+    .book-closed__float,
+    .book-closed__cover-arrow {
         animation: none;
     }
 

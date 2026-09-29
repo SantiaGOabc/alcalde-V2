@@ -2,6 +2,7 @@
 export { default as Link } from './global/Link.astro';
 export { default as Tipography } from './global/Tipography.astro';
 export { default as SmartImage } from './global/SmartImage.astro';
+export { default as Video } from './global/Video.astro';
 export { default as Hero } from './global/Hero.astro';
 export { default as Navbar } from './global/Navbar.astro';
 export { default as Footer } from './global/Footer.astro';

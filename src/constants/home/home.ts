@@ -15,6 +15,7 @@ export const CONTENT_HERO_HOME = {
     alcalde("niños.webp"),
     alcalde("colegio.webp"),
     alcalde("señora.webp"),
+    alcalde("IMG_8396.jpg")
   ],
 };
 
@@ -46,12 +47,12 @@ export const SECTION_PHRASES_CONTENT = {
   philosophy: {
     phrase:
       "El trabajo honesto y la cercanía con la gente son la base de todo.",
-    imageURL: alcalde("alcalde.jpg"),
+    imageURL: alcalde("colegio.webp"),
   },
   family: {
     phrase:
       "En la familia aprendemos el valor de estar, incluso cuando nadie mira.",
-    imageURL: alcalde("señora.webp"),
+    imageURL: alcalde("esposa.jpg"),
   },
   pets: {
     phrase: "Los que nunca piden palabras enseñan lo que es la lealtad.",
@@ -85,45 +86,32 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
   description:
     "Imágenes que muestran cómo cambian sus espacios y la vida de sus habitantes.",
   transitionPhrase: "Pionieros en ...",
-
-  // ── OJO: estas cuatro fotos son APROXIMACIONES ──────────────────────────
-  // En `public/` no hay ninguna foto del antes de la gestión: todas las que hay
-  // son de la gestión actual. Estas cuatro apuntaban al deploy viejo de Netlify,
-  // que sí tenía las fotos históricas pero ya no responde (503), así que la
-  // sección se veía sin nada del lado izquierdo. Ahora se pone una foto de la
-  // ciudad para que la card no quede vacía.
-  // Cuando existan las fotos del antes, se copian a `public/` y se cambia cada
-  // línea por la de su carpeta: `antes("nombre")` si van en la raíz de `public/`,
-  // `alcalde("nombre")` si van en `public/alcalde/`.
   before: [
     {
       title: "Capitán Manfred Reyes Villa",
-      imageURL: alcalde("alcalde.jpg"),
+      imageURL: alcalde("policia.jpeg"),
       imageFit: "contain",
     },
     {
       title: "Laguna Coña Coña",
-      imageURL: antes("cocha.jpg"),
+      imageURL: raiz("CoñaCoñaAntes.jpg"),
       imageFit: "cover",
     },
     {
       title: "Plaza de las banderas",
-      imageURL: alcalde("policia.jpeg"),
+      imageURL: raiz("PlazaBanderasAntes.png"),
       imageFit: "cover",
     },
     {
       title: "Laguna Alalay",
-      imageURL: antes("teleferico.jpg"),
+      imageURL: raiz("LagunaAlalayAntes.jpg"),
       imageFit: "cover",
     },
   ],
-
-  // El "después" sí tiene foto propia de cada obra: son las fotos de los espacios
-  // recuperados, que es lo que el título del par anuncia.
   after: [
     {
       title: "Prefecto Manfred Reyes Villa",
-      imageURL: premio("premio2.JPG"),
+      imageURL: alcalde("prefecto.jpg"),
       imageFit: "contain",
     },
     {

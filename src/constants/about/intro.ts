@@ -1,6 +1,5 @@
 import type { ClosingContent } from "@types";
 import { CONTENT_HERO_HOME } from "../home/home";
-// La foto de la persona es local, de `public/alcalde/` (ver `src/utils/images.ts`).
 import { alcalde } from "@utils";
 
 /** Mismo hero (componente e imágenes) que la home, con su propio mensaje. */

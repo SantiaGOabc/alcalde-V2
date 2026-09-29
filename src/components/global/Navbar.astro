@@ -1,33 +1,45 @@
 ---
 import { Link } from "@components";
 import { NAVBAR } from "@constant";
+// `--home-accent` vive aquí, y el navbar lo necesita en todas las páginas.
+import "@styles/home.css";
 
 interface Props {
   /** Sobre un hero: sin fondo hasta hacer scroll. Si no, sólido desde el inicio. */
   transparent?: boolean;
+  /** El Home es la sección con efecto de cristal; si no se dice, se deduce de `transparent`. */
+  isHome?: boolean;
   /** Ruta del panel; solo llega cuando quien mira es el administrador con sesión. */
   adminHref?: string | null;
 }
 
-const { transparent = false, adminHref = null } = Astro.props;
-const currentPath = Astro.url.pathname;
+const { transparent = false, isHome = transparent, adminHref = null } = Astro.props;
+// La ruta se compara sin barra final para que `/` y la home sean el mismo enlace.
+const normalize = (path: string) => path.replace(/\/+$/, "") || "/";
+const currentPath = normalize(Astro.url.pathname);
 
 const links = [
   ...NAVBAR.map((link) => ({ ...link, isAdmin: false })),
-  ...(adminHref ? [{ path: adminHref, label: 'Panel', isAdmin: true }] : []),
-];
+  ...(adminHref ? [{ path: adminHref, label: "Panel", isAdmin: true }] : []),
+].map((link) => ({ ...link, isActive: normalize(link.path) === currentPath }));
 ---
 
 <nav
   id="site-navbar"
+  data-navbar-glass={isHome ? "true" : "false"}
   aria-label="Navegación principal"
   data-transparent={transparent}
   data-solid={!transparent}
   data-menu-open="false"
-  class="group fixed top-0 z-50 w-full text-white transition-[background-color,box-shadow] duration-300 data-[solid=true]:bg-(--home-accent) data-[solid=true]:shadow-md"
+  class="group fixed top-0 z-50 w-full border-b border-transparent text-white transition-[background-color,box-shadow] duration-300 data-[solid=true]:bg-(--home-accent) data-[solid=true]:border-white/10 data-[solid=true]:shadow-md"
 >
   <div class="page-container flex h-16 items-center justify-between">
-    <a href="/" class="text-lg font-semibold text-white no-underline">M.R.V</a>
+    <a
+      href="/"
+      class="text-xl font-bold tracking-tight text-white no-underline before:hidden after:hidden transition-transform hover:scale-105"
+    >
+      M<span class="text-indigo-300">.</span>R<span class="text-indigo-300">.</span>V
+    </a>
 
     <ul class="hidden items-center gap-6 md:flex">
       {
@@ -35,9 +47,9 @@ const links = [
           <li>
             <Link
               href={nav.path}
-              aria-current={nav.path === currentPath ? "page" : undefined}
+              aria-current={nav.isActive ? "page" : undefined}
               class:list={[
-                "border-b-2 border-transparent pb-0.5 text-lg font-semibold text-white/80 no-underline transition-colors hover:text-white aria-[current=page]:border-white aria-[current=page]:text-white",
+                "border-b-2 border-transparent pb-0.5 text-lg font-semibold text-white/80 no-underline transition-colors before:hidden after:hidden hover:border-white/50 hover:text-white aria-[current=page]:border-white aria-[current=page]:text-white",
                 nav.isAdmin && "rounded-full border-2 border-white/60 px-4 py-1 hover:border-white",
               ]}
             >
@@ -92,7 +104,7 @@ const links = [
         >
           <Link
             href={nav.path}
-            aria-current={nav.path === currentPath ? "page" : undefined}
+            aria-current={nav.isActive ? "page" : undefined}
             class="text-3xl font-semibold text-white/75 no-underline transition-colors hover:text-white aria-[current=page]:text-white"
           >
             {nav.label}
@@ -106,5 +118,6 @@ const links = [
 <script>
   import { initNavbar, onPageLoad } from "@utils";
 
+  // `initNavbar` pasa de transparente a sólido al hacer scroll y mueve el menú móvil.
   onPageLoad(initNavbar);
 </script>

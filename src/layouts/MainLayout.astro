@@ -6,13 +6,21 @@ import '../styles/global.css';
 
 interface Props {
 	title: string;
-	/** El navbar nace sin fondo (páginas que abren con un hero). */
+/** El navbar nace sin fondo (páginas que abren con un hero). */
 	transparentNavbar?: boolean;
+	/** El Home lleva cristal; si no se dice, se deduce de la ruta. */
+	isHome?: boolean;
 	/** Excluye la página de los buscadores (panel de administración). */
 	noindex?: boolean;
 }
 
-const { title, transparentNavbar = false, noindex = false } = Astro.props;
+const { title, transparentNavbar = false, isHome: isHomeProp, noindex = false } = Astro.props;
+
+// El Home es la unica seccion con efecto de cristal en el navbar. Si la
+// pagina no lo dice explicitamente se deduce de la ruta, para que el navbar
+// nunca se quede transparente en una seccion interior (ni cristal en el Home).
+const isHome = isHomeProp ?? Astro.url.pathname.replace(/\/+$/, "") === "";
+const transparentNavbarFinal = transparentNavbar || isHome;
 
 // Solo un administrador con sesión recibe el enlace al panel (no aparece para nadie más).
 const adminHref = Astro.locals.admin ? getAdminPanelPath() : null;
@@ -23,6 +31,12 @@ const adminHref = Astro.locals.admin ? getAdminPanelPath() : null;
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Roboto:wght@300..800&display=swap"
+		/>
 		<meta name="description" content="Alcaldía V2" />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
 		<title>{title}</title>
@@ -30,7 +44,11 @@ const adminHref = Astro.locals.admin ? getAdminPanelPath() : null;
 		<ClientRouter />
 	</head>
 	<body class="flex min-h-screen flex-col">
-		<Navbar transparent={transparentNavbar} adminHref={adminHref} />
+<Navbar
+			transparent={transparentNavbarFinal}
+			isHome={isHome}
+			adminHref={adminHref}
+		/>
 		<main class="flex-1">
 			<slot />
 		</main>

@@ -1,20 +1,22 @@
 /* ==========================================================================
    TIPOGRAFÍA ÚNICA DEL SITIO
-   Para cambiarla en toda la página, hay que tocar solo dos cosas en este archivo:
-     1. el @import de la fuente (Google Fonts u otra) justo aquí abajo, y
+   Para cambiarla en toda la página, hay que tocar solo dos cosas:
+     1. el <link> a la fuente (Google Fonts u otra) en layouts/MainLayout.astro, y
      2. el valor de --font-sans dentro de @theme.
    Todo el sitio usa esa fuente (Tailwind aplica --font-sans al <html>); ningún
    componente define la suya.
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..800;1,400..700&display=swap');
 @import "tailwindcss";
 
 @theme {
+    /* Tipografía base. Al redefinir --font-sans, la utilidad `font-sans` y
+       la fuente por defecto del sitio (preflight) pasan a usar Roboto.
+       El fallback mantiene una tipografía decente si Google Fonts no carga. */
+    --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
     --color-primary: var(--brand-primary);
     --color-primary-strong: var(--brand-primary-strong);
     --color-accent: var(--brand-accent);
     --color-accent-strong: var(--brand-accent-strong);
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {

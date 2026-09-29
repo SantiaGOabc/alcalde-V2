@@ -1,0 +1,49 @@
+---
+import { Section } from "@components";
+import { ELFSIGHT_TIKTOK_APP_ID } from "@constant";
+
+/**
+ * Feed de TikTok.
+ *
+ * La última sección de la portada, justo antes del footer (el footer vive en
+ * `MainLayout`, así que basta con ser el último bloque dentro del layout).
+ *
+ * No lleva estado ni hydrated JS: Elfsight se encarga de pintar la caja. El
+ * `<script>` va con `is:inline` porque es código de un tercero y Astro no debe
+ * tocarlo (sin eso lo empaquetaría como módulo y le añadiría `type="module"`).
+ * Por eso el div del widget lleva el atributo `data-elfsight-app-lazy` de
+ * Elfsight: el widget no se descarga hasta que entra en pantalla.
+ *
+ * El contenido no es del CMS: los videos se administran desde el panel de
+ * Elfsight, y aquí solo se declara el id de la app (`ELFSIGHT_TIKTOK_APP_ID`).
+ */
+---
+
+<Section variant="primary" className="py-10 sm:py-15 lg:py-20">
+  <div class="page-container">
+    <div class="mt-12 flex justify-center" data-elfsight-feed>
+      <div
+        class={`elfsight-app-${ELFSIGHT_TIKTOK_APP_ID}`}
+        data-elfsight-app-lazy
+      >
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script is:inline src="https://elfsightcdn.com/platform.js" async></script>
+
+<script>
+  import { onPageLoad } from "@utils";
+
+  const PLATFORM_SRC = "https://elfsightcdn.com/platform.js";
+
+  onPageLoad(() => {
+    if (document.querySelector(`script[src="${PLATFORM_SRC}"]`)) return;
+
+    const platform = document.createElement("script");
+    platform.src = PLATFORM_SRC;
+    platform.async = true;
+    document.body.append(platform);
+  });
+</script>

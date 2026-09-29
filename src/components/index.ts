@@ -17,6 +17,7 @@ export { default as BiographyVideo } from './Sections/Home/BiographyVideo.astro'
 export { default as Phrase } from './Sections/Home/Phrase.astro';
 export { default as BeforeAfter } from './Sections/Home/BeforeAfter.astro';
 export { default as Book } from './Sections/Home/Book.astro';
+export { default as TikTokFeed } from './Sections/Home/TikTokFeed.astro';
 
 // Sections ABOUT
 export { default as About } from './Sections/About/About.astro';

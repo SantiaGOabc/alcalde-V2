@@ -1,6 +1,5 @@
 /** Banner de cierre con una frase y dos llamados a la acción (Sobre mí, Gestión…). */
 export interface ClosingContent {
-  kicker: string;
   phrase: string;
   description: string;
   primary: { label: string; href: string };

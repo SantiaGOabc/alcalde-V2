@@ -6,14 +6,11 @@ interface Props {
   content: ClosingContent;
 }
 
-const { kicker, phrase, description, primary, secondary } = Astro.props.content;
+const { phrase, description, primary, secondary } = Astro.props.content;
 ---
 
-<Section variant="accent" className="bg-(--home-accent) py-24 sm:py-32 lg:py-40">
+<Section variant="accent" className="py-24 sm:py-32 lg:py-40">
   <div data-reveal class="page-container mx-auto max-w-4xl text-center">
-    <Tipography variant="eyebrow" color="inverse" class="mb-6 tracking-[0.3em] text-white/70">
-      {kicker}
-    </Tipography>
     <Tipography as="blockquote" variant="quote" color="inverse" class="m-0 text-3xl leading-tight text-balance sm:text-5xl lg:text-6xl">
       {phrase}
     </Tipography>

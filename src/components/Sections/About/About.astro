@@ -12,7 +12,7 @@ const [hero, person, passions, hitos, closing] = await Promise.all([
   getContent("about.closing"),
 ]);
 ---
-
+ 
 <MainLayout title="Sobre mí" transparentNavbar>
   <Hero id={sectionId("about.hero")} title={hero.title} description={hero.description} images={hero.images} />
   <div id={sectionId("about.person")}><Person content={person} /></div>

@@ -83,8 +83,8 @@ const numeral = (index: number) => String(index + 1).padStart(2, "0");
                 </div>
 
                 <div data-reveal class="md:col-span-6">
-                  <Tipography as="blockquote" variant="quote" class="border-l-2 border-(--brand-accent) pl-5">
-                    {item.frase}
+                  <Tipography as="blockquote" variant="quote" class="{--font-italic} text-right">
+                    "{item.frase}"
                   </Tipography>
                   <div class="mt-8 space-y-4">
                     {item.historia.map((paragraph) => (

@@ -182,8 +182,6 @@ export interface BookPage {
 export interface BookMeta {
   /** Antetítulo de la tapa. */
   coverKicker: string;
-  /** Etiqueta corta de la tapa, arriba del rótulo. */
-  coverBadge: string;
   /** Imagen de tapa: alimenta la tapa del visor y el libro cerrado en 3D. */
   coverImage: string;
   /** Texto alternativo de la imagen de tapa. */

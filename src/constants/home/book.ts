@@ -57,7 +57,6 @@ import { SECTION_BOOK_CONTENT } from "./home";
  */
 export const BOOK_META: BookMeta = {
   coverKicker: SECTION_BOOK_CONTENT.eyebrow,
-  coverBadge: "Colección fotográfica",
   coverImage: SECTION_BOOK_CONTENT.imageURL,
   coverAlt: SECTION_BOOK_CONTENT.imageAlt,
   coverLines: ["Cocha,", "la mejor ciudad", "de Bolivia"],

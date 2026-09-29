@@ -197,13 +197,6 @@
     text-shadow: 0 2px 22px rgb(0 0 0 / 0.65);
 }
 
-.book-closed__cover-badge {
-    @apply rounded-full border border-white/30 px-[3%] py-[0.6%] text-white/90 uppercase;
-
-    font-size: calc(var(--book-cover-width) * 0.045);
-    letter-spacing: 0.22em;
-    backdrop-filter: blur(2px);
-}
 
 .book-closed__cover-rule {
     @apply block h-px w-[18%] bg-white/60;

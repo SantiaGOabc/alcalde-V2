@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+    /* Tipografía base. Al redefinir --font-sans, la utilidad `font-sans` y
+       la fuente por defecto del sitio (preflight) pasan a usar Roboto.
+       El fallback mantiene una tipografía decente si Google Fonts no carga. */
+    --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
     --color-primary: var(--brand-primary);
     --color-primary-strong: var(--brand-primary-strong);
     --color-accent: var(--brand-accent);

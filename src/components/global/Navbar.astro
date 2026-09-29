@@ -1,42 +1,75 @@
 ---
-import {Link} from "@components";
+import { Link } from "@components";
 import { NAVBAR } from "@constant";
 
 import "@styles/home.css";
-const {isHome = false} = Astro.props;
+
+const { isHome = false } = Astro.props;
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
 ---
 
 <nav
   id="site-navbar"
   data-navbar-glass={isHome ? "true" : "false"}
   aria-label="Navegación principal"
-  class:list={["fixed top-0 z-50 w-full",
-    isHome ? "bg-transparent shadow-sm backdrop-blur-sm transition-all duration-300"
-      : "bg-[var(--home-accent)] shadow-md"
+  class:list={[
+    "fixed top-0 z-50 w-full transition-all duration-300 border-b",
+    isHome 
+      ? "bg-transparent shadow-none border-transparent" 
+      : "bg-[var(--home-accent)] shadow-md border-white/10"
   ]}
 >
-  <div class="page-container flex h-16 items-center justify-between">
-    <a href="/" class="text-lg font-semibold no-underline before:hidden after:hidden">M.R.V</a>
-    <ul class="flex items-center gap-6">
-      {
-        NAVBAR.map((nav) => (
-          <li>
-            <Link
-              href={nav.path}
-              aria-current={nav.path === Astro.url.pathname ? "page" : undefined}
-              class="text-lg font-semibold text-gray-200 no-underline before:hidden after:hidden"
-            >
-              {nav.label}
-            </Link>
-          </li>
-        ))
-      }
-    </ul>
+
+  <div class="mx-auto max-w-7xl flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+    
+    <!-- Lado Izquierdo: Logo -->
+    <div class="flex items-center">
+      <a href="/" class="text-xl font-bold tracking-tight text-white no-underline before:hidden after:hidden transition-transform hover:scale-105">
+        M<span class="text-indigo-300">.</span>R<span class="text-indigo-300">.</span>V
+      </a>
+    </div>
+
+    <!-- Lado Derecho -->
+    <div class="hidden md:block">
+      <ul class="flex items-center gap-6">
+        {
+          NAVBAR.map((nav) => {
+            const navPath = nav.path.replace(/\/+$/, "") || "/";
+            const isActive = navPath === currentPath;
+            return (
+              <li>
+                <Link
+                  href={nav.path}
+                  aria-current={isActive ? "page" : undefined}
+                  class:list={[
+                    "py-5 text-base font-medium transition-all duration-300 no-underline before:hidden after:hidden border-b-2",
+                    isActive 
+                      ? "text-white border-white" 
+                      : "text-white/70 border-transparent hover:text-white hover:border-white/50"
+                  ]}
+                >
+                  {nav.label}
+                </Link>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+    <div class="md:hidden flex items-center">
+      <button class="text-white hover:text-gray-300 focus:outline-none p-2">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
   </div>
 </nav>
 
 <script>
   const navbar = document.getElementById("site-navbar");
+  
   if (navbar?.dataset.navbarGlass === "true") {
     const GLASS_BG = "bg-transparent";
     const SOLID_BG = "bg-[var(--home-accent)]";
@@ -46,8 +79,10 @@ const {isHome = false} = Astro.props;
       const isScrolled = window.scrollY > SCROLL_THRESHOLD;
       navbar.classList.toggle(GLASS_BG, !isScrolled);
       navbar.classList.toggle(SOLID_BG, isScrolled);
-      navbar.classList.toggle("shadow-sm", !isScrolled);
+      navbar.classList.toggle("shadow-none", !isScrolled);
       navbar.classList.toggle("shadow-md", isScrolled);
+      navbar.classList.toggle("border-transparent", !isScrolled);
+      navbar.classList.toggle("border-white/10", isScrolled);
     };
 
     updateNavbar();

@@ -3,12 +3,17 @@ import {Link} from "@components";
 import { NAVBAR } from "@constant";
 
 import "@styles/home.css";
+const {isHome = false} = Astro.props;
 ---
 
 <nav
   id="site-navbar"
+  data-navbar-glass={isHome ? "true" : "false"}
   aria-label="Navegación principal"
-  class="fixed top-0 z-50 w-full bg-transparent shadow-sm transition-all duration-300"
+  class:list={["fixed top-0 z-50 w-full",
+    isHome ? "bg-transparent shadow-sm backdrop-blur-sm transition-all duration-300"
+      : "bg-[var(--home-accent)] shadow-md"
+  ]}
 >
   <div class="page-container flex h-16 items-center justify-between">
     <a href="/" class="text-lg font-semibold no-underline before:hidden after:hidden">M.R.V</a>
@@ -31,18 +36,18 @@ import "@styles/home.css";
 </nav>
 
 <script>
-  import { getElementById } from "@utils";
-  const navbar = getElementById("site-navbar");
-  
-  if (navbar) {
-    const updateNavbar = () => {
-      const isScrolled = window.scrollY > 16;
+  const navbar = document.getElementById("site-navbar");
+  if (navbar?.dataset.navbarGlass === "true") {
+    const GLASS_BG = "bg-transparent";
+    const SOLID_BG = "bg-[var(--home-accent)]";
+    const SCROLL_THRESHOLD = 150;
 
-      navbar.classList.toggle("bg-transparent", !isScrolled);
-      navbar.classList.toggle("bg-(--home-accent)", isScrolled);
+    const updateNavbar = () => {
+      const isScrolled = window.scrollY > SCROLL_THRESHOLD;
+      navbar.classList.toggle(GLASS_BG, !isScrolled);
+      navbar.classList.toggle(SOLID_BG, isScrolled);
       navbar.classList.toggle("shadow-sm", !isScrolled);
       navbar.classList.toggle("shadow-md", isScrolled);
-      navbar.classList.toggle("backdrop-blur-sm", isScrolled);
     };
 
     updateNavbar();

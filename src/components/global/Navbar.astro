@@ -101,7 +101,7 @@ const links = [
       links.map((nav, index) => (
         <li
           style={`--delay: ${index * 70 + 100}ms`}
-          class="translate-y-6 opacity-0 transition-[opacity,transform] duration-500 group-data-[open=true]/menu:translate-y-0 group-data-[open=true]/menu:opacity-100 group-data-[open=true]/menu:[transition-delay:var(--delay)]"
+          class="translate-y-6 opacity-0 transition-[opacity,transform] duration-500 group-data-[open=true]/menu:translate-y-0 group-data-[open=true]/menu:opacity-100 group-data-[open=true]/menu:delay-(--delay)"
         >
           <Link
             href={nav.path}

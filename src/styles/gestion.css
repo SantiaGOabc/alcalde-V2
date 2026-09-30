@@ -17,8 +17,9 @@
      · el título central de la obra,
      · la pastilla de categoría seleccionada, que se pinta de morado,
      · el punto de avance activo y el ítem elegido del desplegable.
-   La barra de miniaturas es la excepción: flota sobre la foto, así que sigue
-   oscura aunque la tarjeta sea clara.
+   Lo que flota es la excepción: la barra de miniaturas (sobre la foto) y el
+   desplegable de categorías (sobre la tarjeta y la página) son superficies
+   oscuras con desenfoque, porque lo que tienen detrás no es fijo.
    ========================================================================== */
 
 :root {
@@ -31,7 +32,15 @@
 
     /* La barra de miniaturas flota sobre la foto, que puede ser de cualquier
        tono, así que esta franja sigue oscura y no se invirtió con la tarjeta. */
-    --gestion-franja: #2b2e33;
+    --gestion-franja: #1b1e23;
+
+    /* La superficie oscura ya teñida, que es la que se pinta de verdad: la barra
+       de miniaturas (sobre la foto) y el desplegable de categorías (sobre la
+       tarjeta y sobre la página). Ninguno de los dos fondos es fijo, así que va
+       translúcida y encima lleva desenfoque; delgada se transparentaba y el
+       texto se perdía contra lo que hubiera detrás. Al 70% el texto blanco
+       sigue leyendo (contraste ~6:1) y la foto de detrás se sigue viendo. */
+    --gestion-carta: color-mix(in srgb, var(--gestion-franja) 70%, transparent);
 
     /* Lila: solo en superficies oscuras (el aro de la miniatura activa y el
        check del ítem morado del desplegable). Sobre el gris no se lee. */
@@ -259,10 +268,11 @@
     animation: gestion-card-menu-in 0.2s ease both;
 }
 
-/* El desplegable se apoya sobre la tarjeta, así que su panel también es gris;
-   el morado queda para el ítem que está elegido. */
+/* El desplegable se apoya sobre la tarjeta, así que su panel es la misma
+   superficie oscura con desenfoque que la barra de miniaturas, no el gris de la
+   tarjeta: el morado queda para el ítem que está elegido. */
 .gestion-card-menu-panel {
-    @apply relative overflow-hidden border border-white/15 bg-(--gestion-carta)/95 shadow-2xl shadow-black/80 backdrop-blur-xl;
+    @apply relative overflow-hidden border border-white/15 bg-(--gestion-carta) shadow-2xl shadow-black/80 backdrop-blur-2xl;
     border-radius: var(--gestion-r-panel);
 }
 
@@ -304,9 +314,10 @@
     @apply shrink-0 text-(--gestion-lilac);
 }
 
-/* Pico que une el botón con el panel. */
+/* Pico que une el botón con el panel. Lleva el mismo fondo que el panel para
+   que no se note la costura entre los dos. */
 .gestion-card-menu-pico {
-    @apply absolute -top-[11px] left-1/2 block size-3 -translate-x-1/2 rotate-45 border-t border-l border-white/15 bg-slate-900/95 sm:right-8 sm:translate-x-0;
+    @apply absolute -top-[11px] left-1/2 block size-3 -translate-x-1/2 rotate-45 border-t border-l border-white/15 bg-(--gestion-carta) sm:right-8 sm:translate-x-0;
     border-radius: 2px;
 }
 
@@ -314,10 +325,11 @@
    Barra de miniaturas (flota sobre la foto)
    ========================================================================== */
 
-/* Barra de miniaturas: flota sobre la foto, así que sigue el gris de la tarjeta
-   y no el violeta de antes. */
+/* Barra de miniaturas: flota sobre la foto, así que lleva la franja oscura con
+   desenfoque y no el gris de la tarjeta, para que las miniaturas y las flechas
+   se lean sobre cualquier imagen. */
 .gestion-card-mini {
-    @apply absolute inset-x-3 bottom-3 flex items-center gap-2.5 border border-white/15 bg-(--gestion-carta) px-3 py-2 shadow-lg sm:inset-x-4 sm:bottom-4;
+    @apply absolute inset-x-3 bottom-3 flex items-center gap-2.5 border border-white/15 bg-(--gestion-carta) px-3 py-2 shadow-lg shadow-black/40 backdrop-blur-xl sm:inset-x-4 sm:bottom-4;
     border-radius: var(--gestion-r-panel);
     z-index: var(--gestion-card-z-media);
 }
@@ -343,9 +355,10 @@
 
 .gestion-card-mini-item--activa {
     @apply ring-2 ring-(--gestion-lilac) ring-offset-2;
-    /* El offset tiene que ser el color de la barra, no un gris: el aro se
-       dibuja en el padding de la barra, que ahora es gris grafito. */
-    --tw-ring-offset-color: var(--gestion-carta);
+    /* El offset tiene que ser el color opaco de la barra, no el translúcido: el
+       aro se dibuja en el padding de la barra y con alfa se transparentaría la
+       foto de debajo. */
+    --tw-ring-offset-color: var(--gestion-franja);
 }
 
 .gestion-card-mini-item--inactiva {

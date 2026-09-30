@@ -36,10 +36,57 @@
     100% { opacity: 0; }
 }
 
-/* Oscurecimiento uniforme para mantener legible el texto del hero. */
+/* Oscurecimiento uniforme para mantener legible el texto del hero. Va flojo
+   porque la viñeta de abajo ya oscurece el marco. */
 .hero-veil {
     @apply pointer-events-none absolute inset-0;
-    background-color: rgb(0 0 0 / 0.35);
+    background-color: rgb(0 0 0 / 0.28);
+}
+
+/* ==========================================================================
+   Hero — viñeta del texto central
+   --------------------------------------------------------------------------
+   El velo de arriba es plano y el carrusel cambia de foto cada pocos segundos,
+   así que solo va lo justo. La viñeta hace el resto al revés de un foco: el
+   negro entra por los bordes y se va apagando hacia el centro, de modo que las
+   letras se recortan en la parte despejada de la foto y el marco se cierra.
+   El desenfoque va con la misma forma, no con un rectángulo: la imagen del
+   centro se aprecia nítida y solo se difumina el marco. Va en z-10, entre el
+   velo y el texto (z-20), así que las letras se leen por encima.
+   ========================================================================== */
+
+.hero-foco {
+    @apply pointer-events-none absolute inset-0 z-10;
+    backdrop-filter: blur(7px) saturate(105%);
+    -webkit-backdrop-filter: blur(7px) saturate(105%);
+    background: radial-gradient(
+        ellipse 75% 75% at 50% 50%,
+        rgb(0 0 0 / 0) 0%,
+        rgb(0 0 0 / 0) 42%,
+        rgb(0 0 0 / 0.2) 72%,
+        rgb(0 0 0 / 0.45) 100%
+    );
+    /* La máscara repite la viñeta con los mismos topes: donde el negro ya es
+       cero, el `backdrop-filter` tampoco pinta. Sin ella el desenfoque
+       emborronaría el hero entero. */
+    mask-image: radial-gradient(
+        ellipse 75% 75% at 50% 50%,
+        transparent 0%,
+        transparent 42%,
+        #000 78%
+    );
+    -webkit-mask-image: radial-gradient(
+        ellipse 75% 75% at 50% 50%,
+        transparent 0%,
+        transparent 42%,
+        #000 78%
+    );
+}
+
+/* Sombra suave en las letras. La viñeta ya no oscurece el centro, así que esto
+   es lo que sostiene el contraste sin tapar la foto. */
+.hero-texto {
+    text-shadow: 0 2px 22px rgb(0 0 0 / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {

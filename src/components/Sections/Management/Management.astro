@@ -1,10 +1,11 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
 import { Closing, Hero, Section, Tipography } from "@components";
-import { SECTION_MANAGEMENT_STATS } from "@constant";
+import { SECTION_MANAGEMENT_STATS, GESTION_VIEWER } from "@constant";
 import { sectionId } from "@/cms/anchors";
 import { getContent, getPublishedWorks } from "@/lib/server";
-import ProjectsViewer from "./ProjectsViewer/ProjectsViewer.astro";
+import ViewerTarjeta from "./ProjectsViewer/ProjectsViewer.astro";
+import ViewerEditorial from "./ProjectsViewerEditorial/ProjectsViewer.astro";
 import "@styles/gestion.css";
 import "@styles/management.css";
 import "@styles/gallery.css";
@@ -15,6 +16,12 @@ const [hero, header, closing, obras] = await Promise.all([
   getContent("management.closing"),
   getPublishedWorks(),
 ]);
+
+// Cuál de los dos visores se pinta. Ambos reciben las mismas `obras` y cargan
+// sus propias clases, así que la elección es solo esta línea: se cambia
+// `GESTION_VIEWER` en `@constants/management/viewer` y nada más.
+const ProjectsViewer =
+  GESTION_VIEWER === "editorial" ? ViewerEditorial : ViewerTarjeta;
 
 const pad = (value: number) => String(value).padStart(2, "0");
 

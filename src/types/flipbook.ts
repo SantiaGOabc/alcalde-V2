@@ -121,7 +121,9 @@ export interface BookBanner {
 /**
  * Plantilla con la que se dibuja la página.
  *
- * - `cover` / `back`: tapas duras a página completa.
+ * - `cover` / `back`: una foto a sangre, tapa dura a página completa. La `cover`
+ *   toma la foto de la propia página y, si no trae ninguna, cae a la de
+ *   `BookMeta`, que es el caso de la tapa real.
  * - `page`: hoja de álbum, solo fotos en bento. Sin título encima.
  * - `section`: hoja de papel blanco con el título centrado en el medio y nada
  *   más. Es la que separa los bloques de dos en dos.
@@ -153,6 +155,9 @@ export interface BookPage {
   /**
    * Fotos de la página. Es lo que decide la forma de la hoja, así que casi
    * siempre es lo único que hace falta escribir.
+   *
+   * En una hoja `cover` solo se dibuja la primera: la hoja es una única foto a
+   * sangre, así que las que sobren no llegan a verse.
    */
   photos?: readonly BookPhoto[];
   /**
@@ -187,23 +192,7 @@ export interface BookMeta {
   /** Texto alternativo de la imagen de tapa. */
   coverAlt: string;
   /** Rótulo de la tapa: normalmente dos o tres líneas cortas. */
-  coverLines: readonly string[];
-  /** Texto bajo el rótulo de la tapa. */
-  coverNote: string;
-  /** Pista de la tapa: le dice al lector que el libro se abre. */
-  coverHint: string;
-  /** Título de la contraportada. */
-  backTitle: string;
-  /** Texto de la contraportada. */
-  backText: string;
-  /** Créditos al pie de la contraportada. */
-  backCredits: string;
 }
-
-
-/* --------------------------------------------------------------------------
-   Estado interno del visor
-   -------------------------------------------------------------------------- */
 
 /**
  * Fases del visor. Es una máquina de estados explícita porque abrir y cerrar

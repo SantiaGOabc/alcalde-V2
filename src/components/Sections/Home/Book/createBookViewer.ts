@@ -251,9 +251,22 @@ export const createBookViewer = (root: ParentNode): BookViewer | null => {
 	const route = (direction: Travel): { from: Box; to: Box; scale: number } => {
 		const sheet = state.sheet as BookSheet;
 		const card = el.anchor.getBoundingClientRect();
-		const scale = Math.min(card.width / visibleWidth(sheet), card.height / sheet.height);
+		const cardWidth = card.width > 0 ? card.width : 280;
+		const cardHeight = card.height > 0 ? card.height : 360;
+		const scale = Math.min(cardWidth / visibleWidth(sheet), cardHeight / sheet.height);
 
-		const folded = onCard(card, sheet, scale);
+		const folded = onCard(
+			card.width > 0
+				? card
+				: ({
+						x: (window.innerWidth - cardWidth) / 2,
+						y: (window.innerHeight - cardHeight) / 2,
+						width: cardWidth,
+						height: cardHeight,
+					} as DOMRect),
+			sheet,
+			scale,
+		);
 		const open = centered(sheet);
 
 		return direction === "open"
@@ -385,6 +398,13 @@ export const createBookViewer = (root: ParentNode): BookViewer | null => {
 	/** Abre el libro. Si ya está en cualquier otro punto, no hace nada. */
 	const open = (trigger: HTMLElement): void => {
 		if (state.phase !== "closed") return;
+
+		// Si el libro está en la portada cerrada, abrirlo muestra directamente
+		// el primer doblece con las páginas para que se vea abierto de inmediato.
+		if (state.page === 0) {
+			state.page = 1;
+			state.engine?.flip(1);
+		}
 
 		// Se mide antes de bloquear el scroll: bloquearlo puede desplazar la
 		// página, y con ella el sitio del que sale el libro.

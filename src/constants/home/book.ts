@@ -8,7 +8,7 @@ import type {
 // Las rutas de `public/` no se escriben a mano: cada foto se nombra con el
 // ayudante de su carpeta (ver `src/utils/images.ts`), de modo que cambiar dónde
 // vive un archivo no obliga a recorrer el libro entero.
-import { alcalde, premio, raiz } from "@utils";
+import { alcalde, premio, raiz, book } from "@utils";
 import { SECTION_BOOK_CONTENT } from "./home";
 
 /* ==========================================================================
@@ -63,14 +63,6 @@ export const BOOK_META: BookMeta = {
   coverKicker: SECTION_BOOK_CONTENT.eyebrow,
   coverImage: SECTION_BOOK_CONTENT.imageURL,
   coverAlt: SECTION_BOOK_CONTENT.imageAlt,
-  coverLines: ["Cocha,", "la mejor ciudad", "de Bolivia"],
-  coverNote: "De los años 90 a la gestión 2021–2026",
-  coverHint: "Toca para abrir",
-  backTitle: "Una visión puede cambiar una ciudad",
-  backText:
-    "De los primeros puentes a la tecnología; de los parques a los hospitales; del agua a las grandes avenidas, la historia de Cochabamba sigue escribiéndose. Porque una obra puede cambiar un lugar. Pero una visión puede cambiar una ciudad.",
-  backCredits:
-    "Gobierno Autónomo Municipal de Cochabamba · Gestión Manfred Reyes Villa · 2021–2026",
 };
 
 /* --------------------------------------------------------------------------
@@ -90,6 +82,10 @@ export const BOOK_META: BookMeta = {
 /** Una foto de `public/`, con su texto alternativo. */
 const photo = (src: string, alt: string): BookImage => ({ src, alt });
 
+/** Una hoja del libro ya digitalizada, tal cual aparece en `public/book/`. */
+const pg = (page: number): BookImage =>
+  photo(book(`LIBRO PKK_Optimizer_page_${page}.webp`), `Página ${page}`);
+
 /** Una foto con el título que sale en su pie dentro del bento. */
 const titled = (
   image: BookImage,
@@ -99,6 +95,7 @@ const titled = (
 
 const PHOTO = {
   cocha: photo(raiz("cocha.jpg"), "Panorámica de la ciudad de Cochabamba"),
+  libro: photo(book("LIBRO PKK_Optimizer_page_1.webp"), "Portada del libro digital"),
   alalay: photo(raiz("lagunaAlalay.jpeg"), "Laguna Alalay recuperada"),
   turquesa: photo(raiz("playaTurquesa.JPG"), "Playa Turquesa, espacio público recuperado"),
   banderas: photo(raiz("plazaBanderas.jpg"), "Plaza de las Banderas"),
@@ -140,12 +137,15 @@ export const BOOK_PAGES: readonly BookPage[] = [
   { kind: "cover", label: "Portada" },
 
   /* ══ BLOQUE 1: LA CIUDAD ══ */
-  { kind: "section", label: "La Ciudad que Cambió" },
+  { kind: "cover", label: "Página 2", photos: [pg(2)] },
+  { kind: "cover", label: "Página 3", photos: [pg(3)] },
+  { kind: "cover", label: "Página 4", photos: [pg(4)] },
+  { kind: "cover", label: "Página 5", photos: [pg(5)] },
   {
     kind: "page",
     label: "Cochabamba Hoy",
     photos: [
-      titled(PHOTO.cocha, "Cochabamba Ciudad Jardín", { badge: "PANORÁMICA" }),
+      titled(PHOTO.cocha, "Cochabamba Ciudad Jardín"),
       titled(PHOTO.turquesa, "Playa Turquesa"),
     ],
   },
@@ -154,20 +154,16 @@ export const BOOK_PAGES: readonly BookPage[] = [
     label: "El Centro y sus Espacios",
     photos: [
       titled(PHOTO.teleferico, "El Teleférico"),
-      titled(PHOTO.banderas, "Plaza de las Banderas", { badge: "RENOVADA" }),
-      titled(PHOTO.alalay, "Laguna Alalay", { badge: "MEDIO AMBIENTE" }),
+      titled(PHOTO.banderas, "Plaza de las Banderas"),
+      titled(PHOTO.alalay, "Laguna Alalay"),
     ],
   },
 
   /* ══ BLOQUE 2: OBRAS ══ */
-  { kind: "section", label: "Obras de Impacto" },
   {
     kind: "page",
     label: "Espacios Públicos",
-    photos: [
-      titled(PHOTO.premio2, "Reconocimiento a la obra", { badge: "DESTACADO" }),
-      titled(PHOTO.cinta, "Corte de Cinta"),
-    ],
+    photos: [titled(PHOTO.cinta, "Corte de Cinta")],
   },
   {
     kind: "page",
@@ -187,7 +183,6 @@ export const BOOK_PAGES: readonly BookPage[] = [
   },
 
   /* ══ BLOQUE 3: LA GENTE ══ */
-  { kind: "section", label: "Cerca de la Gente" },
   {
     kind: "page",
     label: "La Comunidad",

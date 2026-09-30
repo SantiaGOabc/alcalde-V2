@@ -8,32 +8,63 @@
     --home-accent: var(--brand-primary, #472D82);
     --home-accent-strong: var(--brand-primary-strong, #695DA9);
     --home-ink: rgb(96, 96, 98);
-    --hero-step: 7s;
+    --hero-step:7s;
 }
 
 /* ==========================================================================
    Hero — fondo carrusel
-   Cada capa usa la misma animacion y se retrasa un paso, asi el desvanecido
-   queda encadenado sin JavaScript.
    ========================================================================== */
-
 .hero-media {
     @apply absolute inset-0 overflow-hidden;
     --hero-duration: calc(var(--hero-count) * var(--hero-step));
 }
 
 .hero-media__layer {
-    @apply absolute inset-0 size-full object-cover object-top opacity-0;
-    animation: hero-crossfade var(--hero-duration) ease-in-out infinite;
+    @apply absolute inset-0 size-full object-cover object-top;
+
+    opacity: 0;
+    clip-path: circle(0% at 50% 50%);
+    will-change: clip-path, transform, opacity;
+
+    animation: hero-iris var(--hero-duration) cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    /* Retraso secuencial por imagen */
     animation-delay: calc(var(--i) * var(--hero-step));
 }
 
-@keyframes hero-crossfade {
-    0% { opacity: 0; }
-    2% { opacity: 1; }
-    24% { opacity: 1; }
-    26% { opacity: 0; }
-    100% { opacity: 0; }
+@keyframes hero-iris {
+    /* 1. Entrada con iris (tarda ~15% de su turno en abrirse) */
+    0% {
+        opacity: 0;
+        transform: scale(1.08);
+        clip-path: circle(0% at 50% 50%);
+    }
+    
+    /* Apertura completa */
+    18% {
+        opacity: 1;
+        clip-path: circle(100% at 50% 50%);
+    }
+
+    /* 2. Mantiene posición y ligera escala durante casi todo su turno */
+    95% {
+        opacity: 1;
+        transform: scale(1.02);
+        clip-path: circle(100% at 50% 50%);
+    }
+
+    /* 3. Se desvanece suavemente para ceder paso a la capa siguiente */
+    100% {
+        opacity: 0;
+        transform: scale(1);
+        clip-path: circle(100% at 50% 50%);
+    }
+
+    /* 4. Permanece invisible el resto del ciclo total */
+    100% {
+        opacity: 0;
+        transform: scale(1);
+        clip-path: circle(0% at 50% 50%);
+    }
 }
 
 /* Oscurecimiento uniforme para mantener legible el texto del hero. Va flojo

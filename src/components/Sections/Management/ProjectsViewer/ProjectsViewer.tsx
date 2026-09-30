@@ -29,9 +29,9 @@ const getInitials = (title: string) =>
  * tarjeta violeta de esquinas redondeadas, con la tira de miniaturas flotando
  * sobre la foto y las flechas al costado.
  *
- * Es la variante que se renderiza hoy. La editorial de bordes rectos sigue
- * viva en `../ProjectsViewerEditorial`, y ambas reciben los mismos datos de
- * `../visorObrasData`.
+ * Es la variante `tarjeta`. La editorial de bordes rectos sigue viva en
+ * `../ProjectsViewerEditorial`, y ambas reciben los mismos datos de
+ * `../visorObrasData`; cuál se monta lo decide `GESTION_VIEWER`.
  */
 export default function ProjectsViewer({ categorias }: ProjectsViewerProps) {
     const {

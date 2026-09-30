@@ -54,17 +54,12 @@ const { label } = Astro.props;
               tapa es siempre la misma; el rótulo es lo que cambia con la marca. */}
           <span class="book-closed__cover-content">
             <span class="book-closed__cover-lines">
-              {BOOK_META.coverLines.map((line) => (
-                <span class="book-closed__cover-line">{line}</span>
-              ))}
             </span>
             <span class="book-closed__cover-rule" />
-            <span class="book-closed__cover-note">{BOOK_META.coverNote}</span>
           </span>
 
           <span class="book-closed__cover-foot">
             <span class="book-closed__cover-hint">
-              {BOOK_META.coverHint}
               <svg viewBox="0 0 16 16" class="book-closed__cover-arrow" fill="currentColor">
                 <path d="M2.72 7.78a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 1.06L4.56 7h8.19a.75.75 0 0 1 0 1.5H4.56l3.47 3.47a.75.75 0 0 1-1.06 1.06L2.72 8.84a.75.75 0 0 1 0-1.06Z" />
               </svg>

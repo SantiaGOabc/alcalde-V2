@@ -4,8 +4,11 @@
  *
  * La isla no necesita saber de dónde salen las obras: se las pasa ya
  * agrupadas por categoría y con las imágenes optimizadas, que es lo único que
- * hace `prepararCategorias`. La variante editorial de
- * `../ProjectsViewerEditorial` usa el mismo extractor.
+ * hace `prepararCategorias`.
+ *
+ * Esta es la variante `tarjeta`. Cuál de las dos se pinta lo decide
+ * `GESTION_VIEWER` (`@constants/management/viewer`); la editorial de
+ * `../ProjectsViewerEditorial` usa el mismo extractor y las mismas props.
  */
 import type { Obra } from '@constant';
 import { prepararCategorias } from '../visorObrasData';

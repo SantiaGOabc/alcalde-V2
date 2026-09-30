@@ -139,7 +139,7 @@ export const SECTION_BOOK_CONTENT = {
     "Un recorrido en imágenes por las obras que transformaron Cochabamba, desde los años 90 hasta la gestión 2021–2026. Fotografías y videos, página por página.",
   // Foto de la tarjeta del libro y de su tapa: la misma imagen en los dos sitios,
   // para que la tarjeta y el libro no puedan contradecirse.
-  imageURL: book("cover.jpg"),
+  imageURL: book("LIBRO PKK_Optimizer_page_1.webp"),
   imageAlt: "La tapa de Cocha, la mejor ciudad",
   button: "Abrir libro",
 };

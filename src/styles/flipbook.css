@@ -42,6 +42,11 @@
     top: 0;
     left: 0;
     will-change: left, top, width, height;
+    background-color: #121214;
+    box-shadow:
+        0 25px 60px -15px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 0 40px rgba(0, 0, 0, 0.6);
     transition:
         left var(--book-transition) var(--book-ease),
         top var(--book-transition) var(--book-ease),
@@ -314,6 +319,16 @@
     /* Permite desplazar una hoja con el dedo en vertical, que es donde vive el
        texto, sin que el motor entienda que se está intentando voltear. */
     touch-action: pan-y;
+    background-color: #18181b;
+}
+
+/* Sombra de encuadernación en el lomo central entre páginas izquierda y derecha */
+.stf__item.--left {
+    box-shadow: inset -10px 0 20px -8px rgba(0, 0, 0, 0.4);
+}
+
+.stf__item.--right {
+    box-shadow: inset 10px 0 20px -8px rgba(0, 0, 0, 0.4);
 }
 
 .stf__item img {
@@ -335,6 +350,10 @@
    Ninguna lleva sombra propia: la que las despega del dorso la pone el motor de
    volteo, que ya sombrea la hoja entera. Ponerle otra sería duplicarla.
    ========================================================================== */
+
+.book-page {
+    background-color: #18181b;
+}
 
 .book-page--bento,
 .book-page--section {

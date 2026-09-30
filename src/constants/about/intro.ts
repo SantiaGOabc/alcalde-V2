@@ -1,12 +1,21 @@
 import type { ClosingContent } from "@types";
-import { CONTENT_HERO_HOME } from "../home/home";
 import { alcalde } from "@utils";
 
-/** Mismo hero (componente e imágenes) que la home, con su propio mensaje. */
+/**
+ * Hero de "Sobre mí": el mismo componente que la home, con su propio mensaje y
+ * su propio carrusel.
+ *
+ * Las imágenes son de persona, no de obra: en esta página lo que se quiere
+ * poner delante es quién es la persona, no lo que construyó.
+ */
 export const CONTENT_HERO_ABOUT = {
   title: "Conoce a la persona detrás del cargo",
   description: "Manfred Reyes Villa",
-  images: CONTENT_HERO_HOME.images,
+  images: [
+    alcalde("alcalde.jpg"),
+    alcalde("esposa.jpg"),
+    alcalde("prefecto.jpg"),
+  ],
 };
 
 // TODO: LOS TEXTOS EN PRIMERA PERSONA DE ESTA PÁGINA (intro, pasiones y cierre)
@@ -18,7 +27,6 @@ export const SECTION_ABOUT_PERSON = {
   title: "Soy más que un título en una puerta",
   imageURL: alcalde("alcalde.jpg"),
   imageAlt: "Manfred Reyes Villa",
-  imageCaption: "Manfred Reyes Villa Bacigalupi",
   paragraphs: [
     "Detrás de las obras y de los años de gestión hay alguien que valora a su familia, respeta a los animales y se siente en casa entre su gente.",
     "Esta página no es un currículum: para eso está la línea de tiempo. Es una invitación a conocer lo que me mueve, lo que disfruto y lo que le da sentido a todo lo demás.",

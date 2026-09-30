@@ -13,14 +13,28 @@ const SPREAD_ASPECT = 2 * BOOK_RENDERED_ASPECT;
  * que se les concede: si no, en una ventana baja se comen el libro entero.
  */
 const room = () => {
-	const margin = BOOK_SHEET.margin * 2;
-	const height = window.innerHeight - margin;
-	const insets = Math.min(
-		BOOK_SHEET.topInset + BOOK_SHEET.bottomInset,
-		height * BOOK_SHEET.insetCap,
-	);
+  const margin = BOOK_SHEET.margin * 2;
+  const height = window.innerHeight - margin;
+  const insets = Math.min(
+    BOOK_SHEET.topInset + BOOK_SHEET.bottomInset,
+    height * BOOK_SHEET.insetCap,
+  );
 
-	return { width: window.innerWidth - margin, height: height - insets };
+  return { width: window.innerWidth - margin, height: height - insets };
+};
+
+/**
+ * Esa misma caja, ya como medidas de hoja, para que el visor pueda colocar el
+ * marco sin volver a hacer la cuenta.
+ *
+ * Se exporta porque con zoom el marco se suelta del libro y se vuelve el
+ * espacio disponible: el doblece ampliado ya no cabe y lo que sobra es
+ * justamente lo que el lector tiene que recorrer.
+ */
+export const bookViewport = (): BookSheet => {
+  const { width, height } = room();
+
+  return { width, height, spread: width };
 };
 
 /** El más pequeño de los topes, ya en píxeles enteros de pantalla. */

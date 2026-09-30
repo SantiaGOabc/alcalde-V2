@@ -102,17 +102,6 @@ export const awards = premio;
 /** Tapa y material del libro digital: `public/book/`. */
 export const book = (archivo: string): string => file(`book/${archivo}`);
 
-/* --------------------------------------------------------------------------
-   Carpetas que todavía no existen
-   --------------------------------------------------------------------------
-   Los ayudantes siguientes están escritos, y funcionan, pero no apuntan a nada
-   porque los archivos aún no están en `public/`. Se dejan aquí, documentados
-   como lo que son, para que añadirlos sea copiar el archivo a la carpeta: si
-   aparece un video o una foto de proyecto, el ayudante que lo nombra ya está
-   escrito y probado. Mientras tanto, los videos y las obras llegan por URL
-   (Cloudinary y el CMS), que es lo que usan hoy.
-   -------------------------------------------------------------------------- */
-
 /** Videos locales: `public/videos/`. */
 export const video = (archivo: string): string => file(`videos/${archivo}`);
 

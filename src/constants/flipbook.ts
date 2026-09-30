@@ -16,12 +16,12 @@
  * una; en pantalla estrecha no cabe el doble y se muestra una sola.
  */
 export const BOOK_SHEET = {
-  /** Proporción de UNA hoja (ancho / alto). */
-  aspect: 0.625,
-  /** Proporción del libro respecto a la ventana. Más alto = más pequeño. */
-  fit: 0.93,
-  /** Ensanche del libro abierto. Compensa la perspectiva con la que se voltea. */
-  spreadBoost: 1.1,
+  /** Proporción de UNA hoja (ancho / alto). Las páginas son 1388 x 1700 (~0.816). */
+  aspect: 0.816,
+  /** Proporción del libro respecto a la ventana. */
+  fit: 0.9,
+  /** Ensanche del libro abierto. */
+  spreadBoost: 1.0,
   /**
    * Por debajo de este ancho de hoja, dos páginas a la vez se leen peor que una.
    *
@@ -29,7 +29,7 @@ export const BOOK_SHEET = {
    * de medir, no una marca de pantalla. Un teléfono pequeño y una ventana
    * estrecha en un monitor comparten la misma respuesta, que es la correcta.
    */
-  minReadableWidth: 230,
+  minReadableWidth: 260,
   /**
    * Umbral con el que el motor de volteo decide si el doblece va en horizontal
    * o en vertical. page-flip compara el ancho del bloque contra el doble de
@@ -39,9 +39,9 @@ export const BOOK_SHEET = {
   /** Aire alrededor del libro abierto. */
   margin: 16,
   /** Reservado arriba, donde vive la barra de controles. */
-  topInset: 72,
+  topInset: 56,
   /** Reservado abajo, donde viven el índice y el tamaño de letra. */
-  bottomInset: 96,
+  bottomInset: 70,
   /**
    * Cuánto de la ventana pueden comerse los controles, como fracción.
    *
@@ -49,10 +49,26 @@ export const BOOK_SHEET = {
    * libro entero: a 420px de alto quedaban 250px de aire y el doblece caía a
    * una hoja diminuta. Con este tope los controles ceden antes.
    */
-  insetCap: 0.33,
+  insetCap: 0.28,
   /** Tope del ancho de una hoja en pantalla estrecha. */
-  narrowMax: 440,
+  narrowMax: 480,
 } as const;
+
+/**
+ * Niveles del zoom de lectura, en orden creciente.
+ *
+ * La rueda no lleva un factor continuo sino que recorre esta lista, y el primer
+ * elemento es el libro tal cual se abre. Escalonado y no continuo por una razón
+ * práctica: con un factor continuo no hay forma de parar en un nivel concreto,
+ * en un trackpad la rueda llega en impulsos finos y el libro nunca se queda
+ * quieto, y la única forma de deshacer el zoom es devolver la rueda en sentido
+ * contrario. Con una lista, un nivel por muesca, se sabe siempre en cuál se está
+ * y se vuelve atrás igual de rápido que se avanza.
+ *
+ * Son factores sobre las medidas de `BOOK_SHEET`, no tamaños: subirlos agranda
+ * la hoja de verdad —la vuelve a medir el motor— en vez de estirar la anterior.
+ */
+export const BOOK_ZOOM_STEPS = [1, 1.25, 1.5, 2, 2.5, 3] as const;
 
 /**
  * Proporción con la que el motor dibuja UNA hoja.

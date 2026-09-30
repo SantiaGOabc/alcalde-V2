@@ -10,11 +10,15 @@ interface Props {
 }
 
 const { title, description, images: allImages = [], id } = Astro.props;
-// Las imágenes sin URL (aún sin cargar en el panel) no forman parte del carrusel.
+
+// Las imágenes sin URL no forman parte del carrusel.
 const images = allImages.filter(Boolean);
 ---
 
-<Section className="home-hero relative isolate grid min-h-svh place-items-center overflow-hidden text-center text-white" id={id}>
+<Section
+	className="home-hero relative isolate grid min-h-svh place-items-center overflow-hidden text-center text-white"
+	id={id}
+>
 	{
 		images.length > 0 && (
 			<div
@@ -39,17 +43,19 @@ const images = allImages.filter(Boolean);
 	}
 
 	<div class="hero-veil" aria-hidden="true"></div>
-    <div class="hero-foco" aria-hidden="true"></div>
+
+	<div class="hero-foco" aria-hidden="true"></div>
 
 	<div class="hero-texto relative z-20 mx-auto max-w-5xl">
 		<Tipography
 			as="p"
 			variant="body"
 			color="inherit"
-			class="text-sm font-semibold uppercase tracking-widest text-white/80 sm:text-base"
+			class="text-sm font-semibold uppercase tracking-widest text-white/80"
 		>
 			{title}
 		</Tipography>
+
 		<Tipography
 			as="h1"
 			variant="h1"

@@ -14,3 +14,4 @@ export * from "./global/mailbox";
 export * from "./global/login";
 export * from "./flipbook.ts";
 export * from "./management/page";
+export * from "./management/viewer";

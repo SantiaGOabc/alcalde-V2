@@ -1,14 +1,26 @@
 import type { ClosingContent } from "@types";
-import { CONTENT_HERO_HOME } from "../home/home";
+import { alcalde, raiz } from "@utils";
 
 // Textos de la página de Gestión que no viven en `projects.ts`. Ese archivo se
 // mantiene libre de imports porque `scripts/db-setup.mjs` lo lee directamente.
 
-/** Mismo hero (componente e imágenes) que la home, con su propio mensaje. */
+/**
+ * Hero de Gestión: el mismo componente que la home, con su propio mensaje y su
+ * propio carrusel.
+ *
+ * Las imágenes son de obra, no de persona: en esta página lo que va delante es
+ * lo que se construyó, que es justo lo que viene a contar el resto de la
+ * página.
+ */
 export const CONTENT_HERO_MANAGEMENT = {
   title: "Obras que transformaron Cochabamba",
   description: "Gestión municipal",
-  images: CONTENT_HERO_HOME.images,
+  images: [
+    raiz("parque vial.jpg"),
+    raiz("puenteCalaCala.png"),
+    alcalde("IMG_2941.jpg"),
+    alcalde("alcaldeObra.jpg"),
+  ],
 };
 
 /** Etiquetas de la línea de datos, calculada con las obras publicadas: "06 obras · 04 áreas". */

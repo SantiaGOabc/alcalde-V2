@@ -24,8 +24,10 @@ import { photoSize } from "./bookPhoto";
  *
  * Con eso se cierran las otras dos, que no dependen de los datos:
  *
- * 3. La tapa: la foto de portada con el rótulo encima.
- * 4. La contraportada: la cita de cierre y los créditos.
+ * 3. La tapa (`cover`): UNA foto a sangre, de borde a borde, sin margen de papel.
+ *    Con fotos propias es una hoja de contenido con ese diseño; sin ellas es la
+ *    tapa real del libro, que las saca de `BOOK_META`.
+ * 4. La contraportada (`back`): la cita de cierre y los créditos.
  *
  * Cuál se dibuja lo dice `kind` en los datos, y añadir una hoja es añadir un
  * objeto, sin tocar ningún componente.
@@ -40,7 +42,20 @@ const labelAttr = { [BOOK_ATTR.label]: label };
 
 const items = photosOfPage(page);
 
-const coverSize = photoSize(BOOK_META.coverImage, 3 / 4);
+/**
+ * La foto que pinta la hoja de tapa.
+ *
+ * `kind: "cover"` sirve para dos cosas: la tapa real del libro —la primera hoja,
+ * que no trae fotos porque las saca de `BOOK_META`— y cualquier otra hoja que
+ * quiera ese mismo diseño a sangre. Por eso la foto sale de la página primero:
+ * si trae `photos` o `image`, ese es el dibujo, y `BOOK_META` queda solo de
+ * respaldo. Antes la plantilla miraba siempre `BOOK_META`, así que dos hojas
+ * `cover` salían idénticas por más que la segunda trajera su foto.
+ */
+const coverPhoto = items[0];
+const isBookCover = !coverPhoto;
+const coverImage = coverPhoto ?? { src: BOOK_META.coverImage, alt: BOOK_META.coverAlt };
+const coverSize = photoSize(coverImage.src, 0.816);
 
 /**
  * La banda de video de la hoja, venga como venga.
@@ -60,65 +75,36 @@ const band: BookBanner | undefined =
   kind === "cover" && (
     <article
       {...labelAttr}
-      class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-sm text-white"
+      class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-sm bg-neutral-900 text-white cursor-pointer"
     >
       <BookImage
-        image={{ src: BOOK_META.coverImage, alt: BOOK_META.coverAlt }}
+        image={coverImage}
         width={coverSize.width}
         height={coverSize.height}
-        class="absolute inset-0 -z-30 size-full object-cover"
+        class="absolute inset-0 size-full object-cover"
         sizes="(min-width: 1024px) 46vw, 96vw"
       />
-      <div
-        aria-hidden="true"
-        class="absolute inset-0 -z-20 bg-linear-to-t from-black/90 via-black/45 to-black/35"
-      />
-
-      {/* El rótulo de la tapa. Son los mismos datos que lee el libro cerrado en
-          3D, y no están repetidos en ninguna parte: la tapa del visor y la
-          tarjeta de la sección no pueden decir cosas distintas. */}
-      <div class="book-page__cover relative flex flex-col items-start gap-2 p-7">
-        <span class="rounded-full border border-white/25 bg-black/35 px-2.5 py-0.5 text-[0.6rem] font-semibold tracking-[0.2em] text-white/85 uppercase backdrop-blur-sm">
-          {BOOK_META.coverBadge}
-        </span>
-
-        <Tipography
-          as="h1"
-          color="inherit"
-          {...reveal}
-          class="text-[calc(1.9rem*var(--book-text-scale))] leading-[1.05] font-extrabold tracking-tight text-balance"
-        >
-          {BOOK_META.coverLines.map((line) => (
-            <span class="block">{line}</span>
-          ))}
-        </Tipography>
-
-        <span
-          aria-hidden="true"
-          class="mt-1 h-px w-14 bg-white/60"
-        />
-
-        <Tipography
-          as="p"
-          color="inherit"
-          {...reveal}
-          class="text-[calc(0.8rem*var(--book-text-scale))] text-white/75"
-        >
-          {BOOK_META.coverNote}
-        </Tipography>
-
-        <Tipography
-          as="p"
-          color="inherit"
-          {...reveal}
-          class="mt-3 flex items-center gap-1.5 text-[calc(0.68rem*var(--book-text-scale))] font-semibold text-white/55 uppercase"
-        >
-          {BOOK_META.coverHint}
-          <svg viewBox="0 0 16 16" class="size-3 animate-pulse fill-current" aria-hidden="true">
-            <path d="M2.72 7.78a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 1.06L4.56 7h8.19a.75.75 0 0 1 0 1.5H4.56l3.47 3.47a.75.75 0 0 1-1.06 1.06L2.72 8.84a.75.75 0 0 1 0-1.06Z" />
-          </svg>
-        </Tipography>
-      </div>
+      {isBookCover && (
+        <>
+          {/* Sombra de lomo en el canto izquierdo de la portada */}
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-linear-to-r from-black/50 via-black/20 to-transparent"
+          />
+          {/* Brillo fino en el canto exterior */}
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20"
+          />
+          {/* Indicador elegante de pase de página */}
+          <div class="pointer-events-none absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 text-[0.72rem] font-medium tracking-wide text-white/90 backdrop-blur-md shadow-lg">
+            <span>Toca para abrir</span>
+            <svg viewBox="0 0 16 16" class="size-3.5 fill-current animate-pulse" aria-hidden="true">
+              <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.44 8 6.22 4.78a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </div>
+        </>
+      )}
     </article>
   )
 }
@@ -133,35 +119,6 @@ const band: BookBanner | undefined =
         aria-hidden="true"
         class="absolute inset-0 -z-10 bg-linear-to-br from-(--home-accent) via-(--home-accent-strong) to-(--home-accent)"
       />
-
-      <Tipography
-        as="h3"
-        color="inherit"
-        {...reveal}
-        class="text-[calc(1.6rem*var(--book-text-scale))] leading-tight font-bold text-balance"
-      >
-        {BOOK_META.backTitle}
-      </Tipography>
-
-      <span aria-hidden="true" {...reveal} class="h-px w-16 bg-white/50" />
-
-      <Tipography
-        as="p"
-        color="inherit"
-        {...reveal}
-        class="max-w-[30ch] text-[calc(0.95rem*var(--book-text-scale))] text-white/75"
-      >
-        {BOOK_META.backText}
-      </Tipography>
-
-      <Tipography
-        as="p"
-        color="inherit"
-        {...reveal}
-        class="mt-3 max-w-[34ch] text-[calc(0.7rem*var(--book-text-scale))] leading-relaxed text-white/55"
-      >
-        {BOOK_META.backCredits}
-      </Tipography>
     </article>
   )
 }
@@ -190,7 +147,7 @@ const band: BookBanner | undefined =
 
 {
   /*
-    La hoja de blanco: papel, y el título EN EL CENTRO de la plana. Es la que
+    La hoja de blanco: papel, y el título en el centro de la plana. Es la que
     dice de qué va el bloque de fotos que viene detrás, y va cada dos hojas para
     que el libro respire y el título se lea sin ninguna foto alrededor.
   */

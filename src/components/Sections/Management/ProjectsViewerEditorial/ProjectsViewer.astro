@@ -3,11 +3,12 @@
  * Visor de Gestión — VARIANTE EDITORIAL (la propuesta anterior).
  *
  * Índice de áreas a la izquierda, ficha de la obra a la derecha y esquinas
- * rectas, con filetes finos. No es la isla que se renderiza hoy — esa es
- * `../ProjectsViewer`, la tarjeta violeta.
+ * rectas, con filetes finos.
  *
- * Se conserva entera para poder volver a ella: en `Management.astro` basta
- * cambiar el import (y el CSS sigue importado, así que no hay nada más que tocar).
+ * Esta es la variante `editorial`. Para que sea la que se pinte hay que poner
+ * `GESTION_VIEWER = "editorial"` en `@constants/management/viewer`: el CSS
+ * sigue importado siempre en `Management.astro`, así que no hay nada más que
+ * tocar.
  */
 import type { Obra } from '@constant';
 import { prepararCategorias } from '../visorObrasData';

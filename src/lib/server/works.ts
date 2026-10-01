@@ -135,8 +135,23 @@ const MAX = { title: 200, description: 4000, area: 120, alt: 300, gallery: 40 } 
 const text = (value: unknown, max: number): string | null =>
   typeof value === 'string' && value.trim().length <= max ? value.trim() : null;
 
-/** Solo URLs http(s) o imágenes propias subidas al panel (`/media/<id>`). */
-const isAllowedSource = (src: string): boolean => /^https?:\/\/\S+$/.test(src) || /^\/media\/\d+$/.test(src);
+/**
+ * Sources accepted for an image or a video:
+ *   - a full http(s) URL (Supabase, YouTube, …);
+ *   - a path inside this site, which is how `public/` is served and how the CMS
+ *     stores uploads: `/media/<id>` for uploaded files, and any other leading
+ *     slash path for the files that already lived in `public/`. The works seeded
+ *     from `constants/management/projects.ts` come in that second shape, so
+ *     without this branch a seeded work could never be saved again from the CMS.
+ *
+ * A leading `//` is rejected: that would not be an internal path but another
+ * site. Backslashes are rejected too, because some browsers normalise them to
+ * `/` and would slip past the check.
+ */
+const isAllowedSource = (src: string): boolean => {
+  if (src.includes('\\')) return false;
+  return /^https?:\/\/\S+$/.test(src) || /^\/(?!\/)[^\s]*$/.test(src);
+};
 
 const parseImage = (input: unknown): WorkImage | null => {
   if (typeof input !== 'object' || input === null) return null;

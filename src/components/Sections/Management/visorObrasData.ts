@@ -1,5 +1,5 @@
 import { getImage } from 'astro:assets';
-import { imagePosition } from '@utils';
+import { imagePosition, youtubePoster } from '@utils';
 import {
   CATEGORIAS_GESTION,
   LABELS_CATEGORIA,
@@ -49,9 +49,11 @@ const prepararImagen = async (imagen: ImagenObra): Promise<ObraImagen> => {
     const poster = imagen.poster
       ? await optimizar(imagen.poster, ANCHO_PORTADA)
       : undefined;
+    // A YouTube link with no poster falls back to YouTube's own thumbnail:
+    // without it the thumbnail strip shows an empty box.
     const thumb = imagen.poster
       ? await optimizar(imagen.poster, ANCHO_THUMB)
-      : (imagen.thumb ?? '');
+      : (imagen.thumb ?? youtubePoster(imagen.src) ?? '');
     return {
       tipo: 'video',
       src: imagen.src,

@@ -1,5 +1,6 @@
 import type { ObraVisor } from '@types';
-import ThumbnailGallery from './ThumbnailGallery';
+import WorkVideo from '@/components/Sections/Management/WorkVideo';
+import ThumbnailGallery from '@/components/Sections/Management/ProjectsViewerEditorial/ThumbnailGallery';
 
 export interface ProjectGalleryProps {
     obra: ObraVisor;
@@ -32,14 +33,11 @@ export default function ProjectGallery({
     return (
         <div className="gestion-media">
             {item?.tipo === 'video' ? (
-                <video
+                <WorkVideo
                     key={item.src}
-                    controls
-                    playsInline
-                    preload="none"
-                    poster={item.poster ?? item.thumb}
                     src={item.src}
-                    className="absolute inset-0 size-full object-cover"
+                    poster={item.poster ?? item.thumb}
+                    titulo={item.titulo ?? obra.titulo}
                 />
             ) : (
                 <button

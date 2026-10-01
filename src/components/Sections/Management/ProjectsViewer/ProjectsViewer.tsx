@@ -4,8 +4,9 @@ import { useProyectosVisor } from '@/hooks';
 import type { CategoriaObra } from '@types';
 import ArrowButton from '@/components/ui/ArrowButton';
 import GalleryModal from '@/components/ui/GalleryModal';
-import SelectorCategorias from './SelectorCategorias';
-import ThumbnailGallery from './GaleriaMedia';
+import SelectorCategorias from '@/components/Sections/Management/ProjectsViewer/SelectorCategorias';
+import ThumbnailGallery from '@/components/Sections/Management/ProjectsViewer/GaleriaMedia';
+import WorkVideo from '@/components/Sections/Management/WorkVideo';
 
 export interface ProjectsViewerProps {
     categorias: CategoriaObra[];
@@ -93,13 +94,11 @@ export default function ProjectsViewer({ categorias }: ProjectsViewerProps) {
                     <article key={obra.id} className="gestion-card">
                         <div className="gestion-card-media">
                             {esVideo && item ? (
-                                <video
+                                <WorkVideo
                                     key={item.src}
-                                    controls
-                                    playsInline
-                                    preload="none"
-                                    poster={item.poster ?? item.thumb}
                                     src={item.src}
+                                    poster={item.poster ?? item.thumb}
+                                    titulo={item.titulo ?? obra.titulo}
                                 />
                             ) : (
                                 <button

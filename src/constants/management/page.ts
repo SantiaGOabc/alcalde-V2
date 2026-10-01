@@ -13,7 +13,7 @@ import { alcalde, raiz } from "@utils";
  * página.
  */
 export const CONTENT_HERO_MANAGEMENT = {
-  title: "Obras que transformaron Cochabamba",
+  title: "Las obras son memorias",
   description: "Gestión municipal",
   images: [
     raiz("parque vial.jpg"),
@@ -30,7 +30,7 @@ export const SECTION_MANAGEMENT_STATS = {
 };
 
 export const SECTION_MANAGEMENT_CLOSING: ClosingContent = {
-  phrase: "Una ciudad se construye con obras, y también con las ideas de sus vecinos.",
+  phrase: "La conectividad: Motor del crecimiento urbano",
   description: "¿Tienes una sugerencia para la próxima obra? Cuéntanos y la escuchamos.",
   primary: { label: "Enviar una sugerencia", href: "/mailbox" },
   secondary: { label: "Conocer al alcalde", href: "/about" },

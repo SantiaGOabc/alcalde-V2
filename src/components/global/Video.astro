@@ -1,5 +1,5 @@
 ---
-import {Button, SafeImage} from "@components";
+import { youtubeId } from "@utils";
 
 interface Props {
   src: string;
@@ -17,10 +17,7 @@ const {
   class: className,
 } = Astro.props;
 
-const youtubeId =
-  /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{6,12})/.exec(
-    src,
-  )?.[1];
+const id = youtubeId(src);
 ---
 
 <div
@@ -30,28 +27,20 @@ const youtubeId =
   ]}
 >
   {
-    youtubeId ? (
-      <Button
-        type="button"
-        className="group absolute inset-0 block h-full w-full cursor-pointer border-0 bg-black p-0"
-        data-youtube-id={youtubeId}
-        data-video-title={title}
-        aria-label={`Reproducir ${title}`}
+    id ? (
+      <lite-youtube
+        videoid={id}
+        nocookie
+        videoplay="Reproducir"
+        videotitle={title}
+        params="rel=0"
+        class="absolute inset-0 h-full w-full"
+        style="--lite-youtube-aspect-ratio: 16 / 10"
       >
-        <SafeImage
-          src={poster ?? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`}
-          alt=""
-          width={1280}
-          height={720}
-          loading="lazy"
-          class="absolute inset-0 h-full w-full object-cover"
-        />
-        <span class="absolute inset-0 grid place-items-center bg-black/20 transition-colors group-hover:bg-black/35">
-          <span class="grid h-16 w-16 place-items-center rounded-full bg-red-600 shadow-lg transition-transform group-hover:scale-105">
-            <span class="ml-1 h-0 w-0 border-y-10 border-y-transparent border-l-16 border-l-white" />
-          </span>
-        </span>
-      </Button>
+        {poster && (
+          <img slot="image" src={poster} alt="" loading="lazy" decoding="async" />
+        )}
+      </lite-youtube>
     ) : (
       <video
         class="block aspect-16/10 w-full object-cover"
@@ -68,25 +57,7 @@ const youtubeId =
 </div>
 
 <script>
-    import { $$ } from "@utils";
-  $$<HTMLButtonElement>("[data-youtube-id]").forEach((button) => {
-    button.addEventListener(
-      "click",
-      () => {
-        const id = button.dataset.youtubeId;
-        if (!id) return;
-
-        const frame = document.createElement("iframe");
-        frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
-        frame.title = button.dataset.videoTitle ?? "Video de YouTube";
-        frame.allow =
-          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-        frame.allowFullscreen = true;
-        frame.loading = "lazy";
-        frame.className = "absolute inset-0 h-full w-full border-0";
-        button.replaceWith(frame);
-      },
-      { once: true },
-    );
-  });
+  // The library calls `customElements.define` on import and has no server
+  // guard, so it is only pulled in from here, in the browser.
+  import "@justinribeiro/lite-youtube";
 </script>

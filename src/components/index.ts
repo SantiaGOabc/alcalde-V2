@@ -37,6 +37,7 @@ export {
   default as ProjectsViewer,
   default as ProyectosVisor,
 } from './Sections/Management/ProjectsViewer/ProjectsViewer.astro';
+export { default as WorkVideo } from './Sections/Management/WorkVideo';
 
 // UI
 export { default as Button } from './ui/Button';

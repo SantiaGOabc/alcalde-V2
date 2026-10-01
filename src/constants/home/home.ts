@@ -82,10 +82,10 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
     imageFit: "contain" | "cover";
   }>;
 } = {
-  title: "Una persona, ciudad que transforman",
+  title: "Un Legado de Progreso",
   description:
-    "Imágenes que muestran cómo cambian sus espacios y la vida de sus habitantes.",
-  transitionPhrase: "Pionieros en ...",
+    "Las fotografías cuentan aquello que muchas veces las palabras no pueden explicar",
+  transitionPhrase: "De una ciudad de ayer a una ciudad que mira al futuro",
   before: [
     {
       title: "Capitán Manfred Reyes Villa",

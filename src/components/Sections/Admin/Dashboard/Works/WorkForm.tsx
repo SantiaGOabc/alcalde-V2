@@ -113,13 +113,13 @@ export default function WorkForm({ work, onSave, onCancel }: WorkFormProps) {
               <div className="flex items-center justify-between gap-3">
                 <select aria-label="Tipo" value={image.tipo ?? 'foto'} onChange={(e) => patchImage(index, { tipo: e.target.value as WorkImage['tipo'] })} className={`${FIELD_CLASS} w-auto`}>
                   <option value="foto">Foto</option>
-                  <option value="video">Video (URL)</option>
+                  <option value="video">Video (mp4 o link de YouTube)</option>
                 </select>
                 <Button type="button" variant="ghost" size="sm" className="text-red-600" onClick={() => patch({ imagenes: draft.imagenes.filter((_, i) => i !== index) })}>
                   Quitar
                 </Button>
               </div>
-              <ImageField label={isVideo ? 'URL del video (mp4)' : 'Foto'} value={image.src} allowUpload={!isVideo} onChange={(src) => patchImage(index, { src })} />
+              <ImageField label={isVideo ? 'URL del video (mp4 o link de YouTube)' : 'Foto'} value={image.src} allowUpload={!isVideo} onChange={(src) => patchImage(index, { src })} />
               {isVideo && <ImageField label="Imagen de portada del video" value={image.poster ?? ''} onChange={(poster) => patchImage(index, { poster })} />}
               <input aria-label="Texto alternativo" placeholder="Descripción breve de la imagen" value={image.alt} onChange={(e) => patchImage(index, { alt: e.target.value })} className={FIELD_CLASS} />
             </div>

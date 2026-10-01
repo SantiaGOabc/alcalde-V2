@@ -1,4 +1,5 @@
 import { BOOK_ATTR, BOOK_SELECT, datasetKey } from "@constant";
+import { YOUTUBE_ALLOW, isYoutube, youtubeEmbed, youtubeId } from "@utils";
 
 /* ==========================================================================
    Los nodos del visor
@@ -83,13 +84,11 @@ export interface OpenMedia {
 }
 
 const VIDEO_FILE = /\.(mp4|webm|ogv|mov)(\?|#|$)/i;
-const YOUTUBE_ID =
-	/(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{6,12})/;
 
 /** Cómo se decide qué tipo de medio es una URL. El primero que encaja gana. */
-const MEDIA_RULES: readonly { type: OpenMedia["type"]; test: RegExp }[] = [
-	{ type: "video", test: VIDEO_FILE },
-	{ type: "embed", test: YOUTUBE_ID },
+const MEDIA_RULES: readonly { type: OpenMedia["type"]; matches: (src: string) => boolean }[] = [
+	{ type: "video", matches: (src) => VIDEO_FILE.test(src) },
+	{ type: "embed", matches: isYoutube },
 ];
 
 const buildImage = ({ src, alt }: OpenMedia): HTMLElement => {
@@ -131,13 +130,15 @@ const buildVideo = ({ src, poster }: OpenMedia): HTMLElement => {
 };
 
 const buildEmbed = ({ src, alt }: OpenMedia): HTMLElement => {
-	const id = YOUTUBE_ID.exec(src)?.[1];
+	const id = youtubeId(src);
+	// `mediaTypeOf` only routes here when the URL matched `isYoutube`, so this
+	// guard is unreachable. It is here to keep the types honest.
+	if (!id) return buildImage({ type: "image", src, alt });
 
 	const frame = document.createElement("iframe");
-	frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+	frame.src = youtubeEmbed(id);
 	frame.title = alt;
-	frame.allow =
-		"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+	frame.allow = YOUTUBE_ALLOW;
 	frame.allowFullscreen = true;
 	frame.className =
 		"book-media__frame aspect-video w-full max-w-5xl rounded-xl border-0";
@@ -153,7 +154,7 @@ export const buildMedia = (media: OpenMedia): HTMLElement =>
 
 /** Clasifica una URL. Si nada encaja es una imagen, que es el caso normal. */
 export const mediaTypeOf = (src: string): OpenMedia["type"] =>
-	MEDIA_RULES.find((rule) => rule.test.test(src))?.type ?? "image";
+	MEDIA_RULES.find((rule) => rule.matches(src))?.type ?? "image";
 
 /**
  * El medio que hay detrás de un elemento ampliable, o `null` si no lo hay.

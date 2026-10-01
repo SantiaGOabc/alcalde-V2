@@ -4,6 +4,7 @@ export * from './clamp';
 export * from './truncate';
 export * from './imagePosition';
 export * from './images';
+export * from './video';
 export * from './intersectionObserver';
 export * from './scroll';
 export * from './form';

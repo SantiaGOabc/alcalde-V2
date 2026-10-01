@@ -9,7 +9,7 @@ import { alcalde } from "@utils";
  * poner delante es quién es la persona, no lo que construyó.
  */
 export const CONTENT_HERO_ABOUT = {
-  title: "Conoce a la persona detrás del cargo",
+  title: "El inicio de una nueva era",
   description: "Manfred Reyes Villa",
   images: [
     alcalde("alcalde.jpg"),
@@ -27,6 +27,7 @@ export const SECTION_ABOUT_PERSON = {
   title: "Soy más que un título en una puerta",
   imageURL: alcalde("alcalde.jpg"),
   imageAlt: "Manfred Reyes Villa",
+  imageCaption: "Manfred Reyes Villa",
   paragraphs: [
     "Detrás de las obras y de los años de gestión hay alguien que valora a su familia, respeta a los animales y se siente en casa entre su gente.",
     "Esta página no es un currículum: para eso está la línea de tiempo. Es una invitación a conocer lo que me mueve, lo que disfruto y lo que le da sentido a todo lo demás.",

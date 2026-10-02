@@ -114,8 +114,8 @@ export default function WorksManager() {
 
             <ul className={`flex flex-col gap-3 transition-opacity ${list.isLoading ? 'opacity-50' : ''}`}>
               {list.items.map((work) => (
-                <li key={work.id} className="flex gap-3 rounded-xl border border-slate-200 bg-white p-3">
-                  <img src={work.portada.src} alt="" loading="lazy" className="size-16 shrink-0 rounded-lg bg-slate-100 object-cover" />
+                <li key={work.id} className="flex gap-3 rounded-brand border border-slate-200 bg-white p-3">
+                  <img src={work.portada.src} alt="" loading="lazy" className="size-16 shrink-0 rounded-brand bg-slate-100 object-cover" />
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div>
                       <p className="truncate text-sm font-bold text-slate-900">{work.titulo}</p>

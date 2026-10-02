@@ -61,14 +61,14 @@ export default function PreviewFrame({ path, anchor, reloadToken }: PreviewFrame
   }, [reloadToken]);
 
   const tabClass = (value: Device) =>
-    `rounded-md px-3 py-1 text-xs font-bold transition-colors ${
+    `rounded-brand px-3 py-1 text-xs font-bold transition-colors ${
       device === value ? 'bg-(--brand-primary) text-white' : 'text-slate-600 hover:bg-slate-100'
     }`;
 
   return (
     <div className="flex h-full flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex gap-1 rounded-lg border border-slate-200 bg-white p-1" role="group" aria-label="Dispositivo">
+        <div className="flex gap-1 rounded-brand border border-slate-200 bg-white p-1" role="group" aria-label="Dispositivo">
           {(Object.keys(DEVICES) as Device[]).map((value) => (
             <button key={value} type="button" className={tabClass(value)} onClick={() => setDevice(value)}>
               {DEVICES[value].label}
@@ -80,7 +80,7 @@ export default function PreviewFrame({ path, anchor, reloadToken }: PreviewFrame
         </a>
       </div>
 
-      <div ref={stageRef} className="relative min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-200">
+      <div ref={stageRef} className="relative min-h-0 flex-1 overflow-hidden rounded-brand border border-slate-200 bg-slate-200">
         <iframe
           ref={frameRef}
           title="Vista previa de la página"

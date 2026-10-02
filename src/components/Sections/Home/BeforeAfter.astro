@@ -50,13 +50,13 @@ const slides = comparisons.flatMap((comparison, index) => [
     {
       slides.length > 0 && (
         <div
-          class="overflow-hidden rounded-lg bg-(--home-accent) text-white shadow-xl"
+          class="overflow-hidden rounded-brand bg-(--home-white) text-white shadow-xl"
           data-before-after-slider
         >
           <div class="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
             <Button
               type="button"
-              variant="inverse"
+              variant="primary"
               className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Comparación anterior"
               title="Comparación anterior"
@@ -66,8 +66,8 @@ const slides = comparisons.flatMap((comparison, index) => [
             </Button>
             <Tipography
               as="p"
-              color="inherit"
-              class="m-0 text-sm font-medium tabular-nums text-white/75"
+              color="accent"
+              class="m-0 text-sm font-medium tabular-nums"
               aria-live="polite"
               data-slide-counter
             >
@@ -75,7 +75,7 @@ const slides = comparisons.flatMap((comparison, index) => [
             </Tipography>
             <Button
               type="button"
-              variant="inverse"
+              variant="primary"
               className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Siguiente comparación"
               title="Siguiente comparación"
@@ -84,7 +84,7 @@ const slides = comparisons.flatMap((comparison, index) => [
               <ArrowRight />
             </Button>
           </div>
-          <div class="relative aspect-4/3 w-full overflow-hidden bg-(--home-accent) sm:aspect-video">
+          <div class="relative aspect-4/3 w-full overflow-hidden bg-(--home-gray) sm:aspect-video">
             {slides.map((slide, index) => (
               <div
                 class="absolute inset-0"
@@ -175,21 +175,29 @@ const slides = comparisons.flatMap((comparison, index) => [
                       data-divider
                     >
                       <span class="absolute left-1/2 top-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-(--home-accent) shadow-lg">
-                        <ArrowRight />
+                        {/* Las dos flechas: el asa se arrastra en los dos
+                            sentidos, no solo hacia la derecha. */}
+                        <span
+                          class="flex items-center gap-0.5 [&>svg]:size-4"
+                          data-divider-handle
+                        >
+                          <ArrowLeft />
+                          <ArrowRight />
+                        </span>
                       </span>
                     </div>
                     <div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-between">
                       <Tipography
                         as="span"
                         color="inherit"
-                        class="rounded-sm bg-(--home-accent)/55 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
+                        class="rounded-brand bg-(--home-accent)/55 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
                       >
                         Antes · {slide.before.title}
                       </Tipography>
                       <Tipography
                         as="span"
                         color="inherit"
-                        class="rounded-sm bg-(--home-accent) px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
+                        class="rounded-brand bg-(--home-accent) px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
                       >
                         Después · {slide.after.title}
                       </Tipography>
@@ -290,22 +298,59 @@ const slides = comparisons.flatMap((comparison, index) => [
       const divider = activeSlide.querySelector(
         "[data-divider]",
       ) as HTMLElement | null;
+      const handle = divider?.querySelector(
+        "[data-divider-handle]",
+      ) as HTMLElement | null;
 
       if (!afterLayer || !divider) return;
 
       afterLayer.getAnimations().forEach((animation) => animation.cancel());
       divider.getAnimations().forEach((animation) => animation.cancel());
+      handle?.getAnimations().forEach((animation) => animation.cancel());
 
-      const positions = [50, 38, 62, 50];
-      const duration = 1200;
-      const easing = "ease-in-out";
+      /* Ida y vuelta con descansos en el centro. Antes eran cuatro posiciones
+         en línea recta (50 → 38 → 62 → 50): el divisor arrancaba y frenaba de
+         golpe en cada extremo. Ahora los `offset` marcan una pausa al principio,
+         al cruzar el 50% y al volver, y cada tramo lleva su propio
+         cubic-bezier (acelera, frena), así que el 50% se lee como el estado en
+         reposo al que la asa regresa. */
+      const TRAMOS = [
+        { offset: 0, x: 50 },
+        { offset: 0.18, x: 50 },
+        { offset: 0.37, x: 32 },
+        { offset: 0.5, x: 50 },
+        { offset: 0.63, x: 68 },
+        { offset: 0.82, x: 50 },
+        { offset: 1, x: 50 },
+      ];
+      const duration = 2200;
+      const easing = "cubic-bezier(0.42, 0, 0.58, 1)";
 
       afterLayer.animate(
-        positions.map((position) => ({ clipPath: `inset(0 0 0 ${position}%)` })),
+        TRAMOS.map(({ offset, x }) => ({
+          offset,
+          clipPath: `inset(0 0 0 ${x}%)`,
+        })),
         { duration, easing },
       );
       divider.animate(
-        positions.map((position) => ({ left: `${position}%` })),
+        TRAMOS.map(({ offset, x }) => ({ offset, left: `${x}%` })),
+        { duration, easing },
+      );
+      /* El asa palpita en los dos extremos: el ojo registra el tirón sin tener
+         que mirar el divisor, que es una línea de medio píxel. El escalado va
+         en un hijo sin `translate`, porque WAAPI pisa `transform` entero y el
+         centrado del asa (que sí usa translate) se perdería. */
+      handle?.animate(
+        [
+          { offset: 0, transform: "scale(1)" },
+          { offset: 0.18, transform: "scale(1)" },
+          { offset: 0.37, transform: "scale(1.14)" },
+          { offset: 0.5, transform: "scale(1)" },
+          { offset: 0.63, transform: "scale(1.14)" },
+          { offset: 0.82, transform: "scale(1)" },
+          { offset: 1, transform: "scale(1)" },
+        ],
         { duration, easing },
       );
     };

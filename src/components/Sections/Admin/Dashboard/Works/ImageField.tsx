@@ -39,7 +39,7 @@ export default function ImageField({ label, value, onChange, allowUpload = true,
       <div className="flex gap-2">
         <input id={id} type="text" value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} className={FIELD_CLASS} />
         {allowUpload && (
-          <label className="inline-flex shrink-0 cursor-pointer items-center rounded-lg border border-slate-200 px-3 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-100 has-disabled:opacity-50">
+          <label className="inline-flex shrink-0 cursor-pointer items-center rounded-brand border border-slate-200 px-3 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-100 has-disabled:opacity-50">
             {isUploading ? 'Subiendo…' : 'Subir'}
             <input
               type="file"
@@ -56,7 +56,7 @@ export default function ImageField({ label, value, onChange, allowUpload = true,
       </div>
       {error && <p role="alert" className="text-xs font-semibold text-red-700">{error}</p>}
       {allowUpload && value && (
-        <img src={value} alt="" loading="lazy" className="mt-1 h-20 w-32 rounded-lg border border-slate-200 object-cover" />
+        <img src={value} alt="" loading="lazy" className="mt-1 h-20 w-32 rounded-brand border border-slate-200 object-cover" />
       )}
     </div>
   );

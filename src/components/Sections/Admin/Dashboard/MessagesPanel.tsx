@@ -71,7 +71,7 @@ export default function MessagesPanel({ onUnreadChange }: MessagesPanelProps) {
         {list.items.map((message) => (
           <article
             key={message.id}
-            className={`rounded-xl border p-4 ${message.isRead ? 'border-slate-200 bg-white' : 'border-(--brand-primary)/40 bg-(--brand-primary)/5'}`}
+            className={`rounded-brand border p-4 ${message.isRead ? 'border-slate-200 bg-white' : 'border-(--brand-primary)/40 bg-(--brand-primary)/5'}`}
           >
             <header className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">

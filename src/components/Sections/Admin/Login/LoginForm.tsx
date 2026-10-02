@@ -38,7 +38,7 @@ export default function LoginForm({ code }: LoginFormProps) {
       {errorMessage && (
         <div
           role="alert"
-          className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs font-medium leading-relaxed text-red-800"
+          className="rounded-brand border border-red-200 bg-red-50 p-3.5 text-xs font-medium leading-relaxed text-red-800"
         >
           {errorMessage}
         </div>

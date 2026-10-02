@@ -75,7 +75,7 @@ const band: BookBanner | undefined =
   kind === "cover" && (
     <article
       {...labelAttr}
-      class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-sm bg-neutral-900 text-white cursor-pointer"
+      class="book-page relative isolate flex h-full flex-col justify-end overflow-hidden rounded-brand bg-neutral-900 text-white cursor-pointer"
     >
       <BookImage
         image={coverImage}
@@ -113,7 +113,7 @@ const band: BookBanner | undefined =
   kind === "back" && (
     <article
       {...labelAttr}
-      class="book-page relative isolate flex h-full flex-col items-center justify-center gap-4 overflow-hidden rounded-sm p-7 text-center text-white"
+      class="book-page relative isolate flex h-full flex-col items-center justify-center gap-4 overflow-hidden rounded-brand p-7 text-center text-white"
     >
       <div
         aria-hidden="true"
@@ -132,7 +132,7 @@ const band: BookBanner | undefined =
   kind === "page" && items.length > 0 && (
     <article
       {...labelAttr}
-      class="book-page book-page--bento relative isolate h-full overflow-hidden rounded-sm bg-neutral-100 p-2"
+      class="book-page book-page--bento relative isolate h-full overflow-hidden rounded-brand bg-neutral-100 p-2"
     >
       <BookGroup photos={items} />
 
@@ -154,7 +154,7 @@ const band: BookBanner | undefined =
   kind === "section" && (
     <article
       {...labelAttr}
-      class="book-page book-page--section relative isolate flex h-full items-center justify-center overflow-hidden rounded-sm bg-white px-6 text-center"
+      class="book-page book-page--section relative isolate flex h-full items-center justify-center overflow-hidden rounded-brand bg-white px-6 text-center"
     >
       <header {...reveal} class="flex flex-col items-center gap-3">
         <span

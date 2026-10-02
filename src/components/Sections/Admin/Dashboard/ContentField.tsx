@@ -12,7 +12,7 @@ interface ContentFieldProps {
 
 const LABEL_CLASS = 'text-[11px] font-bold tracking-wide text-slate-700 uppercase';
 const SMALL_BUTTON =
-  'rounded-md border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent';
+  'rounded-brand border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent';
 
 /**
  * Editor recursivo: dibuja el control que corresponde al tipo del valor
@@ -44,7 +44,7 @@ export default function ContentField({ label, value, path, defaults, onChange }:
       <fieldset className="flex flex-col gap-3">
         <legend className={LABEL_CLASS}>{label}</legend>
         {value.map((item, index) => (
-          <details key={index} className="rounded-xl border border-slate-200 bg-white" open={value.length === 1}>
+          <details key={index} className="rounded-brand border border-slate-200 bg-white" open={value.length === 1}>
             <summary className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-slate-800">
               <span className="truncate">{itemTitle(item, index)}</span>
               <span className="flex shrink-0 gap-1" onClick={(event) => event.preventDefault()}>
@@ -85,7 +85,7 @@ export default function ContentField({ label, value, path, defaults, onChange }:
 
   if (isRecord(value)) {
     return (
-      <fieldset className="flex flex-col gap-4 rounded-xl border border-slate-200 p-4">
+      <fieldset className="flex flex-col gap-4 rounded-brand border border-slate-200 p-4">
         <legend className={`${LABEL_CLASS} px-1`}>{label}</legend>
         {Object.entries(value).map(([key, item]) => child(key, item))}
       </fieldset>
@@ -120,7 +120,7 @@ export default function ContentField({ label, value, path, defaults, onChange }:
       ) : (
         <input id={id} type="text" value={text} onChange={(event) => onChange(path, event.target.value)} className={FIELD_CLASS} />
       )}
-      {isImageUrl(text) && <img src={text} alt="" loading="lazy" className="mt-1 h-20 w-32 rounded-lg border border-slate-200 object-cover" />}
+      {isImageUrl(text) && <img src={text} alt="" loading="lazy" className="mt-1 h-20 w-32 rounded-brand border border-slate-200 object-cover" />}
     </div>
   );
 }

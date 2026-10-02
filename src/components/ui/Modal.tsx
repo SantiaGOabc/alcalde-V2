@@ -39,7 +39,7 @@ export default function Modal({ open, onClose, title, children, footer, classNam
       // Un clic sobre el propio <dialog> (no sobre su contenido) es un clic en el fondo.
       onClick={(event) => event.target === event.currentTarget && onClose()}
       className={cn(
-        'm-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-0 text-slate-800 shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm',
+        'm-auto w-[calc(100%-2rem)] max-w-md rounded-brand bg-white p-0 text-slate-800 shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm',
         className,
       )}
     >

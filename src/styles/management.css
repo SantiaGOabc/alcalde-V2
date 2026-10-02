@@ -1,17 +1,24 @@
 @reference "tailwindcss";
+  /* Necesario para que @apply rounded-brand vea el token --radius-brand,
+     que vive en el @theme de global.css y no en el tema default. */
+  @reference "./global.css";
 /* ==========================================================================
    Gestión — visor de obras
    --------------------------------------------------------------------------
-   Estética editorial: papel cálido, esquinas rectas, filetes finos y un índice
-   numerado, en lugar de pastillas y sombras. Casi todo el CSS vive aquí porque
-   el visor cambia estados desde JS. Breakpoints del proyecto (sm = 40rem,
-   lg = 64rem).
-   ========================================================================== */
+Estética editorial: papel cálido, filetes finos y un índice
+    numerado, en lugar de pastillas y sombras. Casi todo el CSS vive aquí porque
+    el visor cambia estados desde JS. Breakpoints del proyecto (sm = 40rem,
+    lg = 64rem).
+
+    Redondeo: este visor tenía esquinas rectas a propósito. Ahora todas sus cajas
+    usan el token global --brand-border (global.css), igual que el resto del
+    sitio; cambiar ese valor mueve también a esta página.
+    ========================================================================== */
 
 :root {
     /* Toma los colores de marca unificados de global.css con fallback */
-    --gestion-accent: var(--brand-accent, #472d82);
-    --gestion-accent-strong: var(--brand-accent-strong, #695da9);
+    --gestion-accent: var(--brand-primary);
+    --gestion-accent-strong: var(--brand-primary);
     --gestion-ink: #17131f;
     /* Papel cálido del fondo de la sección */
     --gestion-paper: #f3efe8;
@@ -93,6 +100,7 @@
 
 .gestion-obra {
     @apply grid min-w-0 overflow-hidden border border-(--gestion-ink)/15 bg-white lg:col-span-9;
+    border-radius: var(--brand-border);
     isolation: isolate;
 }
 
@@ -113,6 +121,7 @@
 /* Insignia "Ampliar" sobre la foto */
 .gestion-media-zoom {
     @apply pointer-events-none absolute top-4 left-4 inline-flex items-center bg-white px-3 py-1.5 text-[11px] font-semibold tracking-wider text-(--gestion-ink) uppercase;
+    border-radius: var(--brand-border);
 }
 
 .gestion-obra-texto {
@@ -171,8 +180,9 @@
     @apply font-bold text-(--gestion-ink);
 }
 
+/* Los puntos son barras de progreso, no cajas: van redondeados del todo. */
 .gestion-punto {
-    @apply h-1 w-3 cursor-pointer border-0 bg-gray-300 transition-all duration-300 hover:bg-gray-400;
+    @apply h-1 w-3 cursor-pointer border-0 rounded-full bg-gray-300 transition-all duration-300 hover:bg-gray-400;
 }
 
 .gestion-punto--activo {
@@ -181,6 +191,7 @@
 
 .gestion-flecha {
     @apply grid size-11 cursor-pointer place-items-center border border-(--gestion-ink)/25 text-(--gestion-ink) transition-colors hover:bg-(--gestion-ink) hover:text-white active:scale-95;
+    border-radius: var(--brand-border);
 }
 
 @media (min-width: 40rem) {
@@ -205,11 +216,13 @@
 
 .gestion-mini {
     @apply absolute inset-x-3 bottom-3 flex items-center gap-2 border border-white/20 bg-black/40 px-2.5 py-2 backdrop-blur-md sm:inset-x-4 sm:bottom-4;
+    border-radius: var(--brand-border);
     z-index: var(--gestion-z-mini);
 }
 
 .gestion-mini-flecha {
     @apply grid size-7 shrink-0 cursor-pointer place-items-center border border-white/20 bg-white/5 text-white transition hover:bg-white/20 active:scale-95;
+    border-radius: var(--brand-border);
 }
 
 .gestion-mini-tira {
@@ -223,6 +236,7 @@
 
 .gestion-mini-item {
     @apply relative aspect-4/3 w-14 shrink-0 cursor-pointer overflow-hidden border-2 border-transparent transition duration-150 sm:w-18;
+    border-radius: var(--brand-border);
 }
 
 .gestion-mini-item--activa {
@@ -231,4 +245,5 @@
 
 .gestion-mini-contador {
     @apply shrink-0 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/90 tabular-nums;
+    border-radius: var(--brand-border);
 }

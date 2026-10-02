@@ -82,7 +82,7 @@ export default function SectionEditor({ section, onPersisted, onDirtyChange }: S
           ))}
         </div>
 
-        <footer className="sticky bottom-0 flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur">
+        <footer className="sticky bottom-0 flex flex-wrap items-center gap-3 rounded-brand border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur">
           <Button type="button" disabled={!isDirty || isBusy} isLoading={isBusy} onClick={handleSave}>
             Guardar cambios
           </Button>

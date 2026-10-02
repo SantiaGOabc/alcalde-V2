@@ -1,13 +1,15 @@
 ---
-import { Button, Input, Section, Tipography } from "@components";
-import { SmartImage } from "@components";
-import { ArrowLeft, ArrowRight } from "@icons";
-
-type ComparacionImagen = {
-  title: string;
-  imageURL: string;
-  imageFit: "contain" | "cover";
-};
+import {
+  ComparisonSlide,
+  Input,
+  InterludeSlide,
+  MayorSlide,
+  Section,
+  SlideNav,
+  Tipography,
+  buildSlides,
+} from "@components";
+import type { ComparacionImagen } from "@types";
 
 interface Props {
   title: string;
@@ -18,22 +20,20 @@ interface Props {
 }
 
 const { title, description, transitionPhrase, before, after } = Astro.props;
-// Solo pares completos: si a una de las dos fotos todavía le falta la URL, la pareja no se muestra.
-const comparisons = before.flatMap((beforeImage, index) =>
-  beforeImage.imageURL && after[index]?.imageURL ? [{ before: beforeImage, after: after[index] }] : [],
-);
 
-const COMPARISON = "comparison" as const;
+const slides = buildSlides(before, after, transitionPhrase);
 
-const slides = comparisons.flatMap((comparison, index) => [
-  ...(index === 1 ? [{ kind: "interlude" as const, text: transitionPhrase }] : []),
-  { kind: COMPARISON, ...comparison },
-]);
+// Los dibujos que se comprueban uno a uno, en orden; el que sobra, la
+// comparación, es el que se dibuja si no es ninguno de los dos. El `as const` no
+// es decorativo: es lo que deja cada elemento con su tipo literal, y con él lo
+// que permite que TypeScript sepa qué diapositiva es cuál al preguntar por el
+// `kind`.
+const optionsSlide = ["interlude", "mayor"] as const;
 ---
 
-<Section className="py-24 sm:py-28 lg:py-32">
+<Section className="py-16 sm:py-20 lg:py-24">
   <div class="page-container">
-    <header class="mb-10 max-w-3xl sm:mb-14">
+    <header class="mb-8 max-w-3xl sm:mb-10">
       <Tipography
         as="h3"
         class="mt-3 text-3xl font-semibold leading-tight text-balance sm:text-4xl lg:text-5xl"
@@ -47,175 +47,30 @@ const slides = comparisons.flatMap((comparison, index) => [
         {description}
       </Tipography>
     </header>
+
     {
       slides.length > 0 && (
+        /* La tarjeta es el alcance del script, y por eso la banda de
+           navegación puede vivir debajo del escenario sin quedarse fuera. */
         <div
-          class="overflow-hidden rounded-brand bg-(--home-white) text-white shadow-xl"
+          class="overflow-hidden rounded-brand bg-white text-white shadow-xl"
           data-before-after-slider
         >
-          <div class="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-            <Button
-              type="button"
-              variant="primary"
-              className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Comparación anterior"
-              title="Comparación anterior"
-              data-previous-slide
-            >
-              <ArrowLeft />
-            </Button>
-            <Tipography
-              as="p"
-              color="accent"
-              class="m-0 text-sm font-medium tabular-nums"
-              aria-live="polite"
-              data-slide-counter
-            >
-              01 / {String(slides.length).padStart(2, "0")}
-            </Tipography>
-            <Button
-              type="button"
-              variant="primary"
-              className="size-14 shrink-0 border border-white/25 p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Siguiente comparación"
-              title="Siguiente comparación"
-              data-next-slide
-            >
-              <ArrowRight />
-            </Button>
-          </div>
-          <div class="relative aspect-4/3 w-full overflow-hidden bg-(--home-gray) sm:aspect-video">
-            {slides.map((slide, index) => (
-              <div
-                class="absolute inset-0"
-                data-slide
-                data-mayor-slide={slide.kind === COMPARISON && index === 0 ? "" : undefined}
-                hidden={index !== 0}
-              >
-                {slide.kind === COMPARISON && index === 0 ? (
-                  <>
-                    <div
-                      class="absolute inset-y-0 left-0 w-1/2 overflow-hidden"
-                      data-mayor-before
-                    >
-                      <SmartImage
-                        src={slide.before.imageURL}
-                        alt={`Antes: ${slide.before.title}`}
-                        class={`size-full select-none object-cover ${slide.before.imageFit === "contain" ? "object-top" : "object-center"}`}
-                        draggable="false"
-                        width={slide.before.imageFit === "contain" ? 900 : 1400}
-                        height={slide.before.imageFit === "contain" ? 1400 : 900}
-                        loading="eager"
-                        decoding="async"
-                      />
-                    </div>
-                    <div
-                      class="absolute inset-y-0 right-0 w-1/2 overflow-hidden"
-                      data-mayor-after
-                    >
-                      <SmartImage
-                        src={slide.after.imageURL}
-                        alt={`Después: ${slide.after.title}`}
-                        class={`size-full select-none object-cover ${slide.after.imageFit === "contain" ? "object-top" : "object-center"}`}
-                        draggable="false"
-                        width={slide.after.imageFit === "contain" ? 900 : 1400}
-                        height={slide.after.imageFit === "contain" ? 1400 : 900}
-                        loading="eager"
-                        decoding="async"
-                      />
-                    </div>
-                    <div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-between">
-                      <Tipography
-                        as="span"
-                        color="inherit"
-                        class="bg-(--home-accent)/80 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
-                      >
-                        Antes · {slide.before.title}
-                      </Tipography>
-                      <Tipography
-                        as="span"
-                        color="inherit"
-                        class="bg-(--home-accent) px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
-                      >
-                        Después · {slide.after.title}
-                      </Tipography>
-                    </div>
-                  </>
-                ) : slide.kind === COMPARISON ? (
-                  <>
-                    <SmartImage
-                      src={slide.before.imageURL}
-                      alt={`Antes: ${slide.before.title}`}
-                      class={`absolute inset-0 size-full select-none object-cover ${slide.before.imageFit === "contain" ? "object-top" : "object-center"}`}
-                      draggable="false"
-                      width={slide.before.imageFit === "contain" ? 900 : 1400}
-                      height={slide.before.imageFit === "contain" ? 1400 : 900}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                    />
-                    <div
-                      class="absolute inset-0 overflow-hidden"
-                      data-after-layer
-                      style="clip-path: inset(0 0 0 50%)"
-                    >
-                      <SmartImage
-                        src={slide.after.imageURL}
-                        alt={`Después: ${slide.after.title}`}
-                        class={`absolute inset-0 size-full select-none object-cover ${slide.after.imageFit === "contain" ? "object-top" : "object-center"}`}
-                        draggable="false"
-                        width={slide.after.imageFit === "contain" ? 900 : 1400}
-                        height={slide.after.imageFit === "contain" ? 1400 : 900}
-                        loading={index === 0 ? "eager" : "lazy"}
-                        decoding="async"
-                      />
-                    </div>
-                    <div
-                      aria-hidden="true"
-                      class="pointer-events-none absolute inset-y-0 left-1/2 z-10 w-0.5 -translate-x-1/2 bg-white shadow-[0_0_12px_rgb(0_0_0/0.45)]"
-                      data-divider
-                    >
-                      <span class="absolute left-1/2 top-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-(--home-accent) shadow-lg">
-                        {/* Las dos flechas: el asa se arrastra en los dos
-                            sentidos, no solo hacia la derecha. */}
-                        <span
-                          class="flex items-center gap-0.5 [&>svg]:size-4"
-                          data-divider-handle
-                        >
-                          <ArrowLeft />
-                          <ArrowRight />
-                        </span>
-                      </span>
-                    </div>
-                    <div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-between">
-                      <Tipography
-                        as="span"
-                        color="inherit"
-                        class="rounded-brand bg-(--home-accent)/55 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
-                      >
-                        Antes · {slide.before.title}
-                      </Tipography>
-                      <Tipography
-                        as="span"
-                        color="inherit"
-                        class="rounded-brand bg-(--home-accent) px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
-                      >
-                        Después · {slide.after.title}
-                      </Tipography>
-                    </div>
-                  </>
+          <div
+            class="relative aspect-4/3 max-h-[calc(100svh-9rem)] min-h-96 w-full overflow-hidden bg-gray-900 sm:aspect-video"
+            data-before-after-stage
+          >
+            {
+              slides.map((slide, index) =>
+                slide.kind === optionsSlide[0] ? (
+                  <InterludeSlide text={slide.text} active={index === 0} />
+                ) : slide.kind === optionsSlide[1] ? (
+                  <MayorSlide comparison={slide} active={index === 0} />
                 ) : (
-                  <div class="absolute inset-0 grid place-items-center bg-(--home-accent) px-6 text-center">
-                    <Tipography
-                      as="h3"
-                      color="inherit"
-                      class="max-w-3xl text-4xl font-semibold leading-tight text-white text-balance sm:text-6xl lg:text-7xl"
-                    >
-                      {slide.text}
-                    </Tipography>
-                  </div>
-                )}
-              </div>
-            ))}
+                  <ComparisonSlide comparison={slide} active={index === 0} />
+                ),
+              )
+            }
 
             <Input
               type="range"
@@ -223,12 +78,13 @@ const slides = comparisons.flatMap((comparison, index) => [
               max="100"
               value="50"
               aria-label="Desliza horizontalmente para comparar el antes y el después"
-              aria-describedby="comparison-instructions"
               aria-valuetext="50% después"
               class="absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               data-comparison-range
             />
           </div>
+
+          <SlideNav total={slides.length} />
         </div>
       )
     }
@@ -236,182 +92,8 @@ const slides = comparisons.flatMap((comparison, index) => [
 </Section>
 
 <script>
-  import { $$, observeVisibility, onPageLoad } from "@utils";
+  import { onPageLoad } from "@utils";
+  import { initBeforeAfterSliders } from "./BeforeAfter/beforeAfterSlider";
 
-  const initSliders = () =>
-    $$("[data-before-after-slider]").forEach((sliderElement) => {
-    const slider = sliderElement as HTMLElement;
-    const slides = Array.from(
-      slider.querySelectorAll("[data-slide]"),
-    ) as HTMLElement[];
-    const range = slider.querySelector(
-      "[data-comparison-range]",
-    ) as HTMLInputElement | null;
-    const counter = slider.querySelector(
-      "[data-slide-counter]",
-    ) as HTMLElement | null;
-    const previousButton = slider.querySelector(
-      "[data-previous-slide]",
-    ) as HTMLButtonElement | null;
-    const nextButton = slider.querySelector(
-      "[data-next-slide]",
-    ) as HTMLButtonElement | null;
-
-    if (
-      !range ||
-      !counter ||
-      !previousButton ||
-      !nextButton ||
-      slides.length === 0
-    )
-      return;
-
-    let activeIndex = 0;
-
-    const updateComparison = () => {
-      const value = Number(range.value);
-      const activeSlide = slides[activeIndex];
-      const afterLayer = activeSlide.querySelector(
-        "[data-after-layer]",
-      ) as HTMLElement | null;
-      const divider = activeSlide.querySelector(
-        "[data-divider]",
-      ) as HTMLElement | null;
-
-      range.hidden = !afterLayer || !divider;
-      if (!afterLayer || !divider) return;
-
-      afterLayer.style.setProperty("clip-path", `inset(0 0 0 ${value}%)`);
-      divider.style.setProperty("left", `${value}%`);
-      range.setAttribute("aria-valuetext", `${value}% después`);
-    };
-
-    const animateDividerCue = () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return;
-      }
-
-      const activeSlide = slides[activeIndex];
-      const afterLayer = activeSlide.querySelector(
-        "[data-after-layer]",
-      ) as HTMLElement | null;
-      const divider = activeSlide.querySelector(
-        "[data-divider]",
-      ) as HTMLElement | null;
-      const handle = divider?.querySelector(
-        "[data-divider-handle]",
-      ) as HTMLElement | null;
-
-      if (!afterLayer || !divider) return;
-
-      afterLayer.getAnimations().forEach((animation) => animation.cancel());
-      divider.getAnimations().forEach((animation) => animation.cancel());
-      handle?.getAnimations().forEach((animation) => animation.cancel());
-
-      /* Ida y vuelta con descansos en el centro. Antes eran cuatro posiciones
-         en línea recta (50 → 38 → 62 → 50): el divisor arrancaba y frenaba de
-         golpe en cada extremo. Ahora los `offset` marcan una pausa al principio,
-         al cruzar el 50% y al volver, y cada tramo lleva su propio
-         cubic-bezier (acelera, frena), así que el 50% se lee como el estado en
-         reposo al que la asa regresa. */
-      const TRAMOS = [
-        { offset: 0, x: 50 },
-        { offset: 0.18, x: 50 },
-        { offset: 0.37, x: 32 },
-        { offset: 0.5, x: 50 },
-        { offset: 0.63, x: 68 },
-        { offset: 0.82, x: 50 },
-        { offset: 1, x: 50 },
-      ];
-      const duration = 2200;
-      const easing = "cubic-bezier(0.42, 0, 0.58, 1)";
-
-      afterLayer.animate(
-        TRAMOS.map(({ offset, x }) => ({
-          offset,
-          clipPath: `inset(0 0 0 ${x}%)`,
-        })),
-        { duration, easing },
-      );
-      divider.animate(
-        TRAMOS.map(({ offset, x }) => ({ offset, left: `${x}%` })),
-        { duration, easing },
-      );
-      /* El asa palpita en los dos extremos: el ojo registra el tirón sin tener
-         que mirar el divisor, que es una línea de medio píxel. El escalado va
-         en un hijo sin `translate`, porque WAAPI pisa `transform` entero y el
-         centrado del asa (que sí usa translate) se perdería. */
-      handle?.animate(
-        [
-          { offset: 0, transform: "scale(1)" },
-          { offset: 0.18, transform: "scale(1)" },
-          { offset: 0.37, transform: "scale(1.14)" },
-          { offset: 0.5, transform: "scale(1)" },
-          { offset: 0.63, transform: "scale(1.14)" },
-          { offset: 0.82, transform: "scale(1)" },
-          { offset: 1, transform: "scale(1)" },
-        ],
-        { duration, easing },
-      );
-    };
-
-    const animateMayorSlide = () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return;
-      }
-
-      const activeSlide = slides[activeIndex];
-      if (!activeSlide.hasAttribute("data-mayor-slide")) return;
-
-      ["[data-mayor-before]", "[data-mayor-after]"].forEach(
-        (selector, index) => {
-          const panel = activeSlide.querySelector(selector) as HTMLElement | null;
-          if (!panel) return;
-
-          panel.getAnimations().forEach((animation) => animation.cancel());
-          panel.animate(
-            [
-              { transform: "translateX(100%)", opacity: 0.7 },
-              { transform: "translateX(0)", opacity: 1 },
-            ],
-            {
-              duration: 750,
-              delay: index * 120,
-              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            },
-          );
-        },
-      );
-    };
-
-    const animateActiveSlide = () => {
-      if (slides[activeIndex].hasAttribute("data-mayor-slide")) {
-        animateMayorSlide();
-      } else {
-        animateDividerCue();
-      }
-    };
-
-    const showSlide = (index: number) => {
-      activeIndex = (index + slides.length) % slides.length;
-      slides.forEach((slide, slideIndex) => {
-        slide.hidden = slideIndex !== activeIndex;
-      });
-      range.value = "50";
-      counter.textContent = `${String(activeIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
-      updateComparison();
-      animateActiveSlide();
-    };
-
-    range.addEventListener("input", updateComparison);
-    previousButton.addEventListener("click", () => showSlide(activeIndex - 1));
-    nextButton.addEventListener("click", () => showSlide(activeIndex + 1));
-    updateComparison();
-    observeVisibility(slider, animateActiveSlide, {
-      once: false,
-      threshold: 0.35,
-    });
-  });
-
-  onPageLoad(initSliders);
+  onPageLoad(initBeforeAfterSliders);
 </script>

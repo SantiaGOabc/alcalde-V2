@@ -9,7 +9,7 @@ interface ArrowButtonProps {
 }
 
 const BASE =
-    'grid shrink-0 place-items-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-md transition-colors duration-200 hover:border-(--brand-primary) hover:bg-(--brand-primary) hover:text-white active:scale-95 disabled:pointer-events-none disabled:opacity-40';
+    'grid shrink-0 cursor-pointer place-items-center rounded-button border border-(--brand-primary) bg-(--brand-secondary) text-gray-700 shadow-md transition-all duration-200 hover:bg-gray-100 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand-primary) disabled:pointer-events-none disabled:opacity-40';
 
 const SIZES = {
     carousel: 'size-10 sm:size-12 lg:size-14',

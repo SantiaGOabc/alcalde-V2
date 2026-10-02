@@ -16,6 +16,14 @@ export { default as Home } from './Sections/Home/Home.astro';
 export { default as BiographyVideo } from './Sections/Home/BiographyVideo.astro';
 export { default as Phrase } from './Sections/Home/Phrase.astro';
 export { default as BeforeAfter } from './Sections/Home/BeforeAfter.astro';
+export {
+  ComparisonSlide,
+  InterludeSlide,
+  MayorSlide,
+  SlideNav,
+  buildSlides,
+  initBeforeAfterSliders,
+} from './Sections/Home/BeforeAfter';
 export { default as Book } from './Sections/Home/Book.astro';
 export { default as TikTokFeed } from './Sections/Home/TikTokFeed.astro';
 
@@ -24,6 +32,7 @@ export { default as About } from './Sections/About/About.astro';
 export { default as Passions } from './Sections/About/Passions/Passions.astro';
 export { default as Person } from './Sections/About/Person/Person.astro';
 export { default as Timeline } from './Sections/About/Timeline/Timeline.component.astro';
+export * from './Sections/Home/BeforeAfter/index.ts';
 
 // Sections MAILBOX
 export { default as Mailbox } from './Sections/MailBox/MailBox.astro';

@@ -1,0 +1,47 @@
+---
+import { SmartImage } from "@components";
+import SlideLabels from "./SlideLabels.astro";
+import type { Comparacion } from "@types";
+import { foto } from "./beforeAfterSlides";
+
+/**
+ * La primera obra: el retrato del alcalde.
+ *
+ * Se parte en dos mitades fijas, la de antes a la izquierda y la de después a
+ * la derecha. Aquí no hay nada que arrastrar, y es a propósito: son dos retratos
+ * de persona y basta con verlos a la vez para leer el cambio de rol. Las obras
+ * de paisaje usan `ComparisonSlide`, que sí lleva divisor.
+ */
+interface Props {
+  comparison: Comparacion;
+  /** Solo la primera diapositiva se pinta; el script va cambiando `hidden`. */
+  active: boolean;
+}
+
+const { comparison, active } = Astro.props;
+---
+
+<div class="absolute inset-0" data-slide data-mayor-slide hidden={!active}>
+  <div class="absolute inset-y-0 left-0 w-1/2 overflow-hidden" data-mayor-before>
+    <SmartImage
+      src={comparison.before.imageURL}
+      alt={`Antes: ${comparison.before.title}`}
+      draggable="false"
+      {...foto(comparison.before, "size-full")}
+      loading="eager"
+      decoding="async"
+    />
+  </div>
+  <div class="absolute inset-y-0 right-0 w-1/2 overflow-hidden" data-mayor-after>
+    <SmartImage
+      src={comparison.after.imageURL}
+      alt={`Después: ${comparison.after.title}`}
+      draggable="false"
+      {...foto(comparison.after, "size-full")}
+      loading="eager"
+      decoding="async"
+    />
+  </div>
+
+  <SlideLabels comparison={comparison} />
+</div>

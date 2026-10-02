@@ -27,10 +27,6 @@ Estética editorial: papel cálido, filetes finos y un índice
     --gestion-z-mini: 10;
 }
 
-.gestion-lienzo {
-    background-color: var(--gestion-paper);
-}
-
 /* ==========================================================================
    Visor: índice de áreas + ficha de la obra
    ========================================================================== */
@@ -57,7 +53,7 @@ Estética editorial: papel cálido, filetes finos y un índice
 }
 
 .gestion-indice-lista {
-    @apply flex gap-1 overflow-x-auto pb-2 lg:sticky lg:top-24 lg:flex-col lg:gap-0 lg:overflow-visible lg:border-t-2 lg:border-(--gestion-ink) lg:pb-0;
+    @apply flex gap-1 overflow-x-auto pb-2 lg:sticky lg:top-24 lg:flex-col lg:gap-0 lg:overflow-visible lg:pb-0;
     scrollbar-width: none;
 }
 
@@ -66,7 +62,29 @@ Estética editorial: papel cálido, filetes finos y un índice
 }
 
 .gestion-indice-item {
-    @apply flex shrink-0 cursor-pointer items-baseline gap-3 border-b border-gray-300 px-3 py-2.5 text-left text-sm whitespace-nowrap text-gray-500 transition-colors hover:text-(--gestion-ink) lg:w-full lg:px-1 lg:py-3.5 lg:whitespace-normal;
+    @apply flex shrink-0 cursor-pointer items-baseline gap-3 rounded-brand border border-(--brand-primary)/45 px-3 py-2.5 text-left text-sm whitespace-nowrap text-gray-600 transition-all duration-200 hover:border-(--brand-primary) hover:bg-(--brand-primary)/10 hover:text-(--brand-primary) lg:w-full lg:rounded-none lg:px-4 lg:py-3 lg:whitespace-normal;
+}
+
+/* En vertical los recuadros van pegados (el borde se comparte con -mt-px) y
+   solo se redondea el costado izquierdo del conjunto. */
+@media (min-width: 64rem) {
+    .gestion-indice-item:not(:first-child) {
+        margin-top: -1px;
+    }
+
+    .gestion-indice-item:first-child {
+        border-top-left-radius: var(--brand-border);
+    }
+
+    .gestion-indice-item:last-child {
+        border-bottom-left-radius: var(--brand-border);
+    }
+
+    .gestion-indice-item:hover,
+    .gestion-indice-item[aria-selected='true'] {
+        position: relative;
+        z-index: 1;
+    }
 }
 
 .gestion-indice-num {
@@ -82,16 +100,7 @@ Estética editorial: papel cálido, filetes finos y un índice
 }
 
 .gestion-indice-item[aria-selected='true'] {
-    @apply border-(--gestion-accent) text-(--gestion-accent);
-    box-shadow: inset 0 -2px 0 var(--gestion-accent);
-}
-
-@media (min-width: 64rem) {
-    .gestion-indice-item[aria-selected='true'] {
-        /* En vertical el énfasis es un filete a la izquierda, no debajo. */
-        box-shadow: inset 3px 0 0 var(--gestion-accent);
-        @apply pl-4;
-    }
+    @apply border-(--brand-primary) bg-(--brand-primary)/15 text-(--brand-primary);
 }
 
 /* ==========================================================================
@@ -190,8 +199,8 @@ Estética editorial: papel cálido, filetes finos y un índice
 }
 
 .gestion-flecha {
-    @apply grid size-11 cursor-pointer place-items-center border border-(--gestion-ink)/25 text-(--gestion-ink) transition-colors hover:bg-(--gestion-ink) hover:text-white active:scale-95;
-    border-radius: var(--brand-border);
+    @apply grid size-11 cursor-pointer place-items-center border border-(--brand-primary) bg-transparent text-gray-700 transition-all duration-200 hover:bg-gray-100 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand-primary);
+    border-radius: var(--button-border);
 }
 
 @media (min-width: 40rem) {

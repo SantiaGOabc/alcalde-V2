@@ -1,0 +1,35 @@
+---
+import { Tipography } from "@components";
+import type { Comparacion } from "@types";
+
+/**
+ * Los rótulos "Antes · …" y "Después · …" de una obra.
+ *
+ * Van en las dos mitades del escenario (la del alcalde partida y la del divisor
+ * arrastrable) y son exactamente los mismos, así que se escriben una vez. El
+ * fondo va a `/80` porque se leen sobre una foto cualquiera: más claro y el
+ * rótulo se pierde de vista.
+ */
+interface Props {
+  comparison: Comparacion;
+}
+
+const { comparison } = Astro.props;
+---
+
+<div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-between">
+  <Tipography
+    as="span"
+    color="inherit"
+    class="rounded-brand bg-(--home-accent)/80 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
+  >
+    Antes · {comparison.before.title}
+  </Tipography>
+  <Tipography
+    as="span"
+    color="inherit"
+    class="rounded-brand bg-(--home-accent)/80 px-3 py-1.5 text-xs font-semibold uppercase text-white sm:text-sm"
+  >
+    Después · {comparison.after.title}
+  </Tipography>
+</div>

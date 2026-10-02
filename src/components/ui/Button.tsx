@@ -25,10 +25,10 @@ const VARIANTS: Record<NonNullable<ButtonProps['variant']>, string> = {
 };
 
 const SIZES: Record<NonNullable<ButtonProps['size']>, string> = {
-  sm: 'px-3 py-1.5 text-xs font-medium rounded-full',
-  md: 'px-6 py-2.5 text-sm font-semibold rounded-full',
-  lg: 'px-8 py-3 text-base font-semibold rounded-full',
-  icon: 'size-10 p-2 rounded-full grid place-items-center shrink-0',
+  sm: 'px-3 py-1.5 text-xs font-medium rounded-button',
+  md: 'px-6 py-2.5 text-sm font-semibold rounded-button',
+  lg: 'px-8 py-3 text-base font-semibold rounded-button',
+  icon: 'size-10 p-2 rounded-button grid place-items-center shrink-0',
 };
 
 const BASE_STYLES =

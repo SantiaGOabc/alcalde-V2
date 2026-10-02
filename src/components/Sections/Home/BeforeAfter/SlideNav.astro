@@ -1,0 +1,62 @@
+---
+import { Button, Tipography } from "@components";
+import { ArrowLeft, ArrowRight } from "@icons";
+
+/**
+ * La banda de navegación: obra anterior, contador y obra siguiente.
+ *
+ * Va DEBAJO del escenario, dentro de la tarjeta, y no encima. Arriba se leía
+ * como un adorno del marco; debajo acompaña a las fotos y el orden del tabulador
+ * sigue siendo el que se ve, así que nadie tiene que desplazarse para llegar a
+ * las flechas.
+ *
+ * El fondo es propio (`bg-(--home-accent)`) y los botones usan `inverse` porque
+ * ya no se apoyan en una foto: sin fondo propio se verían sobre el gris de la
+ * sección y las letras blancas no se leerían.
+ */
+interface Props {
+  total: number;
+}
+
+const { total } = Astro.props;
+
+const BUTTON_CLASS =
+  "size-14 shrink-0 border border-(--home-accent) p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-40";
+---
+
+<div
+  class="flex items-center justify-between gap-4 bg-(--home-secondary) px-4 py-4 sm:px-6"
+  data-before-after-nav
+>
+  <Button
+    type="button"
+    variant="ghost"
+    className={BUTTON_CLASS}
+    aria-label="Comparación anterior"
+    title="Comparación anterior"
+    data-previous-slide
+  >
+    <ArrowLeft />
+  </Button>
+
+  <Tipography
+    as="p"
+    color="primary"
+    class="m-0 text-sm font-medium tabular-nums"
+    aria-live="polite"
+    data-slide-counter
+  >
+    01 / {String(total).padStart(2, "0")}
+  </Tipography>
+
+  <Button
+    type="button"
+    variant="ghost"
+    className={BUTTON_CLASS}
+    aria-label="Siguiente comparación"
+    title="Siguiente comparación"
+    data-next-slide
+  >
+    <ArrowRight />
+  </Button>
+</div>

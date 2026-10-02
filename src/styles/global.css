@@ -21,6 +21,7 @@
        Para cambiar el redondeo de toda la web se edita un solo valor:
        --brand-border, más abajo en :root. Este bloque no se toca. */
     --radius-brand: var(--brand-border);
+    --radius-button: var(--button-border);
 
     /* Tipografía base. Al redefinir --font-sans, la utilidad `font-sans` y
        la fuente por defecto del sitio (preflight) pasan a usar Roboto.
@@ -35,6 +36,8 @@
     /* 1. Color Primario (Morado: Navbar, Footer, Botones Principales) */
     --brand-primary: #6d559f;
     --brand-primary-strong: #8c5da9;
+    --brand-secondary: #fff;
+    --brand-dark: #000;
 
     /* Alias de compatibilidad */
     --button-primary: var(--brand-primary);
@@ -52,8 +55,7 @@
        acá, directa o indirectamente (--radius-brand -> rounded-brand, y los
        `border-radius: var(--brand-border)` sueltos). */
     --brand-border: 0.75rem;
-    --buttons-border: @apply rounded-full;
-    --containers-border: @apply rounded-lg;
+    --button-border: 99rem;
 }
 
 @media (min-width: 768px) {

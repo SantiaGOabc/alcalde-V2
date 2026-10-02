@@ -30,8 +30,8 @@ export const SECTION_MANAGEMENT_STATS = {
 };
 
 export const SECTION_MANAGEMENT_CLOSING: ClosingContent = {
-  phrase: "La conectividad: Motor del crecimiento urbano",
+  phrase: "La conectividad: Motor del",
+  enphasis: "crecimiento urbano",
   description: "¿Tienes una sugerencia para la próxima obra? Cuéntanos y la escuchamos.",
   primary: { label: "Enviar una sugerencia", href: "/mailbox" },
-  secondary: { label: "Conocer al alcalde", href: "/about" },
 };

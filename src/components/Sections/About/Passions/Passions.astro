@@ -29,7 +29,7 @@ const numeral = (index: number) => String(index + 1).padStart(2, "0");
                 <a
                   href={`#${item.id}`}
                   data-passion-link={item.id}
-                  class="flex items-baseline gap-3 text-sm font-semibold text-gray-400 no-underline transition-colors hover:text-gray-700 aria-[current=true]:text-(--brand-primary)"
+                  class="flex items-baseline gap-3 text-sm font-semibold text-gray-400 no-underline transition-colors hover:text-gray-700 aria-current:text-(--brand-primary)"
                 >
                   <span class="text-lg font-semibold">{numeral(index)}</span>
                   {item.kicker}

@@ -1,30 +1,5 @@
 @reference "tailwindcss";
-  /* Necesario para que @apply rounded-brand vea el token --radius-brand,
-     que vive en el @theme de global.css y no en el tema default. */
-  @reference "./global.css";
-/* ==========================================================================
-   Gestión — tarjeta gris suave
-   --------------------------------------------------------------------------
-   La variante que se renderiza hoy: selector por pastillas + desplegable, ficha
-   de la obra en tarjeta redondeada y tira de miniaturas flotante.
-
-   La otra variante del visor (índice a la izquierda, esquinas rectas) sigue
-   viva en `management.css` y en `ProjectsViewerEditorial/`. Por eso estas
-   clases llevan el prefijo `.gestion-card-`: las dos hojas se importan a la vez
-   desde `Management.astro` y comparten nombres de clase que se pisarían
-   (.gestion-mini-item, .gestion-mini-contador, .gestion-punto, ...).
-
-   Colores (cambio pedido): la tarjeta pasó de violeta a gris suave, así que
-   todo lo que estaba calibrado para fondo oscuro (texto, velos, bordes) se
-   invirtió a gris oscuro. El morado de marca queda como único acento:
-     · el título central de la obra,
-     · la pastilla de categoría seleccionada, que se pinta de morado,
-     · el punto de avance activo y el ítem elegido del desplegable.
-   Lo que flota es la excepción: la barra de miniaturas (sobre la foto) y el
-   desplegable de categorías (sobre la tarjeta y la página) son superficies
-   oscuras con desenfoque, porque lo que tienen detrás no es fijo.
-   ========================================================================== */
-
+@reference "./global.css";
 :root {
     /* Morado oscuro de marca (navbar, footer). Es el único acento. */
     --gestion-violeta: var(--brand-primary, #472d82);
@@ -77,7 +52,7 @@
 }
 
 .gestion-card-flecha {
-    @apply absolute top-1/2 z-10 -translate-y-1/2 transition-transform duration-200 hover:scale-110 active:scale-95;
+    @apply absolute top-1/2 z-10 -translate-y-1/2;
 }
 
 .gestion-card-flecha--prev {
@@ -237,15 +212,15 @@
 }
 
 .gestion-card-pastilla {
-    @apply cursor-pointer rounded-full border px-5 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-all duration-200;
+    @apply cursor-pointer rounded-brand border px-5 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-all duration-200;
 }
 
 .gestion-card-pastilla--activa {
-    @apply border-(--gestion-violeta) bg-(--gestion-violeta) text-white shadow-lg shadow-(--gestion-violeta)/25;
+    @apply border-(--brand-primary) bg-(--brand-primary)/15 text-(--brand-primary);
 }
 
 .gestion-card-pastilla--inactiva {
-    @apply border-(--gestion-violeta)/45 bg-(--gestion-gris) text-gray-600 hover:border-(--gestion-violeta) hover:text-(--gestion-violeta);
+    @apply border-(--brand-primary)/45 bg-transparent text-gray-600 hover:border-(--brand-primary) hover:bg-(--brand-primary)/10 hover:text-(--brand-primary);
 }
 
 .gestion-card-pastilla--mas {
@@ -302,7 +277,7 @@
 }
 
 .gestion-card-menu-item--activo {
-    @apply border border-(--gestion-lilac)/40 bg-(--gestion-violeta) font-bold text-white;
+    @apply border border-(--brand-primary) bg-(--brand-primary)/30 font-bold text-white;
 }
 
 .gestion-card-menu-item--inactivo {

@@ -1,0 +1,30 @@
+---
+import { Tipography } from "@components";
+
+/**
+ * La frase de transición, a pantalla completa.
+ *
+ * Entra entre la primera obra y la segunda y no lleva fotos: es el cartel que
+ * anuncia el cambio de etapa, el momento en que el "antes y después" deja de ser
+ * una comparación suelta para ser una historia.
+ */
+interface Props {
+  text: string;
+  /** Solo la diapositiva activa se pinta; el script va cambiando `hidden`. */
+  active: boolean;
+}
+
+const { text, active } = Astro.props;
+---
+
+<div class="absolute inset-0" data-slide hidden={!active}>
+  <div class="absolute inset-0 grid place-items-center bg-(--home-accent) px-6 text-center">
+    <Tipography
+      as="h3"
+      color="inherit"
+      class="max-w-3xl text-4xl font-semibold leading-tight text-balance text-white sm:text-6xl lg:text-7xl"
+    >
+      {text}
+    </Tipography>
+  </div>
+</div>

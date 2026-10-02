@@ -42,8 +42,8 @@ export const SECTION_ABOUT_PERSON = {
 };
 
 export const SECTION_ABOUT_CLOSING: ClosingContent = {
-  phrase: "Conocerme es escucharme, pero lo más importante para mí es escucharte a ti.",
+  phrase: "Conocerme es escucharme, pero lo más importante para mí es",
+  enphasis: "escucharte a ti",
   description: "Cuéntame qué piensas, qué necesitas o qué te gustaría ver en Cochabamba.",
   primary: { label: "Escríbeme", href: "/mailbox" },
-  secondary: { label: "Ver la gestión", href: "/management" },
 };

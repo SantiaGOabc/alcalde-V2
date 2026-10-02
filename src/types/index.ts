@@ -5,3 +5,4 @@ export * from "./management";
 export * from "./flipbook";
 export * from "./closing";
 export * from "./liteYoutube";
+export * from "./beforeAfter";

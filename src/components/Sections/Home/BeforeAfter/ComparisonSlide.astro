@@ -1,0 +1,66 @@
+---
+import { SmartImage } from "@components";
+import { ArrowLeft, ArrowRight } from "@icons";
+import SlideLabels from "./SlideLabels.astro";
+import type { Comparacion } from "@types";
+import { foto } from "./beforeAfterSlides";
+
+/**
+ * Una obra de paisaje con su antes y su después superpuestos.
+ *
+ * El antes ocupa el fondo entero y el después va encima recortado con un
+ * `clip-path`; el divisor es la línea del medio y es lo que arrastra el rango.
+ * Las fotos llegan perezosas porque la primera diapositiva siempre es la del
+ * alcalde: esta nunca se ve en el primer impacto.
+ */
+interface Props {
+  comparison: Comparacion;
+  /** Solo la diapositiva activa se pinta; el script va cambiando `hidden`. */
+  active: boolean;
+}
+
+const { comparison, active } = Astro.props;
+---
+
+<div class="absolute inset-0" data-slide hidden={!active}>
+  <SmartImage
+    src={comparison.before.imageURL}
+    alt={`Antes: ${comparison.before.title}`}
+    draggable="false"
+    {...foto(comparison.before, "absolute inset-0 size-full")}
+    loading="lazy"
+    decoding="async"
+  />
+
+  <div
+    class="absolute inset-0 overflow-hidden"
+    data-after-layer
+    style="clip-path: inset(0 0 0 50%)"
+  >
+    <SmartImage
+      src={comparison.after.imageURL}
+      alt={`Después: ${comparison.after.title}`}
+      draggable="false"
+      {...foto(comparison.after, "absolute inset-0 size-full")}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <!-- Las dos flechas del asa: se arrastra en los dos sentidos, no solo hacia
+       la derecha. -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-y-0 left-1/2 z-10 w-0.5 -translate-x-1/2 bg-white shadow-[0_0_12px_rgb(0_0_0/0.45)]"
+    data-divider
+  >
+    <span class="absolute left-1/2 top-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-(--home-accent) text-white shadow-lg">
+      <span class="flex items-center gap-0.5 [&>svg]:size-4" data-divider-handle>
+        <ArrowLeft />
+        <ArrowRight />
+      </span>
+    </span>
+  </div>
+
+  <SlideLabels comparison={comparison} />
+</div>

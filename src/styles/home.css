@@ -204,7 +204,7 @@
    ========================================================================== */
 
 .home-cta {
-    @apply inline-flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-center transition-all;
+    @apply inline-flex items-center gap-1 px-4 py-2 rounded-button font-semibold text-center transition-all;
 }
 
 .home-cta--primary {

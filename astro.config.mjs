@@ -31,7 +31,10 @@ export default defineConfig({
     ]
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    // Solo afecta a `astro dev`: deja entrar por el link de tunnelmole. El build y
+    // el servidor de producción no usan esta opción.
+    server: { allowedHosts: ['.tunnelmole.net'] },
   },
 
   integrations: [react()]

@@ -109,7 +109,7 @@ export default function WorkForm({ work, onSave, onCancel }: WorkFormProps) {
         {draft.imagenes.map((image, index) => {
           const isVideo = image.tipo === 'video';
           return (
-            <div key={index} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4">
+            <div key={index} className="flex flex-col gap-3 rounded-brand border border-slate-200 bg-white p-4">
               <div className="flex items-center justify-between gap-3">
                 <select aria-label="Tipo" value={image.tipo ?? 'foto'} onChange={(e) => patchImage(index, { tipo: e.target.value as WorkImage['tipo'] })} className={`${FIELD_CLASS} w-auto`}>
                   <option value="foto">Foto</option>

@@ -147,7 +147,8 @@ export default function TimelineDolly({ tabs }: Props) {
         onAbrirDetalle={estado.abrirDetalle}
       />
       <div className="timeline-pistas">
-        <p>
+        <p className="timeline-pistas-linea">
+          <span className="timeline-mouse" aria-hidden="true" />
           {n > 1
             ? "Rueda o arrastra dentro del recuadro para recorrer la línea"
             : "Arrastra la línea dentro del recuadro para recorrerla"}

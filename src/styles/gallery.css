@@ -1,4 +1,7 @@
 @reference "tailwindcss";
+  /* Necesario para que @apply rounded-brand vea el token --radius-brand,
+     que vive en el @theme de global.css y no en el tema default. */
+  @reference "./global.css";
 /* ==========================================================================
    Lightbox de galería — compartido
    --------------------------------------------------------------------------
@@ -29,7 +32,7 @@
 }
 
 .galeria-modal-img {
-    @apply max-h-[72svh] max-w-[90vw] rounded-2xl object-contain;
+    @apply max-h-[72svh] max-w-[90vw] rounded-brand object-contain;
     animation: galeria-zoom-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 

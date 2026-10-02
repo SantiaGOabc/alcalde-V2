@@ -99,7 +99,7 @@ const buildImage = ({ src, alt }: OpenMedia): HTMLElement => {
 	// `w-auto` y no `w-full`: con el ancho al 100 % una foto vertical se
 	// estiraría hasta quedar más alta que la pantalla. Aquí manda el alto y el
 	// ancho se acomoda.
-	image.className = "book-media__frame max-h-[72svh] w-auto rounded-xl object-contain";
+	image.className = "book-media__frame max-h-[72svh] w-auto rounded-brand object-contain";
 	return image;
 };
 
@@ -125,7 +125,7 @@ const buildVideo = ({ src, poster }: OpenMedia): HTMLElement => {
 	// toque, que es justo lo que se quiere evitar aquí.
 	video.preload = "auto";
 	video.className =
-		"book-media__frame max-h-[72svh] w-auto rounded-xl bg-black object-contain";
+		"book-media__frame max-h-[72svh] w-auto rounded-brand bg-black object-contain";
 	return video;
 };
 
@@ -141,7 +141,7 @@ const buildEmbed = ({ src, alt }: OpenMedia): HTMLElement => {
 	frame.allow = YOUTUBE_ALLOW;
 	frame.allowFullscreen = true;
 	frame.className =
-		"book-media__frame aspect-video w-full max-w-5xl rounded-xl border-0";
+		"book-media__frame aspect-video w-full max-w-5xl rounded-brand border-0";
 	return frame;
 };
 

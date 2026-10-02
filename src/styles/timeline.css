@@ -1,4 +1,7 @@
 @reference "tailwindcss";
+  /* Necesario para que @apply rounded-brand vea el token --radius-brand,
+     que vive en el @theme de global.css y no en el tema default. */
+  @reference "./global.css";
 /* ==========================================================================
    Timeline — galería de línea de tiempo (dolly 3D)
    --------------------------------------------------------------------------
@@ -15,8 +18,8 @@
 
 :root {
     /* Toma los colores de marca unificados de global.css con fallback */
-    --timeline-accent: var(--brand-accent, #0a5cff);
-    --timeline-accent-strong: var(--brand-accent-strong, #0849cc);
+    --timeline-accent: var(--brand-primary);
+    --timeline-accent-strong: var(--brand-primary-strong);
 
     /* Capas de la galería. `.timeline-galeria` abre un contexto de apilamiento
        propio (`isolation: isolate`), así que estos valores solo ordenan hijos de
@@ -98,7 +101,7 @@
    ========================================================================== */
 
 .timeline-zona {
-    @apply pointer-events-none absolute inset-0 rounded-2xl border border-dashed;
+    @apply pointer-events-none absolute inset-0 rounded-brand border border-dashed;
     z-index: 900;
     border-color: color-mix(in srgb, var(--timeline-accent) 30%, transparent);
 }
@@ -148,7 +151,7 @@
 }
 
 .timeline-placa {
-    @apply absolute left-1/2 top-1/2 overflow-hidden rounded-2xl bg-gray-200;
+    @apply absolute left-1/2 top-1/2 overflow-hidden rounded-brand bg-gray-200;
     width: var(--placa-w);
     aspect-ratio: 4 / 5;
     box-shadow: 0 24px 60px -18px rgb(17 24 39 / 0.35);
@@ -243,7 +246,7 @@
    ========================================================================== */
 
 .timeline-info {
-    @apply relative mx-auto mt-6 flex w-[min(340px,92%)] cursor-zoom-in flex-col rounded-2xl border border-gray-200 bg-white text-left select-none;
+    @apply relative mx-auto mt-6 flex w-[min(340px,92%)] cursor-zoom-in flex-col rounded-brand border border-gray-200 bg-white text-left select-none;
     z-index: var(--timeline-z-info);
     min-height: 240px;
     padding: 1.5rem 1.5rem 1.25rem;
@@ -321,6 +324,55 @@
     @apply mt-4 text-center text-xs tracking-[0.04em] text-gray-500;
 }
 
+/* La primera pista lleva un ratón con la rueda bajando: es lo mismo que dice
+   el texto ("Rueda o arrastra"), así que no hay que leerlo para entenderlo.
+   El texto centrado pasa a ser una fila centrada para que el ratón quede al
+   lado de la frase y no encima. */
+.timeline-pistas-linea {
+    @apply mt-4 flex items-center justify-center gap-2.5 text-xs tracking-[0.04em] text-gray-500;
+}
+
+.timeline-mouse {
+    @apply h-9 w-[1.4rem] shrink-0 rounded-full border-2 border-gray-400;
+}
+
+/* El punto de la rueda. Va con `transform` a propósito y sin ninguna utilidad
+   de translate de Tailwind: si la hubiera, se sumaría al translate de los
+   keyframes y el punto se iría al doble de centrado. */
+.timeline-mouse::after {
+    position: absolute;
+    top: 0.4rem;
+    left: 50%;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 9999px;
+    content: '';
+    background: var(--timeline-accent);
+    animation: timeline-mouse-rueda 1.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes timeline-mouse-rueda {
+    0%,
+    10% {
+        transform: translate(-50%, 0);
+        opacity: 0;
+    }
+
+    22% {
+        opacity: 1;
+    }
+
+    65% {
+        opacity: 1;
+    }
+
+    85%,
+    100% {
+        transform: translate(-50%, 0.8rem);
+        opacity: 0;
+    }
+}
+
 /* Segunda línea de la ayuda: el límite de la zona de captura del scroll. */
 .timeline-pistas-limite {
     @apply mt-1.5 font-semibold tracking-[0.06em] text-gray-600;
@@ -331,7 +383,7 @@
    ========================================================================== */
 
 .timeline-btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-brand px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
 }
 
 .timeline-btn--primary {
@@ -358,7 +410,7 @@
 }
 
 .timeline-detalle {
-    @apply flex w-[min(420px,94%)] max-h-[88svh] cursor-default flex-col overflow-hidden rounded-2xl bg-white;
+    @apply flex w-[min(420px,94%)] max-h-[88svh] cursor-default flex-col overflow-hidden rounded-brand bg-white;
     box-shadow: 0 30px 80px -20px rgb(17 24 39 / 0.6);
     animation: timeline-zoom-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -440,11 +492,11 @@
 }
 
 .timeline-movil-pista:focus-visible {
-    @apply rounded-2xl outline-2 outline-offset-4 outline-(--timeline-accent);
+    @apply rounded-brand outline-2 outline-offset-4 outline-(--timeline-accent);
 }
 
 .timeline-movil-placa {
-    @apply relative flex flex-col overflow-hidden rounded-2xl bg-white;
+    @apply relative flex flex-col overflow-hidden rounded-brand bg-white;
     flex: 0 0 calc(100% - 2rem);
     scroll-snap-align: center;
     height: clamp(380px, 56svh, 500px);
@@ -497,6 +549,12 @@
     .timeline-detalle {
         animation: none;
     }
+
+    /* El punto del ratón se queda arriba del todo, sin bubear. */
+    .timeline-mouse::after {
+        animation: none;
+        transform: translate(-50%, 0.8rem);
+    }
 }
 
 .timeline-estatico {
@@ -510,7 +568,7 @@
 }
 
 .timeline-estatico li {
-    @apply grid cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white text-left transition-all duration-200;
+    @apply grid cursor-pointer overflow-hidden rounded-brand border border-gray-200 bg-white text-left transition-all duration-200;
     grid-template-columns: 8rem 1fr;
 }
 

@@ -72,7 +72,7 @@ export function showToast({
 
   const toast = document.createElement('div');
   toast.setAttribute('role', variant === 'error' ? 'alert' : 'status');
-  toast.className = `pointer-events-auto relative w-full max-w-sm translate-y-3 overflow-hidden rounded-xl border-l-4 bg-white opacity-0 shadow-xl ring-1 ring-black/5 transition duration-200 ${style.accent}`;
+  toast.className = `pointer-events-auto relative w-full max-w-sm translate-y-3 overflow-hidden rounded-brand border-l-4 bg-white opacity-0 shadow-xl ring-1 ring-black/5 transition duration-200 ${style.accent}`;
 
   const body = document.createElement('div');
   body.className = 'flex items-start gap-3 p-4 pr-10';

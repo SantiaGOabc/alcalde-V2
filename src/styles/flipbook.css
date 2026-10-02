@@ -1,4 +1,7 @@
 @reference "tailwindcss";
+  /* Necesario para que @apply rounded-brand vea el token --radius-brand,
+     que vive en el @theme de global.css y no en el tema default. */
+  @reference "./global.css";
 
 /* ==========================================================================
    El libro
@@ -37,7 +40,7 @@
    `place` en `createBookViewer.ts`): sin recortar, la mitad vacía del
    doblece asomaría fuera del marco. */
 .book-viewer__frame {
-    @apply fixed z-1 overflow-hidden rounded-md;
+    @apply fixed z-1 overflow-hidden rounded-brand;
 
     top: 0;
     left: 0;
@@ -380,7 +383,7 @@
 }
 
 .book-media__frame::-webkit-media-controls-enclosure {
-    border-radius: 0.75rem;
+    border-radius: var(--brand-border);
 }
 
 /* ==========================================================================

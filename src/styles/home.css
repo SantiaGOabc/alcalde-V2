@@ -1,13 +1,17 @@
 @reference "tailwindcss";
+  /* Necesario para que @apply rounded-brand vea el token --radius-brand,
+     que vive en el @theme de global.css y no en el tema default. */
+  @reference "./global.css";
 /* ==========================================================================
    Home — design tokens
    ========================================================================== */
 
 :root {
     /* Toma los colores de marca unificados de global.css con fallback */
-    --home-accent: var(--brand-primary, #472D82);
-    --home-accent-strong: var(--brand-primary-strong, #695DA9);
+    --home-accent: var(--brand-primary, #6d559f);
+    --home-accent-strong: var(--brand-primary-strong, #7727d8);
     --home-ink: rgb(96, 96, 98);
+    --bg-gray: #f5f5f5;
     --hero-step:7s;
 }
 

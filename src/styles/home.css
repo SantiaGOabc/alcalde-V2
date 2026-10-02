@@ -121,6 +121,7 @@
 /* Sombra suave en las letras. La viñeta ya no oscurece el centro, así que esto
    es lo que sostiene el contraste sin tapar la foto. */
 .hero-texto {
+    @apply mt-52;
     text-shadow: 0 2px 22px rgb(0 0 0 / 0.6);
 }
 

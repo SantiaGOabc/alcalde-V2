@@ -52,6 +52,8 @@
        acá, directa o indirectamente (--radius-brand -> rounded-brand, y los
        `border-radius: var(--brand-border)` sueltos). */
     --brand-border: 0.75rem;
+    --buttons-border: @apply rounded-full;
+    --containers-border: @apply rounded-lg;
 }
 
 @media (min-width: 768px) {

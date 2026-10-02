@@ -12,37 +12,4 @@ import MailboxBoard from '../components/Sections/Admin/Dashboard/Mailbox/Mailbox
  * Ojo: `preview-mailbox.astro` es una ruta pública y no pide sesión. No debe quedar
  * publicada; sirve mientras se toca la pantalla.
  */
-const mock: MailboxMessage[] = [
-    {
-        id: 1,
-        fullName: 'Emiliano Gómez Vargas',
-        email: 'emiliano@gmail.com',
-        type: 'sugerencia',
-        message:
-            'Buen día, señor alcalde. Le escribo para sugerir que se amplíe el horario de atención en las oficinas de la zona rural, porque actualmente se cierran a las 14:00 y mucha gente sale del trabajo más tarde. Muchas gracias por su tiempo.',
-        isRead: false,
-        createdAt: new Date('2026-09-28T14:32:00Z').toISOString(),
-    },
-    {
-        id: 2,
-        fullName: 'María Fernanda Quispe',
-        email: 'mfquispe@hotmail.com',
-        type: 'felicitacion',
-        message: 'Quisiera felicitar a todo el equipo por la rapidez con las obras de la avenida. Los vecinos estamos muy felices.',
-        isRead: false,
-        createdAt: new Date('2026-09-27T09:10:00Z').toISOString(),
-    },
-    {
-        id: 3,
-        fullName: 'Juan Carlos Rojas',
-        email: 'jrojas@correo.com',
-        type: 'sugerencia',
-        message:
-            'La verdad nunca he escrito antes, pero quiero decir que el servicio de limpieza mejoró mucho en el centro de la ciudad. Gracias de verdad.',
-        isRead: true,
-        createdAt: new Date('2026-09-20T18:05:00Z').toISOString(),
-    },
-];
 ---
-
-<MailboxBoard messages={mock} standalone />

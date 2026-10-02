@@ -6,6 +6,7 @@ la base de datos solo guarda *valores*. Nunca hay que migrar la base para cambia
 ```
 constants/…            → estructura + valores por defecto (una sola fuente de verdad)
 cms/sections.ts        → registro: qué constants son editables (clave, página, etiqueta)
+cms/sections.ts        → CMS_IMAGE_FIELDS: qué claves de esa sección son imágenes
 site_content (DB)      → solo los valores que alguien editó desde el panel
 getContent(clave)      → lee la DB y la reconcilia con los constants actuales
 ```
@@ -30,6 +31,21 @@ El panel **se genera solo** a partir de la estructura: no hay formularios por se
 TypeScript avisa si algún componente sigue leyéndolo (`getContent` está tipado con `CmsContent<clave>`).
 
 **Añadir un campo** → agrégalo al constant (con su valor por defecto) y úsalo en el componente.
+
+**Añadir un campo de imagen** → el valor sigue siendo una URL de texto (así lo guarda,
+valida y pinta la base de datos sin cambiar nada), pero el panel ofrece subida de archivo
+y miniatura en vez de un campo de texto. Se declara en `CMS_IMAGE_FIELDS`:
+
+```ts
+export const CMS_IMAGE_FIELDS: Partial<Record<CmsKey, readonly string[]>> = {
+  'site.brand': ['logo'], // ← el campo `logo` de esa sección
+};
+```
+
+`ContentField` lo reconoce por el **nombre** de la clave a cualquier profundidad, así que
+también funciona dentro de una lista (`hero.images.src`). No se decide por el valor: un
+campo recién vacío seguiría pareciendo un texto cualquiera. Y solo afecta a las secciones
+que se nombren aquí; las demás siguen mostrando un campo de texto para sus imágenes.
 
 **Cambiar la estructura de un componente** → cambia el constant y el componente en el mismo commit;
 `npm run check` (astro check) marca cualquier desajuste. No hace falta tocar `db.sql`.

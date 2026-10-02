@@ -14,6 +14,7 @@ import {
   SECTION_GESTION,
   SECTION_MANAGEMENT_CLOSING,
   SECTION_PHRASES_CONTENT,
+  SITE_BRAND,
 } from '@constant';
 
 /** Página pública donde se ve cada sección: es lo que muestra la vista previa. */
@@ -22,6 +23,9 @@ const PAGES = {
   about: { page: 'Sobre mí', path: '/about' },
   management: { page: 'Gestión', path: '/management' },
   mailbox: { page: 'Buzón ciudadano', path: '/mailbox' },
+  // El navbar está en todas las páginas, pero la vista previa necesita una sola
+  // ruta: se enseña en la home, donde además se ve tal cual la ve el visitante.
+  site: { page: 'Sitio (todas las páginas)', path: '/' },
 } as const;
 
 /**
@@ -56,10 +60,32 @@ export const CMS_SECTIONS = {
   'management.closing': { ...PAGES.management, label: 'Cierre', defaults: SECTION_MANAGEMENT_CLOSING },
 
   mailbox: { ...PAGES.mailbox, label: 'Textos del formulario', defaults: MAILBOX_CONTENT },
+
+  // Va al final a propósito: el panel abre la primera sección del registro, y
+  // añadirla al principio cambiaría la sección con la que arranca el administrador.
+  'site.brand': { ...PAGES.site, label: 'Logotipo', defaults: SITE_BRAND },
 } as const;
 
 export type CmsKey = keyof typeof CMS_SECTIONS;
 export type CmsContent<K extends CmsKey> = (typeof CMS_SECTIONS)[K]['defaults'];
+
+/**
+ * Claves cuyo valor es una IMAGEN y por lo tanto el panel les pone subida de
+ * archivo y miniatura en vez de un campo de texto.
+ *
+ * Va aparte del registro a propósito: esto no dice qué contiene la sección, sino
+ * cómo se edita. Mezclarlo en `CMS_SECTIONS` obligaría a repetir una lista vacía
+ * en las catorce secciones que no tienen imágenes, y a inventar un tipo de campo
+ * dentro de los `constants`, que según la regla de oro guardan valores, no
+ * formularios.
+ *
+ * Se nombran por su clave, no por lo que parece su valor: un campo se declara
+ * aquí y el editor recursivo lo reconoce a cualquier profundidad. Añadir un campo
+ * de imagen es escribir su nombre en esta línea.
+ */
+export const CMS_IMAGE_FIELDS: Partial<Record<CmsKey, readonly string[]>> = {
+  'site.brand': ['logo'],
+};
 
 export const isCmsKey = (key: unknown): key is CmsKey =>
   typeof key === 'string' && Object.hasOwn(CMS_SECTIONS, key);
@@ -76,4 +102,6 @@ export interface CmsSectionState {
   value: unknown;
   defaults: unknown;
   overridden: boolean;
+  /** Claves de esta sección que son imágenes (ver `CMS_IMAGE_FIELDS`). */
+  imageFields: readonly string[];
 }

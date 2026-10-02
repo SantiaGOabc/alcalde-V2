@@ -1,15 +1,15 @@
 ---
-import { Link, Button } from "@components";
+import { Link, Button, SmartImage } from "@components";
 import { NAVBAR } from "@constant";
+import { sectionId } from "@/cms/anchors";
+import { getContent } from "@/lib/server";
 // El logo se IMPORTA, no se escribe como ruta a mano. Un `src` escrito a mano lo
 // resuelve el navegador contra la URL de la página, así que el mismo camino
 // funcionaba en la home y daba 404 en `/about` o `/management`.
 //
-// Se pinta con un `<img>` normal y NO con `SmartImage` a propósito: `SmartImage`
-// manda las imágenes importadas por el servicio de imágenes de Astro, que necesita
-// `sharp`, y sin él el endpoint `/_image` responde 500 y el logo desaparece. Un
-// logo de 4 KB no gana nada optimizándose, así que se sirve el archivo tal cual
-// (Vite le pone un hash al nombre en la compilación) y no depende de nada.
+// Este import deja de ser el logo que se pinta: pasa a ser solo el VALOR POR
+// DEFECTO y la fuente de sus medidas (ver `SITE_BRAND`). El logo que se ve sale de
+// `getContent("site.brand")`, o sea, del panel.
 import logo from "@/assets/logo/logo-alcalde.png";
 // `--home-accent` vive aquí, y el navbar lo necesita en todas las páginas.
 import "@styles/home.css";
@@ -28,6 +28,23 @@ const { transparent = false, isHome = transparent, adminHref = null } = Astro.pr
 const normalize = (path: string) => path.replace(/\/+$/, "") || "/";
 const currentPath = normalize(Astro.url.pathname);
 
+const brand = await getContent("site.brand");
+
+/*
+  El logo del panel es una URL (una subida a `/media/…` o la ruta con hash que da
+  Vite), no un asset importado, así que sus medidas ya no se conocen. Solo se les
+  pasan cuando sigue siendo el logo original: entonces son exactas y el navegador
+  reserva el hueco. Si se sube otro, el alto lo fija el CSS (`h-10 w-auto`) y el
+  navegador corrige el ancho al pintarlo.
+
+  Se pinta con `SmartImage` y no con un `<img>` a mano porque `SmartImage` YA
+  distingue los dos casos y, cuando el `src` es una URL, cae en su rama de `<img>`
+  sin pasar por el servicio de imágenes de Astro —el que necesita `sharp` y cuyo
+  fallo dejaba el logo en blanco—. Ese era el motivo del `<img>` a mano; con una
+  URL ya no aplica.
+*/
+const measures = brand.logo === logo.src ? { width: logo.width, height: logo.height } : {};
+
 const links = [
   ...NAVBAR.map((link) => ({ ...link, isAdmin: false })),
   ...(adminHref ? [{ path: adminHref, label: "Panel", isAdmin: true }] : []),
@@ -44,20 +61,27 @@ const links = [
   class="group fixed top-0 z-50 w-full border-b border-transparent text-white transition-[background-color,box-shadow] duration-300 data-[solid=true]:bg-(--home-accent) data-[solid=true]:border-white/10 data-[solid=true]:shadow-md"
 >
   <div class="page-container flex h-16 items-center justify-between">
-    <Link
-      href="/"
-      class="text-xl font-bold tracking-tight text-white no-underline before:hidden after:hidden transition-transform hover:scale-105"
-    >
-      <img
-        src={logo.src}
-        alt="Manfred Reyes Villa"
-        width={logo.width}
-        height={logo.height}
-        loading="eager"
-        decoding="async"
-        class="h-10 w-auto"
-      />
-    </Link>
+    {/*
+      El `id` de la sección va en un envoltorio y no en el `<nav>` porque el navbar
+      ya tiene `id="site-navbar"` y lo busca `initNavbar`. El envoltorio no cambia
+      nada de la maquetación: es el mismo hijo flexible de antes, con el enlace
+      dentro. Sirve para que la vista previa del panel sepa qué bloque es este.
+    */}
+    <span id={sectionId("site.brand")}>
+      <Link
+        href="/"
+        class="text-xl font-bold tracking-tight text-white no-underline before:hidden after:hidden transition-transform hover:scale-105"
+      >
+        <SmartImage
+          src={brand.logo}
+          alt="Manfred Reyes Villa"
+          loading="eager"
+          decoding="async"
+          class="h-10 w-auto"
+          {...measures}
+        />
+      </Link>
+    </span>
 
     <ul class="hidden items-center gap-6 md:flex">
       {

@@ -1,4 +1,5 @@
 import { blankLike, getIn, humanize, isImageUrl, isLongText, isRecord, itemTitle, type Path } from '@/cms/editor';
+import ImageField from '@/components/ui/ImageField';
 import { FIELD_CLASS } from '@/components/ui/fieldStyles';
 
 interface ContentFieldProps {
@@ -7,6 +8,8 @@ interface ContentFieldProps {
   path: Path;
   /** Datos por defecto de la sección: sirven de molde para añadir elementos a una lista. */
   defaults: unknown;
+  /** Claves de la sección cuyo valor es una imagen (ver `CMS_IMAGE_FIELDS`). */
+  imageFields: readonly string[];
   onChange: (path: Path, value: unknown) => void;
 }
 
@@ -14,12 +17,15 @@ const LABEL_CLASS = 'text-[11px] font-bold tracking-wide text-slate-700 uppercas
 const SMALL_BUTTON =
   'rounded-brand border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent';
 
+/** Última clave de la ruta: el nombre del campo, sea cual sea su profundidad. */
+const fieldKey = (path: Path): string => String(path[path.length - 1] ?? '');
+
 /**
  * Editor recursivo: dibuja el control que corresponde al tipo del valor
  * (texto, número, casilla, objeto o lista), de modo que cualquier sección
  * nueva del registro es editable sin escribir un formulario a medida.
  */
-export default function ContentField({ label, value, path, defaults, onChange }: ContentFieldProps) {
+export default function ContentField({ label, value, path, defaults, imageFields, onChange }: ContentFieldProps) {
   const id = `field-${path.join('.')}`;
   const child = (key: string | number, item: unknown) => (
     <ContentField
@@ -28,6 +34,7 @@ export default function ContentField({ label, value, path, defaults, onChange }:
       value={item}
       path={[...path, key]}
       defaults={defaults}
+      imageFields={imageFields}
       onChange={onChange}
     />
   );
@@ -62,11 +69,19 @@ export default function ContentField({ label, value, path, defaults, onChange }:
                     value={inner}
                     path={[...path, index, key]}
                     defaults={defaults}
+                    imageFields={imageFields}
                     onChange={onChange}
                   />
                 ))
               ) : (
-                <ContentField label={label} value={item} path={[...path, index]} defaults={defaults} onChange={onChange} />
+                <ContentField
+                  label={label}
+                  value={item}
+                  path={[...path, index]}
+                  defaults={defaults}
+                  imageFields={imageFields}
+                  onChange={onChange}
+                />
               )}
             </div>
           </details>
@@ -111,6 +126,20 @@ export default function ContentField({ label, value, path, defaults, onChange }:
   }
 
   const text = typeof value === 'string' ? value : '';
+
+  /*
+    Campo de imagen declarado en `CMS_IMAGE_FIELDS`: se dibuja con `ImageField`, el
+    mismo control que usa el formulario de obras, y por lo tanto con subida de
+    archivo y miniatura. Se decide por el NOMBRE del campo y no por lo que parece
+    su valor, porque un campo recién vacío no tiene nada que delatarlo.
+
+    El valor sigue siendo una URL de texto, así que el resto de la sección (la
+    validación de `matchesShape`, la vista previa, el sitio) no cambia nada: solo
+    se le da una forma cómoda de escribirla.
+  */
+  if (imageFields.includes(fieldKey(path))) {
+    return <ImageField label={label} value={text} onChange={(src) => onChange(path, src)} />;
+  }
 
   return (
     <div className="flex flex-col gap-1.5">

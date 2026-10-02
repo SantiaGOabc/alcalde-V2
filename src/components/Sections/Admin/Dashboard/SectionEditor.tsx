@@ -77,6 +77,7 @@ export default function SectionEditor({ section, onPersisted, onDirtyChange }: S
               value={value}
               path={[key]}
               defaults={section.defaults}
+              imageFields={section.imageFields}
               onChange={update}
             />
           ))}

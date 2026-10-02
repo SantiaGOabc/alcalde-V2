@@ -3,7 +3,7 @@ import { CATEGORIAS_GESTION, ESTADOS_GESTION, LABELS_CATEGORIA } from '@constant
 import Button from '@/components/ui/Button';
 import { FIELD_CLASS } from '@/components/ui/fieldStyles';
 import { ApiError, type Work, type WorkImage, type WorkInput } from '@/lib';
-import ImageField from './ImageField';
+import ImageField from '@/components/ui/ImageField';
 
 interface WorkFormProps {
   /** `null` = obra nueva. */

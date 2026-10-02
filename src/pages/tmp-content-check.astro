@@ -1,0 +1,17 @@
+---
+// TEMPORAL: comprueba el payload real del panel. Se borra tras verificar.
+import { listContent } from '@/lib/server';
+
+const sections = await listContent();
+const brand = sections.find((s) => s.key === 'site.brand');
+---
+
+<pre id="out">{JSON.stringify(
+  {
+    total: sections.length,
+    primera: sections[0].key,
+    site: brand,
+  },
+  null,
+  2,
+)}</pre>

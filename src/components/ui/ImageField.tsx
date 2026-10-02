@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
-import { FIELD_CLASS } from '@/components/ui/fieldStyles';
 import { ApiError, uploadImage } from '@/lib';
+import { FIELD_CLASS } from './fieldStyles';
 
 interface ImageFieldProps {
   label: string;
@@ -13,7 +13,13 @@ interface ImageFieldProps {
 
 const LABEL_CLASS = 'text-[11px] font-bold tracking-wide text-slate-700 uppercase';
 
-/** URL de imagen con subida de archivo y miniatura. */
+/**
+ * URL de imagen con subida de archivo y miniatura.
+ *
+ * Vive en `ui/` porque lo usan dos sitios del panel que no tienen nada que ver
+ * entre sí: el formulario de obras y el editor de contenido (`ContentField`, para
+ * los campos de imagen de una sección del CMS).
+ */
 export default function ImageField({ label, value, onChange, allowUpload = true, placeholder = 'https://…' }: ImageFieldProps) {
   const id = useId();
   const [isUploading, setIsUploading] = useState(false);

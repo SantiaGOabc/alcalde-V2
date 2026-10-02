@@ -1,5 +1,11 @@
 import { sectionId } from '@/cms/anchors';
-import { CMS_SECTIONS, type CmsContent, type CmsKey, type CmsSectionState } from '@/cms/sections';
+import {
+  CMS_IMAGE_FIELDS,
+  CMS_SECTIONS,
+  type CmsContent,
+  type CmsKey,
+  type CmsSectionState,
+} from '@/cms/sections';
 import { reconcile } from '@/cms/shape';
 import { isDbConfigured, query } from './db';
 import { getPreviewDraft } from './preview';
@@ -52,6 +58,9 @@ export async function listContent(): Promise<CmsSectionState[]> {
       label,
       defaults,
       overridden,
+      // Las claves de imagen son un dato del panel, no del contenido: se leen del
+      // registro aparte para no meter el formulario dentro de los `constants`.
+      imageFields: CMS_IMAGE_FIELDS[key] ?? [],
       value: overridden ? reconcile(defaults, stored.get(key)) : defaults,
     };
   });

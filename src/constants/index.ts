@@ -9,6 +9,7 @@ export * from "./about/intro";
 export * from "./management/categories";
 export * from "./management/projects";
 export * from "./global/navbar";
+export * from "./global/site";
 export * from "./global/footer";
 export * from "./global/mailbox";
 export * from "./global/mailboxBoard";

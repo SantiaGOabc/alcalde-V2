@@ -22,8 +22,8 @@
 
 :root {
     /* 1. Color Primario (Morado: Navbar, Footer, Botones Principales) */
-    --brand-primary: #472D82;
-    --brand-primary-strong: #695DA9;
+    --brand-primary: #6d559f;
+    --brand-primary-strong: #8c5da9;
 
     /* 2. Color de Acento (Celeste: Timeline, Eje, Pestañas activas, Gestión) */
     --brand-accent: #472D82;

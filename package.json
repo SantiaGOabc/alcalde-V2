@@ -7,7 +7,7 @@
   },
   "scripts": {
     "limpieza": "node -e \"for (const d of ['node_modules/.vite','node_modules/.astro','.astro','dist']) require('node:fs').rmSync(d,{recursive:true,force:true})\"",
-    "dev": "npm run limpieza && astro dev",
+    "dev": "npm run limpieza && astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

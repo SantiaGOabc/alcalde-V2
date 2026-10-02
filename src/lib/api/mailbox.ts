@@ -38,3 +38,6 @@ export const listMailboxMessages = (query: MailboxQuery = {}) =>
 
 export const markMailboxMessageRead = (id: number, isRead: boolean) =>
   request<{ ok: true }>(`/api/mailbox/${id}`, { method: 'PATCH', body: { isRead } });
+
+export const deleteMailboxMessage = (id: number) =>
+  request<{ ok: true }>(`/api/mailbox/${id}`, { method: 'DELETE' });

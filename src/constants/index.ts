@@ -11,6 +11,7 @@ export * from "./management/projects";
 export * from "./global/navbar";
 export * from "./global/footer";
 export * from "./global/mailbox";
+export * from "./global/mailboxBoard";
 export * from "./global/login";
 export * from "./flipbook.ts";
 export * from "./management/page";

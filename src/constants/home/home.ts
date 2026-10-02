@@ -87,11 +87,11 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
     "Las fotografías cuentan aquello que muchas veces las palabras no pueden explicar",
   transitionPhrase: "De una ciudad de ayer a una ciudad que mira al futuro",
   before: [
-    {
+    /*{
       title: "Capitán Manfred Reyes Villa",
-      imageURL: alcalde("policia.jpeg"),
+      imageURL: alcalde("prefecto.jpg"),
       imageFit: "contain",
-    },
+    },*/
     {
       title: "Laguna Coña Coña",
       imageURL: raiz("CoñaCoñaAntes.jpg"),
@@ -109,11 +109,11 @@ export const SECTION_BEFORE_AFTER_CONTENT: {
     },
   ],
   after: [
-    {
+    /*{
       title: "Prefecto Manfred Reyes Villa",
       imageURL: alcalde("prefecto.jpg"),
       imageFit: "contain",
-    },
+    },*/
     {
       title: "Playa Turquesa",
       imageURL: raiz("playaTurquesa.JPG"),

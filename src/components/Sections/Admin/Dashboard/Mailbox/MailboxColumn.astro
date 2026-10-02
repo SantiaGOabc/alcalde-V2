@@ -1,0 +1,61 @@
+---
+import { MAILBOX_BOARD, type MailboxColumn } from '@constant';
+import type { MailboxEntry } from './mailboxBoardModel';
+import MessageCard from './MessageCard.astro';
+
+interface Props {
+    column: MailboxColumn;
+    /** Los mensajes que abren en esta columna. "En revisión" llega vacía. */
+    entries: MailboxEntry[];
+}
+
+const { column, entries } = Astro.props;
+
+const headingId = `mailbox-column-${column.id}`;
+---
+
+{/*
+    `data-mailbox-column` + `data-column` localizan la columna; `data-mailbox-list`
+    es la zona donde caen las tarjetas arrastradas y la que cuenta y ordena. Son
+    parte del contrato con `bindMailboxBoard.ts`.
+
+    El tinte va en una variable de la columna en vez de en la hoja de estilos para
+    que las tres columnas se pinten con la misma regla: cambiar la marca en
+    `global.css` repinta el tablero entero sin tocar este archivo.
+*/}
+<div
+    role="region"
+    aria-labelledby={headingId}
+    class="mailbox-column"
+    data-mailbox-column
+    data-column={column.id}
+    style={`--mailbox-column-tint: ${column.tint}`}
+>
+    <header class="mailbox-column__head">
+        <div class="mailbox-column__titles">
+            <h3 class="mailbox-column__title" id={headingId}>{column.label}</h3>
+            <p class="mailbox-column__hint">{column.hint}</p>
+        </div>
+        {/* `aria-live`: arrastrar una tarjeta cambia el número y hay que anunciarlo. */}
+        <span class="mailbox-column__count" data-mailbox-count={column.id} aria-live="polite">
+            {entries.length}
+        </span>
+    </header>
+
+    <div class="mailbox-column__list" data-mailbox-list={column.id}>
+        {/*
+            `state` es la columna inicial; el `<script>` la reescribe al mover la
+            tarjeta, así que no es de fiar como estado de verdad: el que manda es
+            `data-state` en el DOM.
+        */}
+        {entries.map((entry) => <MessageCard entry={entry} state={column.id} />)}
+
+        {/*
+            El aviso sale con `hidden` desde el servidor cuando la columna ya tiene
+            tarjetas, para que no haya un destello antes de que arranque el script.
+        */}
+        <p class="mailbox-empty" data-mailbox-empty hidden={entries.length > 0}>
+            {MAILBOX_BOARD.empty}
+        </p>
+    </div>
+</div>

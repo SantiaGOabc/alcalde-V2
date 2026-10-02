@@ -1,4 +1,12 @@
-<svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
+---
+/** Flecha a la izquierda. `class` permite cambiar el tamaño sin editar el icono. */
+interface Props {
+    class?: string;
+}
+const { class: className = 'size-5' } = Astro.props;
+---
+
+<svg viewBox="0 0 24 24" fill="none" class={className} aria-hidden="true">
   <path
     d="m15 18-6-6 6-6"
     stroke="currentColor"

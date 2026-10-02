@@ -1,0 +1,134 @@
+---
+import { MAILBOX_BOARD, MAILBOX_COLUMNS } from '@constant';
+import type { MailboxMessage } from '@/lib';
+import { isDbConfigured, searchMailboxMessages } from '@/lib/server';
+import MailboxColumn from './MailboxColumn.astro';
+import MailboxFilters from './MailboxFilters.astro';
+import MessageModal from './MessageModal.astro';
+import {
+    buildMailboxEntries,
+    buildMailboxPayload,
+    mailboxSummary,
+    splitMailboxColumns,
+} from './mailboxBoardModel';
+import '@styles/mailbox.css';
+
+/** Cuántos mensajes trae el tablero de una vez. Ver `mailboxSummary` sobre el aviso de página corta. */
+const PAGE_SIZE = 50;
+
+interface Props {
+    /**
+     * Mensajes ya resueltos. Los usa la previsualización estática; si no se pasan,
+     * el tablero los pide al servidor. Es también el hueco por donde se le podrían
+     * pasar más de `PAGE_SIZE` mensajes desde el futuro.
+     */
+    messages?: MailboxMessage[];
+    /**
+     * Lo pinta suelto, sin la pestaña del panel. Solo para la previsualización, que
+     * no tiene `CmsPanel` que destape el panel ni quien le avise de la pestaña activa.
+     */
+    standalone?: boolean;
+}
+
+interface BoardData {
+    /** La página cargada. */
+    messages: MailboxMessage[];
+    /** Mensajes que hay en total en la bandeja, para el resumen. */
+    total: number;
+    /** No leídos de toda la bandeja, no solo de la página: es lo que va en la insignia. */
+    unread: number;
+}
+
+/** Pide una página de la bandeja, sin filtros. Los contadores vienen del servidor. */
+const loadBoard = async (): Promise<BoardData> => {
+    if (!isDbConfigured()) return { messages: [], total: 0, unread: 0 };
+
+    const page = await searchMailboxMessages({
+        page: 1,
+        pageSize: PAGE_SIZE,
+        type: null,
+        status: 'all',
+        search: null,
+    });
+    return { messages: page.items, total: page.total, unread: page.unread };
+};
+
+const { messages, standalone = false } = Astro.props;
+
+/**
+ * Con `messages` no se toca la base, así que la previsualización puede pintar el
+ * tablero entero con datos de mentira y ejercitar filtros, arrastre y modal.
+ */
+const board: BoardData = messages
+    ? {
+          messages,
+          total: messages.length,
+          unread: messages.filter((message) => !message.isRead).length,
+      }
+    : await loadBoard();
+
+/**
+ * Vista previa derivada una sola vez y repartida entre las tarjetas y el payload
+ * del modal, para que los dos nunca enseñen un asunto o un rótulo distinto del
+ * mismo mensaje. De eso se encarga `mailboxBoardModel.ts`; aquí solo se pinta.
+ */
+const entries = buildMailboxEntries(board.messages);
+const columns = splitMailboxColumns(entries);
+const summary = mailboxSummary({
+    visible: entries.length,
+    total: board.total,
+    capped: board.total > entries.length,
+    filtered: false,
+});
+---
+
+ {/*
+    El panel nace `hidden` y lo destapa `CmsPanel` cuando llega a la pestaña del
+    buzón. `data-mailbox-tabbed` le dice al `<script>` que este tablero es una
+    pestaña y no una pantalla suelta, para que solo en ese caso se ocupa de
+    mostrarlo y esconderlo.
+*/}
+<div
+    id={MAILBOX_BOARD.panelId}
+    role="tabpanel"
+    aria-label={MAILBOX_BOARD.title}
+    hidden={!standalone}
+    data-mailbox-tabbed={standalone ? undefined : 'true'}
+>
+     {/*
+        Los totales viajan en `data-`, no en el texto: el `<script>` los necesita para
+        contar y para saber si lo que se ve es todo. `data-mailbox-dialog` (el modal) y
+        `data-mailbox-data` (el payload) están DENTRO a propósito: el tablero busca con
+        `root.querySelector`, que solo alcanza a descendientes. Fuera, devolvía `null` y
+        el tablero se quedaba invisible.
+    */}
+    <div data-mailbox-board data-mailbox-unread={board.unread} data-mailbox-total={board.total}>
+        <MailboxFilters summary={summary} />
+
+        <div class="mailbox-board">
+            {MAILBOX_COLUMNS.map((column) => (
+                <MailboxColumn column={column} entries={columns[column.id]} />
+            ))}
+        </div>
+
+        <MessageModal />
+
+         {/*
+            Los datos que el modal necesita van en un `<script type="application/json">`:
+            el DOM inicial solo lleva la vista previa truncada y el texto entero se
+            inyecta al abrir. Para eso hay que usar `is:inline`, porque un `<script>`
+            normal lo trataría como JavaScript.
+        */}
+        <script is:inline type="application/json" data-mailbox-data set:html={buildMailboxPayload(entries)} />
+    </div>
+</div>
+
+ {/*
+    El tablero en el navegador va en su propio módulo (`bindMailboxBoard.ts`, que a su
+    vez reparte el trabajo con `mailboxBoardModel.ts` y `mailboxBoardDom.ts`). Este
+    import es su único punto de entrada: el módulo se registra con `onPageLoad`, así
+    que no hace falta repetir aquí la búsqueda del tablero ni sus oyentes.
+*/}
+<script>
+    import './bindMailboxBoard';
+</script>

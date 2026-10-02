@@ -1,14 +1,14 @@
 ---
-/** Flecha a la derecha. `class` permite cambiar el tamaño sin editar el icono. */
+/** Cerrar. Equivale a la "x" de un diálogo. */
 interface Props {
     class?: string;
 }
 const { class: className = 'size-5' } = Astro.props;
 ---
 
-<svg viewBox="0 0 24 24" fill="none" class={className} aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" class={className} stroke="currentColor" aria-hidden="true">
   <path
-    d="m9 18 6-6-6-6"
+    d="M6 18L18 6M6 6l12 12"
     stroke="currentColor"
     stroke-width="2"
     stroke-linecap="round"

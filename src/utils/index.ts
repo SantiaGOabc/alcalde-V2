@@ -2,6 +2,7 @@ export * from './cn';
 export * from './dom';
 export * from './clamp';
 export * from './truncate';
+export * from './date';
 export * from './imagePosition';
 export * from './images';
 export * from './video';

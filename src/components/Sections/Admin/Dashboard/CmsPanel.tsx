@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { MAILBOX_EVENTS } from '@constant';
 import type { CmsSectionState } from '@/cms/sections';
 import Button from '@/components/ui/Button';
 import { ConfirmProvider } from '@/components/ui/Confirm';
 import { logout } from '@/lib';
 import ContentManager from './ContentManager';
-import MessagesPanel from './MessagesPanel';
 import WorksManager from './Works/WorksManager';
 
 interface CmsPanelProps {
@@ -25,6 +25,21 @@ const TABS: { id: Tab; label: string }[] = [
 export default function CmsPanel({ username, sections, initialUnread }: CmsPanelProps) {
   const [tab, setTab] = useState<Tab>('content');
   const [unread, setUnread] = useState(initialUnread);
+
+  // El tablero del buzón es un componente .astro, y Astro no permite anidar uno
+  // dentro de una isla React. Por eso el panel solo le avisa en qué pestaña está
+  // y recibe su total de no leídos; el tablero se pinta en `Dashboard.astro`.
+  useEffect(() => {
+    document.dispatchEvent(new CustomEvent(MAILBOX_EVENTS.tab, { detail: { tab } }));
+  }, [tab]);
+
+  useEffect(() => {
+    const onUnread = (event: Event) => {
+      setUnread((event as CustomEvent<{ unread: number }>).detail.unread);
+    };
+    document.addEventListener(MAILBOX_EVENTS.unread, onUnread);
+    return () => document.removeEventListener(MAILBOX_EVENTS.unread, onUnread);
+  }, []);
 
   const handleLogout = async () => {
     await logout().catch(() => undefined);
@@ -52,7 +67,7 @@ export default function CmsPanel({ username, sections, initialUnread }: CmsPanel
 
         <div role="tablist" className="flex gap-6 border-b border-slate-200">
           {TABS.map(({ id, label }) => (
-            <button key={id} role="tab" type="button" aria-selected={tab === id} className={tabClass(id)} onClick={() => setTab(id)}>
+            <button key={id} role="tab" type="button" aria-selected={tab === id} aria-controls={id === 'messages' ? 'panel-messages' : undefined} className={tabClass(id)} onClick={() => setTab(id)}>
               {label}
               {id === 'messages' && unread > 0 && (
                 <span className="ml-2 rounded-full bg-(--brand-primary) px-2 py-0.5 text-xs text-white">{unread}</span>
@@ -63,7 +78,6 @@ export default function CmsPanel({ username, sections, initialUnread }: CmsPanel
 
         {tab === 'content' && <ContentManager sections={sections} />}
         {tab === 'works' && <WorksManager />}
-        {tab === 'messages' && <MessagesPanel onUnreadChange={setUnread} />}
       </div>
     </ConfirmProvider>
   );

@@ -1,0 +1,85 @@
+---
+import { MAILBOX_ACTIONS, isMailboxLocked, type MailboxColumnId } from '@constant';
+import { Eye, Trash } from '@icons';
+import type { MailboxEntry } from './mailboxBoardModel';
+import MessageChecks from './MessageChecks.astro';
+
+interface Props {
+    /** El mensaje ya derivado por `buildMailboxEntries`: asunto, rótulo y fecha salen de ahí. */
+    entry: MailboxEntry;
+    /** Columna en la que se pinta. El `<script>` la reescribe al mover la tarjeta. */
+    state: MailboxColumnId;
+}
+
+const { entry, state } = Astro.props;
+const { message, subject, preview, typeLabel, day } = entry;
+
+const initials = message.fullName.trim().slice(0, 2).toUpperCase();
+
+/** Ya leído no se mueve: la columna "Leídos" es el final del flujo. El bloqueo
+ *  sale de la columna, así que el servidor, el HTML y el `<script>` coinciden. */
+const locked = isMailboxLocked(state);
+---
+
+ {/*
+    `data-mailbox-card`, `data-id` y `data-state` son el contrato con
+    `bindMailboxBoard.ts`: los lee para contar, filtrar, mover y saber en qué columna
+    está la tarjeta, y `data-state` es también lo que pinta la franja lateral en
+    `styles/mailbox.css`. `data-type` alimenta el filtro por tipo de mensaje.
+
+    `tabindex` la hace enfocable para que el atajo de Ctrl + flechas tenga dónde posarse,
+    incluso en las tarjetas bloqueadas, que se siguen pudiendo abrir y eliminar.
+
+    El arrastre se apaga con `draggable="false"` en las leídas: el bloqueo se ve en el
+    cursor, no solo en el script. Todo el CSS vive en `styles/mailbox.css`.
+*/}
+<article
+    class="mailbox-card p-4"
+    draggable={locked ? 'false' : 'true'}
+    tabindex="0"
+    data-mailbox-card
+    data-id={message.id}
+    data-state={state}
+    data-type={message.type}
+    data-locked={locked ? 'true' : 'false'}
+>
+    <div class="mailbox-card__top">
+        <span class="mailbox-card__avatar" aria-hidden="true">{initials}</span>
+        <p class="mailbox-card__sender" title={message.fullName}>{message.fullName}</p>
+        <time class="mailbox-card__time" datetime={message.createdAt}>{day}</time>
+        <MessageChecks state={state} />
+    </div>
+
+    <span class="mailbox-card__badge">{typeLabel}</span>
+
+    <h4 class="mailbox-card__subject">{subject}</h4>
+    <p class="mailbox-card__preview">{preview}</p>
+
+     {/*
+        Los botones solo llevan su gancho `data-mailbox-view` / `data-mailbox-remove`:
+        un único oyente en el tablero hace la delegación de eventos, así que no hay
+        un manejador por tarjeta. Los rótulos salen de `MAILBOX_ACTIONS` y los iconos
+        de `@icons`, para que el texto y el SVG no cambien de forma según el archivo.
+    */}
+    <div class="mailbox-card__actions">
+        <button
+            type="button"
+            class="mailbox-card__action"
+            data-mailbox-view
+            aria-label={`${MAILBOX_ACTIONS.view} el mensaje de ${message.fullName}`}
+        >
+            <Eye class="size-4" />
+            {MAILBOX_ACTIONS.view}
+        </button>
+
+        <button
+            type="button"
+            class="mailbox-card__action mailbox-card__action--danger ml-auto"
+            data-mailbox-remove
+            aria-label={`${MAILBOX_ACTIONS.remove} el mensaje de ${message.fullName}`}
+        >
+            <Trash class="size-4" />
+            {MAILBOX_ACTIONS.remove}
+        </button>
+    </div>
+</article>

@@ -1,0 +1,23 @@
+---
+import type { MailboxColumnId } from '@constant';
+
+interface Props {
+    /** Columna en la que está el mensaje; decide el color del check. */
+    state: MailboxColumnId;
+}
+
+const { state } = Astro.props;
+---
+
+ {/*
+    Doble check al estilo de WhatsApp. Es decorativo: el estado ya lo anuncian la
+    cabecera de la columna y la franja lateral de la tarjeta, así que va fuera del
+    árbol de accesibilidad. El color lo pone el CSS según `data-state`, que el
+    `<script>` reescribe al mover la tarjeta.
+*/}
+<span class="mailbox-checks" data-mailbox-checks data-state={state} aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1.5 12.5l4 4 9-9"></path>
+        <path d="M9 12.5l4 4 10-11"></path>
+    </svg>
+</span>

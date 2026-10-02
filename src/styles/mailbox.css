@@ -1,3 +1,592 @@
-@layer components{
-    
+@reference "tailwindcss";
+/* Necesario para que `@apply` vea los tokens del @theme (--radius-brand, --font-sans)
+   y los colores de marca, que viven en el @theme / :root de global.css. */
+@reference "./global.css";
+
+/* ==========================================================================
+   Buzón ciudadano — tablero de 3 columnas
+   --------------------------------------------------------------------------
+   Todo el CSS del tablero vive aquí porque el componente cambia de estado desde
+   JS (arrastrar tarjetas, abrir el modal, navegar entre mensajes) y las
+   utilidades solas no alcanzan para eso.
+
+   Paleta: solo `--brand-primary` / `--brand-primary-strong` y sus derivados con
+   `color-mix`, más la escala `slate-*` que ya usa el resto del sitio. No hay
+   ningún color propio: cambiar `global.css` repinta el buzón.
+   ========================================================================== */
+
+:root {
+    /* Escala de grises del tablero, derivada de la marca para que no haya dos
+       "--gris" distintos entre el formulario público y el panel. */
+    --mailbox-surface: color-mix(in srgb, var(--brand-primary) 3%, white);
+    --mailbox-surface-strong: color-mix(in srgb, var(--brand-primary) 9%, white);
+    --mailbox-border: color-mix(in srgb, var(--brand-primary) 14%, white);
+    --mailbox-border-strong: color-mix(in srgb, var(--brand-primary) 28%, white);
+    --mailbox-ink: #0f172a;        /* slate-900 */
+    --mailbox-ink-soft: #475569;   /* slate-600 */
+    --mailbox-ink-mute: #94a3b8;   /* slate-400 */
+
+    /* Estado del mensaje. Son tonos semánticos (alerta, trabajo, hecho), no de
+       marca: los usa el resto del panel tal cual. Van aquí como token para que
+       cambiar el color de un check sea tocar una línea y no tres reglas. */
+    --mailbox-unread: #dc2626;     /* red-600 */
+    --mailbox-reviewing: #d97706;  /* amber-600 */
+    --mailbox-read: #16a34a;       /* green-600 */
+
+    /* Capas: el modal tiene que quedar por encima del navbar y del toast region. */
+    --mailbox-z-modal: 90;
+    --mailbox-z-modal-controls: 95;
+}
+
+/* ==========================================================================
+   Rejilla de columnas
+   ========================================================================== */
+
+.mailbox-board {
+    display: grid;
+    gap: 1rem;
+    /* Móvil: desplazamiento lateral con anclaje, una columna por pantalla. */
+    grid-auto-flow: column;
+    grid-auto-columns: min(86%, 21rem);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding-bottom: 0.5rem;
+}
+
+@media (min-width: 64rem) {
+    /* Escritorio: tres columnas a la vez, sin desplazamiento horizontal. */
+    .mailbox-board {
+        grid-auto-flow: row;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-columns: auto;
+        overflow-x: visible;
+        scroll-snap-type: none;
+        gap: 1.25rem;
+    }
+}
+
+.mailbox-column {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    scroll-snap-align: start;
+    background-color: var(--mailbox-surface);
+    border: 1px solid var(--mailbox-border);
+    border-radius: var(--brand-border);
+    /* Altura alta y lista con scroll propio: el tablero nunca estira la página. */
+    max-height: min(72vh, 44rem);
+}
+
+/* Franja superior: identifica la columna sin necesidad de un color nuevo por estado. */
+.mailbox-column::before {
+    content: "";
+    display: block;
+    height: 4px;
+    border-radius: calc(var(--brand-border) - 2px) calc(var(--brand-border) - 2px) 0 0;
+    background-color: var(--mailbox-column-tint, var(--brand-primary));
+}
+
+.mailbox-column__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--mailbox-border);
+}
+
+.mailbox-column__titles {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.mailbox-column__title {
+    font-size: 0.9375rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--mailbox-ink);
+}
+
+.mailbox-column__hint {
+    font-size: 0.6875rem;
+    color: var(--mailbox-ink-mute);
+}
+
+/* Contador de la cabecera. Con `aria-live` su texto cambia sin que el lector
+   de pantalla tenga que volver a recorrer la columna. */
+.mailbox-column__count {
+    @apply ml-auto rounded-full text-xs font-bold tabular-nums;
+    padding: 0.125rem 0.5rem;
+    background-color: var(--mailbox-surface-strong);
+    color: var(--mailbox-ink-soft);
+}
+
+.mailbox-column[data-mailbox-active="true"] .mailbox-column__count {
+    background-color: var(--mailbox-column-tint, var(--brand-primary));
+    color: white;
+}
+
+.mailbox-column__list {
+    display: flex;
+    min-height: 11rem;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.625rem;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    padding: 0.75rem;
+}
+
+/* Zona destino mientras se arrastra una tarjeta por encima. */
+.mailbox-column[data-mailbox-dropzone="true"] {
+    background-color: var(--mailbox-surface-strong);
+    outline: 2px dashed var(--brand-primary);
+    outline-offset: -4px;
+}
+
+.mailbox-empty {
+    @apply flex flex-1 items-center justify-center text-center text-xs;
+    color: var(--mailbox-ink-mute);
+    border: 1px dashed var(--mailbox-border-strong);
+    border-radius: var(--brand-border);
+    padding: 2rem 1rem;
+}
+
+/* `hidden` tiene que ganarle a las utilidades de `display`: el navegador aplica
+   el atributo antes que el CSS de autor, así que sin esto una tarjeta o el aviso
+   de columna vacía con `display: flex` se quedarían siempre visibles. */
+.mailbox-card[hidden],
+.mailbox-empty[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Barra de filtros
+   --------------------------------------------------------------------------
+   Filtra sobre la página ya cargada, sin volver a pedirla al servidor: el tablero
+   es HTML plano y recargar el panel perdería la pestaña activa.
+   ========================================================================== */
+
+.mailbox-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.mailbox-filters__titles {
+    display: flex;
+    min-width: 0;
+    margin-right: auto;
+    flex-direction: column;
+}
+
+.mailbox-filters__title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--mailbox-ink);
+}
+
+.mailbox-filters__summary {
+    font-size: 0.8125rem;
+    color: var(--mailbox-ink-mute);
+}
+
+.mailbox-filters input,
+.mailbox-filters select {
+    width: auto;
+}
+
+.mailbox-filters input {
+    flex: 1 1 14rem;
+    max-width: 20rem;
+}
+
+/* ==========================================================================
+   Tarjeta estilo bandeja de correo
+   ========================================================================== */
+
+.mailbox-card {
+    @apply relative flex flex-col rounded-brand border bg-white text-left;
+    border-color: var(--mailbox-border);
+    /* Franja lateral que codifica el estado, como el punto de "no leído" de Gmail. */
+    box-shadow: inset 3px 0 0 0 var(--mailbox-card-tint, transparent);
+    cursor: grab;
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.mailbox-card:hover {
+    border-color: var(--mailbox-border-strong);
+    box-shadow: inset 3px 0 0 0 var(--mailbox-card-tint, transparent), 0 8px 20px -14px rgb(15 23 42 / 0.45);
+}
+
+.mailbox-card:focus-within {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+}
+
+/* Leído = atendido: la tarjeta se apaga y deja de aceptar el arrastre. */
+.mailbox-card[data-locked="true"] {
+    cursor: default;
+    opacity: 0.75;
+}
+
+.mailbox-card[data-locked="true"]:hover {
+    box-shadow: inset 3px 0 0 0 var(--mailbox-card-tint, transparent);
+}
+
+.mailbox-card[data-state="unread"] {
+    --mailbox-card-tint: var(--brand-primary);
+    background-color: color-mix(in srgb, var(--brand-primary) 4%, white);
+}
+
+.mailbox-card[data-state="reviewing"] {
+    --mailbox-card-tint: color-mix(in srgb, var(--brand-primary) 70%, white);
+}
+
+.mailbox-card[data-state="read"] {
+    --mailbox-card-tint: var(--mailbox-border-strong);
+}
+
+.mailbox-card[data-dragging="true"] {
+    opacity: 0.45;
+    cursor: grabbing;
+}
+
+/* Avatar: dos iniciales, círculo (elemento circular por naturaleza). */
+.mailbox-card__avatar {
+    @apply grid size-8 shrink-0 place-items-center rounded-full text-[0.625rem] font-extrabold uppercase;
+    background-color: var(--mailbox-surface-strong);
+    color: var(--brand-primary-strong);
+}
+
+.mailbox-card__top {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.mailbox-card__sender {
+    @apply min-w-0 flex-1 truncate text-sm font-bold;
+    color: var(--mailbox-ink);
+}
+
+.mailbox-card__time {
+    @apply shrink-0 text-[0.6875rem] whitespace-nowrap;
+    color: var(--mailbox-ink-mute);
+}
+
+/* ==========================================================================
+   Doble check, como el de WhatsApp: el color es el estado del mensaje.
+   --------------------------------------------------------------------------
+   `data-state` lo reescribe el `<script>` al mover la tarjeta, así que el check
+   cambia de color sin volver a pedir nada. Los tres tonos son semánticos (alerta,
+   trabajo, hecho) y no salen de la marca: son los mismos que usa el resto del panel.
+   ========================================================================== */
+
+.mailbox-checks {
+    @apply inline-flex size-4 shrink-0;
+}
+
+.mailbox-checks[data-state="unread"] {
+    color: var(--mailbox-unread);
+}
+
+.mailbox-checks[data-state="reviewing"] {
+    color: var(--mailbox-reviewing);
+}
+
+.mailbox-checks[data-state="read"] {
+    color: var(--mailbox-read);
+}
+
+/* Badge de categoría: la única etiqueta de color de la tarjeta. */
+.mailbox-card__badge {
+    @apply mt-2 inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[0.6875rem] font-bold;
+    background-color: var(--mailbox-surface-strong);
+    color: var(--brand-primary-strong);
+}
+
+.mailbox-card__subject {
+    @apply mt-1.5 line-clamp-2 text-sm font-semibold;
+    color: var(--mailbox-ink);
+}
+
+.mailbox-card__preview {
+    @apply mt-1 line-clamp-3 text-xs leading-5;
+    color: var(--mailbox-ink-soft);
+}
+
+.mailbox-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid var(--mailbox-border);
+}
+
+.mailbox-card__action {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-colors;
+    color: var(--mailbox-ink-soft);
+}
+
+.mailbox-card__action:hover {
+    background-color: var(--mailbox-surface-strong);
+    color: var(--brand-primary-strong);
+}
+
+.mailbox-card__action--danger:hover {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+/* ==========================================================================
+   Botones del modal
+   ========================================================================== */
+
+.mailbox-btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+}
+
+.mailbox-btn--approve {
+    background-color: var(--brand-primary);
+    color: white;
+}
+
+.mailbox-btn--approve:hover {
+    filter: brightness(0.92);
+}
+
+.mailbox-btn--approve:focus-visible {
+    --tw-ring-color: var(--brand-primary);
+}
+
+.mailbox-btn--reject {
+    @apply border border-slate-300 bg-white text-slate-700;
+}
+
+.mailbox-btn--reject:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+.mailbox-btn--reject:focus-visible {
+    --tw-ring-color: #dc2626;
+}
+
+/* ==========================================================================
+   Modal de lectura
+   --------------------------------------------------------------------------
+   El `<dialog>` es solo el escenario: transparente, sin bordes, más ancho que la
+   tarjeta. La tarjeta de verdad es `.mailbox-dialog__panel`, y las flechas de
+   navegación quedan FUERA de ella, en el hueco que deja el `padding` del
+   escenario. Así no tapan el mensaje ni la cabecera, que es donde vive la
+   información útil.
+   ========================================================================== */
+
+.mailbox-dialog {
+    @apply relative m-auto p-0 text-slate-800;
+    /* El `dialog:modal` del navegador trae `max-width`/`max-height` propios: se
+       anulan para que el ancho lo mande el `padding` de los lados. */
+    width: min(100% - 2rem, 58rem);
+    max-width: none;
+    max-height: none;
+    border: none;
+    background: transparent;
+    /* El escenario no debe recortar nada: lo que se ajusta es el panel. */
+    overflow: visible;
+}
+
+/* Mismo fondo que `ui/Modal.tsx`, para que los dos modales del panel se comparen
+   como el mismo sistema. */
+.mailbox-dialog::backdrop {
+    background-color: rgb(2 6 23 / 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.mailbox-dialog[open] {
+    animation: mailbox-dialog-in 0.22s ease-out;
+}
+
+@keyframes mailbox-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* La tarjeta. `overflow: hidden` para que el cuerpo respete el borde redondeado. */
+.mailbox-dialog__panel {
+    position: relative;
+    display: flex;
+    max-width: 44rem;
+    max-height: min(88vh, 52rem);
+    margin-inline: auto;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: white;
+    border: 1px solid var(--mailbox-border);
+    border-radius: var(--brand-border);
+    box-shadow: 0 25px 60px -20px rgb(15 23 42 / 0.45);
+}
+
+.mailbox-dialog__head {
+    position: relative;
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--mailbox-border);
+}
+
+.mailbox-dialog__close {
+    @apply absolute top-3 right-3 grid size-9 cursor-pointer place-items-center rounded-full text-slate-400 transition-colors;
+}
+
+.mailbox-dialog__close:hover {
+    background-color: var(--mailbox-surface-strong);
+    color: var(--mailbox-ink);
+}
+
+.mailbox-dialog__badge {
+    @apply mb-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-[0.6875rem] font-bold;
+    background-color: var(--mailbox-surface-strong);
+    color: var(--brand-primary-strong);
+}
+
+.mailbox-dialog__title {
+    @apply pr-10 text-lg leading-6 font-extrabold;
+    color: var(--mailbox-ink);
+}
+
+.mailbox-dialog__meta {
+    @apply mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs;
+    color: var(--mailbox-ink-mute);
+}
+
+.mailbox-dialog__meta a {
+    color: var(--brand-primary);
+}
+
+.mailbox-dialog__meta a:hover {
+    text-decoration: underline;
+}
+
+/* Aprobar / Rechazar, justo bajo la X. */
+.mailbox-dialog__actions {
+    @apply mt-4 flex flex-wrap gap-2;
+}
+
+.mailbox-dialog__body {
+    overflow-y: auto;
+    padding: 1.25rem;
+    /* `white-space: pre-line` respeta los saltos de línea que escribió el
+       ciudadano; sin esto el espaciado del mensaje se pierde. */
+    white-space: pre-line;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--mailbox-ink-soft);
+}
+
+/* Pie: solo la posición en la lista. Las flechas se fueron fuera de la tarjeta. */
+.mailbox-dialog__foot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem 1.25rem;
+    border-top: 1px solid var(--mailbox-border);
+}
+
+.mailbox-dialog__counter {
+    @apply text-xs font-semibold tabular-nums;
+    color: var(--mailbox-ink-mute);
+}
+
+/* ==========================================================================
+   Flechas de navegación, fuera de la tarjeta
+   --------------------------------------------------------------------------
+   Son hijas del `<dialog>`, no del panel, para poder posicionarse en el hueco
+   lateral. Por debajo de 64rem no hay sitio a los lados y se reincorporan al pie
+   de la tarjeta superpuestas; en ambos casos es el mismo botón, solo lo mueve
+   el CSS.
+   ========================================================================== */
+
+.mailbox-dialog__arrow {
+    @apply grid size-11 cursor-pointer place-items-center rounded-full transition-colors;
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: var(--mailbox-z-modal-controls);
+    background-color: var(--mailbox-surface-strong);
+    color: var(--mailbox-ink-soft);
+    /* Las de fuera necesitan separarse del fondo oscurecido. */
+    box-shadow: 0 8px 24px -12px rgb(15 23 42 / 0.6);
+}
+
+.mailbox-dialog__arrow--prev {
+    left: 0;
+}
+
+.mailbox-dialog__arrow--next {
+    right: 0;
+}
+
+.mailbox-dialog__arrow:hover:not(:disabled) {
+    background-color: var(--brand-primary);
+    color: white;
+}
+
+.mailbox-dialog__arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Móvil y tableta: sin huecos laterales, las flechas vuelven dentro. */
+@media (max-width: 63.99rem) {
+    .mailbox-dialog__arrow {
+        top: auto;
+        bottom: 0.75rem;
+        translate: none;
+        box-shadow: none;
+    }
+
+    .mailbox-dialog__arrow--prev {
+        right: 4rem;
+        left: auto;
+    }
+
+    .mailbox-dialog__arrow--next {
+        right: 0.75rem;
+    }
+}
+
+@media (min-width: 64rem) {
+    /* Este `padding` es el hueco donde caben las flechas: 4rem para una flecha de
+       2.75rem deja aire entre el botón y la tarjeta, sin shouting ni tocar el marco. */
+    .mailbox-dialog {
+        padding-inline: 4rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mailbox-dialog[open] {
+        animation: none;
+    }
+
+    .mailbox-card {
+        transition: none;
+    }
 }

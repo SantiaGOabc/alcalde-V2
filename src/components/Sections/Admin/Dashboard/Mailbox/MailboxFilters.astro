@@ -1,0 +1,57 @@
+---
+import { MAILBOX_BOARD, MAILBOX_MESSAGE_TYPES, MAILBOX_STATUS_FILTERS } from '@constant';
+import { FIELD_CLASS } from '@/components/ui/fieldStyles';
+
+interface Props {
+    /**
+     * El contador inicial. Lo calcula el servidor con el mismo formato que el
+     * `<script>` usa al filtrar, para que el número no cambie de forma al tocar
+     * un control y luego vuelva a su sitio.
+     */
+    summary: string;
+}
+
+const { summary } = Astro.props;
+---
+
+ {/*
+    Los controles se pintan en el servidor y el `<script>` los escucha: filtrar es
+    poner `hidden` a las tarjetas que no cumplen, sin volver a pedir la página
+    (recargarla perdería la pestaña activa del panel).
+
+    Los `aria-label` repiten el texto visible porque no hay `<label>` asociado: la
+    barra vive en un `header` y los controles se leen por su etiqueta, no por un
+    título de sección.
+*/}
+<header class="mailbox-filters">
+    <div class="mailbox-filters__titles">
+        <h2 class="mailbox-filters__title">{MAILBOX_BOARD.title}</h2>
+        <p class="mailbox-filters__summary" data-mailbox-summary aria-live="polite">{summary}</p>
+    </div>
+
+    <input
+        type="search"
+        class={FIELD_CLASS}
+        data-mailbox-search
+        aria-label={MAILBOX_BOARD.filters.searchLabel}
+        placeholder={MAILBOX_BOARD.filters.search}
+    />
+
+    {/* Sin tipo = cualquier tipo de mensaje (`value` de `MAILBOX_MESSAGE_TYPES`). */}
+    <select
+        class={FIELD_CLASS}
+        data-mailbox-type
+        aria-label={MAILBOX_BOARD.filters.typeLabel}
+    >
+        <option value="">{MAILBOX_BOARD.filters.everyType}</option>
+        {MAILBOX_MESSAGE_TYPES.map(({ value, label }) => <option value={value}>{label}</option>)}
+    </select>
+
+    <select
+        class={FIELD_CLASS}
+        data-mailbox-status
+        aria-label={MAILBOX_BOARD.filters.statusLabel}
+    >
+        {MAILBOX_STATUS_FILTERS.map(({ value, label }) => <option value={value}>{label}</option>)}
+    </select>
+</header>

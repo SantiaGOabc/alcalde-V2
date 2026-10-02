@@ -1,0 +1,90 @@
+---
+import { MAILBOX_ACTIONS } from '@constant';
+import { ArrowLeft, ArrowRight, Check, Close, Trash } from '@icons';
+---
+
+ {/*
+    Modal de lectura. No lleva ningún texto: el `<script>` del tablero inyecta el
+    contenido del mensaje con `textContent` en los nodos marcados con `data-mailbox-*`
+    (asunto, remitente, fecha, cuerpo…). Por eso los identificadores son `data-*` y
+    no `id`, y por eso el tablero puede rellenar el modal sin volver a pedir nada.
+
+    `data-mailbox-dialog` es el gancho con el que el tablero localiza este `<dialog>`.
+    El CSS está en `styles/mailbox.css` (`mailbox-dialog__*` y `mailbox-btn--*`).
+*/}
+<dialog class="mailbox-dialog" data-mailbox-dialog>
+    <div class="mailbox-dialog__panel">
+        <header class="mailbox-dialog__head">
+            <button
+                type="button"
+                class="mailbox-dialog__close"
+                data-mailbox-close
+                aria-label={MAILBOX_ACTIONS.close}
+            >
+                <Close />
+            </button>
+
+            {/* Rótulo del tipo de mensaje (Sugerencia, Felicitación…). */}
+            <span class="mailbox-dialog__badge" data-mailbox-badge></span>
+
+            {/* Asunto: primera frase del mensaje. */}
+            <h2 class="mailbox-dialog__title" data-mailbox-title></h2>
+
+            {/* Quién escribió y cuándo: los rellena el tablero, el enlace va al `mailto:`. */}
+            <p class="mailbox-dialog__meta">
+                <span data-mailbox-sender></span>
+                <span aria-hidden="true">·</span>
+                <time data-mailbox-date></time>
+                <a data-mailbox-email href="#"></a>
+            </p>
+
+            {/* Aprobar mueve el mensaje a "Leídos"; Rechazar lo retira del tablero. */}
+            <div class="mailbox-dialog__actions">
+                <button type="button" class="mailbox-btn mailbox-btn--approve" data-mailbox-approve>
+                    <Check class="size-4" />
+                    {MAILBOX_ACTIONS.approve}
+                </button>
+
+                <button type="button" class="mailbox-btn mailbox-btn--reject" data-mailbox-reject>
+                    <Trash class="size-4" />
+                    {MAILBOX_ACTIONS.reject}
+                </button>
+            </div>
+        </header>
+
+        {/* `white-space: pre-line` en el CSS: respeta los saltos de línea del ciudadano. */}
+        <div class="mailbox-dialog__body" data-mailbox-body></div>
+
+        <footer class="mailbox-dialog__foot">
+            {/* Posición dentro del orden de lectura. */}
+            <span class="mailbox-dialog__counter" data-mailbox-counter></span>
+        </footer>
+    </div>
+
+     {/*
+        Las flechas son hijas del `<dialog>` y NO del panel: así el CSS puede sacarlas
+        de la tarjeta y dejarlas en el hueco lateral (`.mailbox-dialog__arrow`). Debajo
+        de 64rem se recolocan dentro por la misma clase. El texto del script las
+        deshabilita según la posición, y el clic en el fondo (`event.target === dialog`)
+        sigue cerrando el modal: el escenario transparente cuenta como fondo.
+
+        Las flechas vienen de `@icons`, las mismas que usa el resto del sitio.
+    */}
+    <button
+        type="button"
+        class="mailbox-dialog__arrow mailbox-dialog__arrow--prev"
+        data-mailbox-prev
+        aria-label={MAILBOX_ACTIONS.previous}
+    >
+        <ArrowLeft />
+    </button>
+
+    <button
+        type="button"
+        class="mailbox-dialog__arrow mailbox-dialog__arrow--next"
+        data-mailbox-next
+        aria-label={MAILBOX_ACTIONS.next}
+    >
+        <ArrowRight />
+    </button>
+</dialog>

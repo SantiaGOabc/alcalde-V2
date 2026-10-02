@@ -98,3 +98,7 @@ export async function searchMailboxMessages({ page, pageSize, type, status, sear
 export async function setMailboxMessageRead(id: number, isRead: boolean): Promise<void> {
   await query('UPDATE mailbox_messages SET is_read = $2 WHERE id = $1', [id, isRead]);
 }
+
+export async function deleteMailboxMessage(id: number): Promise<void> {
+  await query('DELETE FROM mailbox_messages WHERE id = $1', [id]);
+}

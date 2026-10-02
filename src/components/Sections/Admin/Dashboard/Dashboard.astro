@@ -2,6 +2,7 @@
 import { Section } from "@components";
 import { type AdminUser, countUnreadMessages, listContent } from "@/lib/server";
 import CmsPanel from "./CmsPanel.tsx";
+import MailboxBoard from "./Mailbox/MailboxBoard.astro";
 
 interface Props {
   user: AdminUser;
@@ -15,5 +16,11 @@ const [sections, initialUnread] = await Promise.all([listContent(), countUnreadM
 <Section variant="secondary" className="min-h-[calc(100vh-80px)] bg-slate-50 pt-24 pb-16">
   <div class="mx-auto w-full max-w-480">
     <CmsPanel client:load username={user.username} sections={sections} initialUnread={initialUnread} />
+    <!--
+      El buzón es un componente .astro (no se puede anidar dentro de la isla React
+      de arriba). Se pinta de entrada en el HTML y `CmsPanel` lo muestra cuando la
+      pestaña "Buzón" está activa, intercambiando el evento `MAILBOX_EVENTS.tab`.
+    -->
+    <MailboxBoard />
   </div>
 </Section>
